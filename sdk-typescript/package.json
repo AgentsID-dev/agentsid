@@ -1,0 +1,31 @@
+{
+  "name": "@agentsid/sdk",
+  "version": "0.1.0",
+  "description": "Identity and auth for AI agents — drop-in MCP middleware, per-tool permissions, delegation chains, audit trails",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["ai", "agents", "auth", "identity", "mcp", "security", "permissions", "audit", "delegation", "tokens"],
+  "author": "AgentsID <hello@agentsid.dev>",
+  "license": "MIT",
+  "homepage": "https://agentsid.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentsid/agentsid"
+  },
+  "bugs": {
+    "url": "https://github.com/agentsid/agentsid/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "agentsid",
+  "version": "0.1.0",
+  "description": "AgentsID CLI — manage agent identities from the terminal",
+  "type": "module",
+  "bin": {
+    "agentsid": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "auth",
+    "identity",
+    "mcp",
+    "cli"
+  ],
+  "author": "AgentsID",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^5.3.0"
+  }
+}
