@@ -477,6 +477,10 @@ Each rule object:
 | `action` | string | No | `allow` or `deny`. Defaults to `allow`. |
 | `conditions` | object | No | Key-value constraints on tool parameters. All conditions must match (AND logic). Values can be a list of allowed values or a single value. |
 | `priority` | integer | No | Rule priority (0-1000). Higher priority rules are evaluated first. Defaults to 0. |
+| `schedule` | object | No | Time-based restriction. Rule only applies during specified hours/days. See [Advanced Permission Fields](#advanced-permission-fields). |
+| `rate_limit` | object | No | Rate limit for allow rules. See [Advanced Permission Fields](#advanced-permission-fields). |
+| `data_level` | string[] | No | Allowed data classification levels, e.g. `["public", "internal"]`. See [Advanced Permission Fields](#advanced-permission-fields). |
+| `requires_approval` | boolean | No | If `true`, matching calls return `pending_approval` instead of `allowed`. Defaults to `false`. See [Approvals](#approvals). |
 
 **Response** `200 OK`:
 
@@ -948,6 +952,497 @@ GET /api/v1/audit/verify
 ```bash
 curl "https://api.agentsid.dev/api/v1/audit/verify" \
   -H "Authorization: Bearer aid_proj_xR7kM2pQ9..."
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 401 | Invalid or missing API key |
+
+---
+
+### Usage
+
+Get current usage stats and plan limits for the authenticated project.
+
+```
+GET /api/v1/audit/usage
+```
+
+**Response** `200 OK`:
+
+```json
+{
+  "events_this_month": 1200,
+  "events_limit": 10000,
+  "agents_active": 5,
+  "agents_limit": 25,
+  "plan": "free"
+}
+```
+
+**curl:**
+
+```bash
+curl "https://api.agentsid.dev/api/v1/audit/usage" \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..."
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 401 | Invalid or missing API key |
+
+---
+
+## Advanced Permission Fields
+
+Permission rules support optional advanced fields for fine-grained control. These fields are set via the [Set Permissions](#set-permissions) endpoint.
+
+### Schedule
+
+Restrict a rule to specific hours and days of the week. If the current time is outside the schedule window, the rule is skipped during evaluation (it neither allows nor denies).
+
+```json
+{
+  "tool_pattern": "deploy_*",
+  "action": "allow",
+  "schedule": {
+    "hours_start": 9,
+    "hours_end": 17,
+    "timezone": "US/Pacific",
+    "days": ["mon", "tue", "wed", "thu", "fri"]
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `hours_start` | integer | No | Start hour, inclusive (0-23) |
+| `hours_end` | integer | No | End hour, exclusive (0-24) |
+| `timezone` | string | No | IANA timezone name. Defaults to `UTC`. |
+| `days` | string[] | No | Days of week: `mon`, `tue`, `wed`, `thu`, `fri`, `sat`, `sun` |
+
+### Rate Limit
+
+Apply a sliding-window rate limit to an allow rule. When the limit is exceeded, the permission check returns `allowed: false` with a rate limit exceeded reason.
+
+```json
+{
+  "tool_pattern": "send_email",
+  "action": "allow",
+  "rate_limit": {
+    "max": 10,
+    "per": "minute"
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `max` | integer | Yes | Maximum number of calls allowed in the window (1-100,000) |
+| `per` | string | Yes | Window size: `second`, `minute`, `hour`, or `day` |
+
+### Data Level
+
+Restrict which data classification levels a tool call can access. If the tool call includes a `data_level` parameter, it must be in the rule's allowed list.
+
+```json
+{
+  "tool_pattern": "query_database",
+  "action": "allow",
+  "data_level": ["public", "internal"]
+}
+```
+
+Valid levels: `public`, `internal`, `confidential`. If the tool call does not include a `data_level` parameter, the check passes regardless.
+
+### Requires Approval
+
+Flag an action for human approval before it proceeds. When a matching rule has `requires_approval: true`, the permission check returns `pending_approval: true` instead of `allowed: true`. The action is held until a human approves or rejects it via the [Approvals](#approvals) endpoints.
+
+```json
+{
+  "tool_pattern": "delete_*",
+  "action": "allow",
+  "requires_approval": true
+}
+```
+
+**Permission check response when approval is required:**
+
+```json
+{
+  "allowed": false,
+  "pending_approval": true,
+  "reason": "This action requires human approval",
+  "matched_rule": {
+    "tool_pattern": "delete_*",
+    "action": "allow",
+    "requires_approval": true
+  }
+}
+```
+
+### Combined Example
+
+A single rule can combine multiple advanced fields:
+
+```json
+{
+  "tool_pattern": "transfer_funds",
+  "action": "allow",
+  "conditions": {"currency": ["USD", "EUR"]},
+  "schedule": {"hours_start": 9, "hours_end": 17, "timezone": "US/Eastern", "days": ["mon", "tue", "wed", "thu", "fri"]},
+  "rate_limit": {"max": 5, "per": "hour"},
+  "data_level": ["confidential"],
+  "requires_approval": true,
+  "priority": 100
+}
+```
+
+---
+
+## Approvals
+
+The approval workflow enables human-in-the-loop authorization for sensitive agent actions. When a permission rule has `requires_approval: true`, matching tool calls are held for human review.
+
+All approval endpoints require a project API key.
+
+### List Pending Approvals
+
+Retrieve all pending approval requests for the project.
+
+```
+GET /api/v1/approvals/
+```
+
+**Response** `200 OK`:
+
+```json
+[
+  {
+    "id": 1,
+    "agent_id": "agt_7x9k2mNpQ4rS1tUv",
+    "tool": "delete_user",
+    "params": {"user_id": "usr_123"},
+    "status": "pending",
+    "requested_at": "2026-03-25 14:30:00+00:00"
+  }
+]
+```
+
+**curl:**
+
+```bash
+curl https://api.agentsid.dev/api/v1/approvals/ \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..."
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 401 | Invalid or missing API key |
+
+---
+
+### Approve Action
+
+Approve a pending action, allowing the agent to proceed.
+
+```
+POST /api/v1/approvals/{approval_id}/approve
+```
+
+**Request body:**
+
+```json
+{
+  "decided_by": "admin@example.com",
+  "reason": "Verified with user"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `decided_by` | string | Yes | Identifier of the human approver (1-255 characters) |
+| `reason` | string | No | Optional reason for the decision |
+
+**Response** `200 OK`:
+
+Returns the updated approval record with `status: "approved"`.
+
+**curl:**
+
+```bash
+curl -X POST https://api.agentsid.dev/api/v1/approvals/1/approve \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..." \
+  -H "Content-Type: application/json" \
+  -d '{"decided_by": "admin@example.com"}'
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 401 | Invalid or missing API key |
+| 404 | Pending approval not found |
+
+---
+
+### Reject Action
+
+Reject a pending action, blocking the agent from proceeding.
+
+```
+POST /api/v1/approvals/{approval_id}/reject
+```
+
+**Request body:**
+
+```json
+{
+  "decided_by": "admin@example.com",
+  "reason": "Action not authorized for this context"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `decided_by` | string | Yes | Identifier of the human rejector (1-255 characters) |
+| `reason` | string | No | Optional reason for the rejection |
+
+**Response** `200 OK`:
+
+Returns the updated approval record with `status: "rejected"`.
+
+**curl:**
+
+```bash
+curl -X POST https://api.agentsid.dev/api/v1/approvals/1/reject \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..." \
+  -H "Content-Type: application/json" \
+  -d '{"decided_by": "admin@example.com", "reason": "Not authorized"}'
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 401 | Invalid or missing API key |
+| 404 | Pending approval not found |
+
+---
+
+### Pending Approval Count
+
+Get the count of pending approvals for the project. Useful for dashboard badges and polling.
+
+```
+GET /api/v1/approvals/count
+```
+
+**Response** `200 OK`:
+
+```json
+{
+  "pending_count": 3
+}
+```
+
+**curl:**
+
+```bash
+curl https://api.agentsid.dev/api/v1/approvals/count \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..."
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 401 | Invalid or missing API key |
+
+---
+
+## Webhooks
+
+Subscribe to real-time event notifications. AgentsID sends HTTP POST requests to your configured URLs when events occur.
+
+All webhook endpoints require a project API key.
+
+**Supported events:**
+
+| Event | Description |
+|-------|-------------|
+| `agent.created` | A new agent was registered |
+| `agent.revoked` | An agent was revoked |
+| `agent.denied` | An agent's tool call was denied |
+| `limit.approaching` | Usage is approaching plan limits |
+| `limit.reached` | Usage has reached plan limits |
+| `approval.requested` | A new approval request was created |
+| `approval.decided` | An approval was approved or rejected |
+| `chain.broken` | Audit hash chain integrity failure detected |
+
+### Create Webhook
+
+Register a new webhook endpoint.
+
+```
+POST /api/v1/webhooks/
+```
+
+**Request body:**
+
+```json
+{
+  "name": "slack-alerts",
+  "url": "https://hooks.slack.com/services/T00/B00/xxx",
+  "events": ["agent.denied", "limit.reached", "approval.requested"],
+  "secret": "whsec_my_signing_secret"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | Yes | Webhook name (1-255 characters) |
+| `url` | string | Yes | Destination URL (1-2000 characters) |
+| `events` | string[] | Yes | List of events to subscribe to (at least one) |
+| `secret` | string | No | Signing secret for payload verification |
+
+**Response** `201 Created`:
+
+Returns the created webhook record.
+
+**curl:**
+
+```bash
+curl -X POST https://api.agentsid.dev/api/v1/webhooks/ \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "slack-alerts",
+    "url": "https://hooks.slack.com/services/T00/B00/xxx",
+    "events": ["agent.denied", "approval.requested"]
+  }'
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 400 | Invalid event name or URL |
+| 401 | Invalid or missing API key |
+
+---
+
+### List Webhooks
+
+List all webhooks for the project.
+
+```
+GET /api/v1/webhooks/
+```
+
+**Response** `200 OK`:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "slack-alerts",
+    "url": "https://hooks.slack.com/services/T00/B00/xxx",
+    "events": ["agent.denied", "approval.requested"],
+    "created_at": "2026-03-25 14:30:00+00:00"
+  }
+]
+```
+
+**curl:**
+
+```bash
+curl https://api.agentsid.dev/api/v1/webhooks/ \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..."
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 401 | Invalid or missing API key |
+
+---
+
+### Delete Webhook
+
+Remove a webhook subscription.
+
+```
+DELETE /api/v1/webhooks/{webhook_id}
+```
+
+**Response** `204 No Content`
+
+No response body.
+
+**curl:**
+
+```bash
+curl -X DELETE https://api.agentsid.dev/api/v1/webhooks/1 \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..."
+```
+
+**Errors:**
+
+| Code | Reason |
+|------|--------|
+| 401 | Invalid or missing API key |
+| 404 | Webhook not found |
+
+---
+
+### Test Webhook
+
+Send a test payload to verify your webhook endpoint is reachable. Sends a `test.ping` event.
+
+```
+POST /api/v1/webhooks/test
+```
+
+**Request body:**
+
+```json
+{
+  "name": "test",
+  "url": "https://your-endpoint.com/webhook",
+  "events": ["test.ping"],
+  "secret": "whsec_optional_secret"
+}
+```
+
+**Response** `200 OK`:
+
+```json
+{
+  "sent": true,
+  "url": "https://your-endpoint.com/webhook"
+}
+```
+
+**curl:**
+
+```bash
+curl -X POST https://api.agentsid.dev/api/v1/webhooks/test \
+  -H "Authorization: Bearer aid_proj_xR7kM2pQ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "test",
+    "url": "https://your-endpoint.com/webhook",
+    "events": ["test.ping"]
+  }'
 ```
 
 **Errors:**
