@@ -36,11 +36,11 @@ export interface HallStats {
 }
 
 export const HALL_STATS: HallStats = {
-  "total": 119,
-  "withTools": 57,
-  "fGrade": 45,
-  "totalFindings": 1695,
-  "totalTools": 831
+  "total": 135,
+  "withTools": 72,
+  "fGrade": 59,
+  "totalFindings": 2491,
+  "totalTools": 1245
 };
 
 export const HALL_SERVERS: readonly HallServer[] = [
@@ -316,6 +316,60 @@ export const HALL_SERVERS: readonly HallServer[] = [
     "scannedAt": "2026-03-30T15:01:22.677Z"
   },
   {
+    "id": "hubspot-mcp",
+    "package": "hubspot-mcp",
+    "name": "hubspot-mcp",
+    "maintainer": "HubSpot",
+    "version": "1.0.0",
+    "tools": 47,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "permissions": "F",
+      "validation": "F",
+      "auth": "B",
+      "output": "A",
+      "hallucination": "F"
+    },
+    "findings": {
+      "high": 6,
+      "medium": 78,
+      "low": 15
+    },
+    "riskTags": [
+      "destructive",
+      "mutation"
+    ],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "delete_contact",
+        "description": "`delete_contact` can permanently delete data — no guardrails, no confirmation required"
+      },
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "delete_company",
+        "description": "`delete_company` can permanently delete data — no guardrails, no confirmation required"
+      },
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "delete_deal",
+        "description": "`delete_deal` can permanently delete data — no guardrails, no confirmation required"
+      },
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "delete_ticket",
+        "description": "`delete_ticket` can permanently delete data — no guardrails, no confirmation required"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"create_contact\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_contact\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_contact\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"create_company\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_company\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_company\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"create_deal\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_deal\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_deal\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"create_ticket\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_ticket\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_ticket\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"create_association\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_association\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"create_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_task\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_call\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_meeting\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_meeting\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"list_contacts\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_contact\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_contact\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_contact\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_contact\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search_contacts\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_companies\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_company\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_company\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_company\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_company\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search_companies\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_deals\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_deal\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_deal\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_deal\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_deal\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search_deals\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_tickets\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_ticket\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_ticket\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_ticket\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_ticket\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search_tickets\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_pipeline\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_associations\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_association\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_association\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_property\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_owners\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_owner\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_notes\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_tasks\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_task\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_calls\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_call\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_emails\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_meetings\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_meeting\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_meeting\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_contact\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"list_owners\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"list_emails\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:13:35.108Z"
+  },
+  {
     "id": "mongodb-mcp-server",
     "package": "mongodb-mcp-server",
     "name": "MongoDB MCP Server",
@@ -527,6 +581,59 @@ export const HALL_SERVERS: readonly HallServer[] = [
     "scannedAt": "2026-03-29T19:51:49.386Z"
   },
   {
+    "id": "salesforce-mcp-server",
+    "package": "salesforce-mcp-server",
+    "name": "salesforce-mcp-server",
+    "maintainer": "Salesforce",
+    "version": "0.1.0",
+    "tools": 25,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "permissions": "F",
+      "validation": "F",
+      "auth": "B",
+      "hallucination": "D"
+    },
+    "findings": {
+      "high": 5,
+      "medium": 28,
+      "low": 10
+    },
+    "riskTags": [
+      "destructive",
+      "execution",
+      "mutation"
+    ],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "delete_apex_class",
+        "description": "`delete_apex_class` can permanently delete data — no guardrails, no confirmation required"
+      },
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "execute_tooling_query",
+        "description": "`execute_tooling_query` executes arbitrary code with no scope restriction or allowlist"
+      },
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "run_tests",
+        "description": "`run_tests` executes arbitrary code with no scope restriction or allowlist"
+      },
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"create_apex_class\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_apex_class\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_apex_class\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"execute_tooling_query\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"ci\",\n          \"dev\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"run_tests\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"ci\",\n          \"dev\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"list_apex_classes\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_apex_class\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_apex_class\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_apex_class\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_apex_class\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search_async_apex_jobs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_apex_triggers\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_apex_trigger\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_apex_pages\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_apex_page\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"execute_tooling_query\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"describe_tooling_object\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_code_coverage\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_symbol_table\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"validate_syntax\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"check_apex_sharing\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"analyze_soql_performance\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"call_rest_api\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"describe_sobject\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:13:38.239Z"
+  },
+  {
     "id": "aashari-mcp-server-atlassian-confluence",
     "package": "@aashari/mcp-server-atlassian-confluence",
     "name": "@aashari/mcp-server-atlassian-confluence",
@@ -680,6 +787,57 @@ export const HALL_SERVERS: readonly HallServer[] = [
     "scannedAt": "2026-03-29T18:07:47.073Z"
   },
   {
+    "id": "gitlab-mcp",
+    "package": "gitlab-mcp",
+    "name": "gitlab-mcp",
+    "maintainer": "Community",
+    "version": "1.2.1",
+    "tools": 116,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "injection": "A",
+      "validation": "F",
+      "auth": "B",
+      "permissions": "B",
+      "output": "B",
+      "secrets": "B",
+      "hallucination": "F"
+    },
+    "findings": {
+      "high": 4,
+      "medium": 158,
+      "low": 7
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      },
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "description": "Server exposes 116 tools — excessive attack surface, strongly recommends per-agent tool scoping"
+      },
+      {
+        "severity": "HIGH",
+        "category": "SECRETS",
+        "tool": "gitlab_get_merge_request_code_context",
+        "description": "`gitlab_get_merge_request_code_context` response may leak secrets or API keys based on tool description"
+      },
+      {
+        "severity": "HIGH",
+        "category": "HALLUCINATION",
+        "tool": "gitlab_unapprove_merge_request",
+        "description": "`gitlab_unapprove_merge_request` uses vague action words — LLM interprets scope as the broadest possible action"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"gitlab_get_project\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_projects\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_repository\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_project_members\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_group_projects\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_group_iterations\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_search_repositories\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_search_code_blobs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_repository_tree\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_file_contents\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_or_update_file\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_push_files\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_branch\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_branch_diffs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_commits\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_commit\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_commit_diff\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_merge_requests\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_merge_request\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_merge_request\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_fork_repository\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_merge_request\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_merge_merge_request\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_merge_request_diffs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_merge_request_diffs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_merge_request_code_context\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_merge_request_versions\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_merge_request_version\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_approve_merge_request\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_unapprove_merge_request\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_merge_request_approval_state\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_merge_request_discussions\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_merge_request_thread\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_mr_discussions\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_merge_request_discussion_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_merge_request_discussion_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_merge_request_discussion_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_resolve_merge_request_thread\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_merge_request_notes\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_merge_request_notes\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_draft_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_draft_notes\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_draft_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_draft_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_draft_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_publish_draft_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_bulk_publish_draft_notes\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_merge_request_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_merge_request_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_merge_request_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_merge_request_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_issues\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_my_issues\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_issue_discussions\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_issue_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_issue_note\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_issue_links\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_issue_link\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_issue_link\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_issue_link\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_wiki_pages\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_wiki_page\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_wiki_page\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_wiki_page\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_wiki_page\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_pipelines\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_pipeline\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_pipeline_jobs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_pipeline_trigger_jobs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_pipeline_job\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_pipeline_job_output\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_pipeline\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_retry_pipeline\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_cancel_pipeline\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_retry_pipeline_job\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_cancel_pipeline_job\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_play_pipeline_job\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_milestones\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_milestone\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_milestone\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_milestone\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_edit_milestone\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_milestone\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_milestone_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_milestone_merge_requests\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_promote_milestone\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_milestone_burndown_events\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_releases\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_release\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_release\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_release\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_release\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_release_evidence\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_download_release_asset\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_labels\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_update_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_delete_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_namespaces\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_namespace\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_verify_namespace\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_users\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_events\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_project_events\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_upload_markdown\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_download_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_execute_graphql_query\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_execute_graphql_mutation\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gitlab_execute_graphql\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"health_check\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_projects\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_search_repositories\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_repository_tree\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_file_contents\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_create_or_update_file\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_push_files\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_merge_request_diffs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_unapprove_merge_request\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_my_issues\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_namespaces\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_get_users\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_list_events\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gitlab_upload_markdown\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:12:57.799Z"
+  },
+  {
     "id": "modelcontextprotocol-server-memory",
     "package": "@modelcontextprotocol/server-memory",
     "name": "memory-server",
@@ -731,6 +889,61 @@ export const HALL_SERVERS: readonly HallServer[] = [
     ],
     "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"create_entities\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_relations\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_entities\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"delete_observations\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"delete_relations\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"search_nodes\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
     "scannedAt": "2026-03-29T19:39:08.762Z"
+  },
+  {
+    "id": "strapi-mcp",
+    "package": "strapi-mcp",
+    "name": "strapi-mcp",
+    "maintainer": "Community",
+    "version": "0.2.0",
+    "tools": 20,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "injection": "A",
+      "permissions": "F",
+      "validation": "F",
+      "auth": "B",
+      "output": "B",
+      "hallucination": "C"
+    },
+    "findings": {
+      "high": 4,
+      "medium": 32,
+      "low": 7
+    },
+    "riskTags": [
+      "destructive",
+      "deployment",
+      "mutation"
+    ],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "delete_entry",
+        "description": "`delete_entry` can permanently delete data — no guardrails, no confirmation required"
+      },
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "delete_content_type",
+        "description": "`delete_content_type` can permanently delete data — no guardrails, no confirmation required"
+      },
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "publish_entry",
+        "description": "`publish_entry` can publish or deploy to production — any agent can trigger a release"
+      },
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"create_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_entry\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"create_content_type\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_content_type\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_content_type\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"create_component\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_component\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"publish_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"release-bot\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"get_entries\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"upload_media\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"upload_media_from_path\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_content_type_schema\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"connect_relation\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"disconnect_relation\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_content_type\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_content_type\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_content_type\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_component_schema\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_component\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_component\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"publish_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"unpublish_entry\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"upload_media\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"upload_media_from_path\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:15:24.985Z"
   },
   {
     "id": "aiondadotcom-mcp-ssh",
@@ -1049,6 +1262,46 @@ export const HALL_SERVERS: readonly HallServer[] = [
     ],
     "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"run_ui5_linter\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"ci\",\n          \"dev\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_ui5_app\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_integration_card\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"run_manifest_validation\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"ci\",\n          \"dev\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"run_ui5_linter\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_api_reference\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_project_info\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_ui5_app\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_integration_card\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"run_manifest_validation\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
     "scannedAt": "2026-03-29T18:03:31.448Z"
+  },
+  {
+    "id": "airtable-mcp-server",
+    "package": "airtable-mcp-server",
+    "name": "airtable-mcp-server",
+    "maintainer": "Community",
+    "version": "1.0.0",
+    "tools": 16,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "permissions": "F",
+      "validation": "F",
+      "auth": "B",
+      "hallucination": "B"
+    },
+    "findings": {
+      "high": 2,
+      "medium": 26,
+      "low": 1
+    },
+    "riskTags": [
+      "destructive",
+      "mutation"
+    ],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "delete_records",
+        "description": "`delete_records` can permanently delete data — no guardrails, no confirmation required"
+      },
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"create_record\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_records\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"delete_records\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"create_table\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_table\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_field\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_field\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"list_records\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search_records\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_tables\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"describe_table\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_record\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_record\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_records\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"delete_records\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_table\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_table\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_field\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_field\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"list_comments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"upload_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:12:56.924Z"
   },
   {
     "id": "european-parliament-mcp-server",
@@ -1402,6 +1655,43 @@ export const HALL_SERVERS: readonly HallServer[] = [
     "scannedAt": "2026-03-30T14:48:26.611Z"
   },
   {
+    "id": "trello-mcp",
+    "package": "trello-mcp",
+    "name": "trello-mcp",
+    "maintainer": "Community",
+    "version": "1.0.0",
+    "tools": 45,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "validation": "F",
+      "auth": "B",
+      "permissions": "A",
+      "hallucination": "F"
+    },
+    "findings": {
+      "high": 2,
+      "medium": 139,
+      "low": 4
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      },
+      {
+        "severity": "HIGH",
+        "category": "HALLUCINATION",
+        "tool": "trello_update_comment",
+        "description": "`trello_update_comment` uses vague action words — LLM interprets scope as the broadest possible action"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"trello_get_board\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_create_board\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_board_labels\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_board_members\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_update_board\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_create_list\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_update_list\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_list_cards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_archive_all_cards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_move_all_cards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_move_list\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_card\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_create_card\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_update_card\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_delete_card\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_search_cards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_add_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_card_comments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_update_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_delete_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_add_card_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_remove_card_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_assign_member\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_remove_member\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_add_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_attachments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_delete_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_copy_card\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_create_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_update_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_delete_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_create_checklist\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_update_checklist\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_delete_checklist\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_checklist\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_add_checklist_item\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_update_checklist_item\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_delete_checklist_item\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_copy_checklist\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_member\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_member_boards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_member_cards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_search_members\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"trello_get_board_members\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_archive_all_cards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_move_all_cards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_move_list\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_add_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_update_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_delete_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_add_card_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_remove_card_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_assign_member\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_remove_member\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_delete_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_delete_label\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_delete_checklist\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_update_checklist_item\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_delete_checklist_item\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_get_me\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_get_member\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_get_member_boards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"trello_get_member_cards\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:12:46.226Z"
+  },
+  {
     "id": "vercel-mcp",
     "package": "vercel-mcp",
     "name": "vercel-mcp",
@@ -1440,6 +1730,101 @@ export const HALL_SERVERS: readonly HallServer[] = [
     ],
     "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"deleteDeployment\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"getDeploymentEvents\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"getDeployment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"cancelDeployment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"listDeploymentFiles\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"getDeploymentFileContents\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"getDeployments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"deleteDeployment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"getDeploymentEvents\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"getDeployment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"cancelDeployment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"listDeploymentFiles\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"getDeploymentFileContents\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"getDeployments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"deleteDeployment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
     "scannedAt": "2026-03-30T15:07:26.679Z"
+  },
+  {
+    "id": "datadog-mcp-server",
+    "package": "datadog-mcp-server",
+    "name": "datadog",
+    "maintainer": "Community",
+    "version": "1.0.0",
+    "tools": 10,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "validation": "F",
+      "auth": "B",
+      "hallucination": "B"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 9,
+      "low": 6
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"get-monitors\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get-dashboard\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get-metrics\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get-metric-metadata\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get-events\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get-incidents\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search-logs\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:14:54.787Z"
+  },
+  {
+    "id": "discord-mcp",
+    "package": "discord-mcp",
+    "name": "discord-mcp",
+    "maintainer": "Community",
+    "version": "2.4.0",
+    "tools": 19,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "validation": "F",
+      "auth": "B",
+      "hallucination": "F"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 34,
+      "low": 5
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"discord_send_message\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_edit_message\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_delete_message\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_add_reaction\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_remove_reaction\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_get_message_history\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_search_messages\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_get_message\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_list_attachments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_download_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_cleanup_download\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_get_channel\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_create_dm\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_remove_friend\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"discord_send_message\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_edit_message\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_delete_message\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_add_reaction\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_remove_reaction\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_get_message_history\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_search_messages\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_list_attachments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_download_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_cleanup_download\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_get_dm_channels\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_create_dm\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_get_friends\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"discord_add_friend\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:12:25.669Z"
+  },
+  {
+    "id": "gmail-mcp-server",
+    "package": "gmail-mcp-server",
+    "name": "gmail-mcp-server",
+    "maintainer": "Community",
+    "version": "1.0.24",
+    "tools": 14,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "injection": "B",
+      "permissions": "B",
+      "validation": "F",
+      "output": "A",
+      "hallucination": "F"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 25,
+      "low": 7
+    },
+    "riskTags": [
+      "credential_access"
+    ],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "PERMISSIONS",
+        "tool": "gmail_authenticate",
+        "description": "`gmail_authenticate` accesses credentials with no scope or audience restriction"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"gmail_authenticate\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"auth-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"gmail_send_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_read_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_search_emails\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"analyze_conversation\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_mark_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_move_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_delete_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_list_attachments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_get_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_draft\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"gmail_send_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gmail_read_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gmail_search_emails\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"analyze_conversation\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gmail_mark_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gmail_move_email\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gmail_list_attachments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gmail_get_attachment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gmail_draft\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"gmail_logout\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:12:27.837Z"
   },
   {
     "id": "jpisnice-shadcn-ui-mcp-server",
@@ -1562,6 +1947,71 @@ export const HALL_SERVERS: readonly HallServer[] = [
     "scannedAt": "2026-03-29T18:00:51.438Z"
   },
   {
+    "id": "pipedrive-mcp",
+    "package": "pipedrive-mcp",
+    "name": "pipedrive-mcp",
+    "maintainer": "Community",
+    "version": "1.0.0",
+    "tools": 35,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "validation": "F",
+      "auth": "B",
+      "permissions": "A",
+      "output": "A",
+      "hallucination": "C"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 20,
+      "low": 12
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"search-deals\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get-deal-updates\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search-persons\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search-organizations\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search-leads\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search-all\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search-products\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get-files\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:13:38.443Z"
+  },
+  {
+    "id": "redis-mcp",
+    "package": "redis-mcp",
+    "name": "redis-server",
+    "maintainer": "Community",
+    "version": "1.0.0",
+    "tools": 13,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "permissions": "A",
+      "validation": "F",
+      "auth": "B",
+      "hallucination": "C"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 18,
+      "low": 0
+    },
+    "riskTags": [
+      "mutation"
+    ],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"set\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"hmset\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"hget\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"hgetall\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"scan\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"set\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"del\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"zadd\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"zrange\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"zrangebyscore\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"zrem\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"sadd\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"smembers\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"scan\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"del\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:11:59.240Z"
+  },
+  {
     "id": "repl-mcp",
     "package": "repl-mcp",
     "name": "repl-mcp",
@@ -1595,6 +2045,68 @@ export const HALL_SERVERS: readonly HallServer[] = [
     ],
     "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"create_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"send_input_to_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"allowedDomains\": [\n          \"yourdomain.com\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"send_signal_to_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"allowedDomains\": [\n          \"yourdomain.com\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"destroy_repl_session\",\n      \"action\": \"deny\"\n    },\n    {\n      \"tool\": \"set_session_ready\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"send_input_to_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"send_signal_to_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_session_details\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"destroy_repl_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"set_session_ready\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"wait_for_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"mark_session_failed\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_full_output\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_clean_text\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"send_input_to_session\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"list_repl_sessions\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"list_repl_configurations\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
     "scannedAt": "2026-03-30T14:31:11.808Z"
+  },
+  {
+    "id": "shopify-admin-mcp",
+    "package": "shopify-admin-mcp",
+    "name": "shopify-admin-mcp",
+    "maintainer": "Shopify",
+    "version": "1.0.0",
+    "tools": 35,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "validation": "F",
+      "auth": "B",
+      "permissions": "A",
+      "output": "A",
+      "hallucination": "F"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 58,
+      "low": 25
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"get_products\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_product\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_product_variants\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_product_tags\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_product_types\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_product_vendors\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_products_count\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_orders\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_order\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_orders_count\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_abandoned_checkouts\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_abandoned_checkouts_count\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_customers\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_customer\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_customers_count\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_segments\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_segment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_segment_members\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_marketing_activities\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_marketing_activity\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_marketing_events\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_marketing_event\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_discounts\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_discount\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_code_discounts\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_automatic_discounts\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_collections\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_collection\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_collections_count\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_inventory_items\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_inventory_item\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_locations\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_location\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_product\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"get_customers\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"get_collection\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"get_locations\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"get_shop_locales\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:15:24.914Z"
+  },
+  {
+    "id": "splunk-mcp",
+    "package": "splunk-mcp",
+    "name": "splunk-mcp",
+    "maintainer": "Community",
+    "version": "0.3.0",
+    "tools": 11,
+    "score": 0,
+    "grade": "F",
+    "categories": {
+      "validation": "F",
+      "auth": "B",
+      "hallucination": "B"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 14,
+      "low": 11
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"current_user\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"ping\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:14:52.655Z"
   },
   {
     "id": "terraform-mcp-server",
@@ -1730,6 +2242,39 @@ export const HALL_SERVERS: readonly HallServer[] = [
     ],
     "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"create_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"create_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update_issue\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search_issues\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get_user_issues\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"add_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"add_comment\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
     "scannedAt": "2026-03-30T14:52:26.688Z"
+  },
+  {
+    "id": "wordpress-mcp",
+    "package": "wordpress-mcp",
+    "name": "WordPress MCP",
+    "maintainer": "Community",
+    "version": "1.0.0",
+    "tools": 5,
+    "score": 10,
+    "grade": "F",
+    "categories": {
+      "permissions": "B",
+      "validation": "C",
+      "auth": "B",
+      "hallucination": "B"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 9,
+      "low": 1
+    },
+    "riskTags": [
+      "mutation"
+    ],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"create-post\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"update-post\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"callerTag\": [\n          \"write-agent\"\n        ]\n      }\n    },\n    {\n      \"tool\": \"search-posts\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"create-post\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"update-post\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"search-posts\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"pathScope\": \"{{project_root}}\"\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:15:15.585Z"
   },
   {
     "id": "openapi-mcp-server",
@@ -2188,6 +2733,35 @@ export const HALL_SERVERS: readonly HallServer[] = [
     ],
     "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"sequentialthinking\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
     "scannedAt": "2026-03-29T18:00:28.654Z"
+  },
+  {
+    "id": "aws-s3-mcp",
+    "package": "aws-s3-mcp",
+    "name": "s3-mcp-server",
+    "maintainer": "Community",
+    "version": "0.4.0",
+    "tools": 3,
+    "score": 58,
+    "grade": "D",
+    "categories": {
+      "validation": "C",
+      "auth": "B"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 3,
+      "low": 1
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"list-objects\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"get-object\",\n      \"action\": \"allow\",\n      \"where\": {\n        \"maxLength\": {\n          \"query\": 500\n        }\n      }\n    },\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:12:29.298Z"
   },
   {
     "id": "mcp-starter",
@@ -3539,6 +4113,34 @@ export const HALL_SERVERS: readonly HallServer[] = [
     ],
     "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
     "scannedAt": "2026-03-29T18:10:16.494Z"
+  },
+  {
+    "id": "mysql-mcp-server",
+    "package": "mysql-mcp-server",
+    "name": "unknown",
+    "maintainer": "Community",
+    "version": "?",
+    "tools": 0,
+    "score": 85,
+    "grade": "B",
+    "categories": {
+      "auth": "B"
+    },
+    "findings": {
+      "high": 1,
+      "medium": 0,
+      "low": 0
+    },
+    "riskTags": [],
+    "topFindings": [
+      {
+        "severity": "HIGH",
+        "category": "AUTH",
+        "description": "Server exposes no auth mechanism — accepts connections from any unauthenticated agent"
+      }
+    ],
+    "mapPolicy": "{\n  \"version\": \"1.0\",\n  \"rules\": [\n    {\n      \"tool\": \"*\",\n      \"action\": \"allow\"\n    }\n  ]\n}",
+    "scannedAt": "2026-03-30T15:12:24.289Z"
   },
   {
     "id": "notepost-mcp",
