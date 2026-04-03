@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentsID — Identity for AI Agents</title>
+<style>
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a1628;
+  --bg-surface: #0d1b30;
+  --grid-line: rgba(77, 148, 255, 0.07);
+  --grid-accent: rgba(77, 148, 255, 0.12);
+  --border: rgba(77, 148, 255, 0.2);
+  --border-bright: rgba(77, 148, 255, 0.4);
+  --text: #c8daf0;
+  --text-bright: #e8f0ff;
+  --text-muted: #5a7a9e;
+  --text-dim: #3a5a7e;
+  --cyan: #00d4ff;
+  --cyan-glow: rgba(0, 212, 255, 0.3);
+  --cyan-dim: rgba(0, 212, 255, 0.15);
+  --blue: #4d94ff;
+  --blue-glow: rgba(77, 148, 255, 0.25);
+  --green: #00e89d;
+  --green-dim: rgba(0, 232, 157, 0.15);
+  --amber: #ffbe2e;
+  --amber-dim: rgba(255, 190, 46, 0.12);
+  --red: #ff4d6a;
+  --red-dim: rgba(255, 77, 106, 0.12);
+  --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Consolas', monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+  --corner-size: 12px;
+  --dash-pattern: 8px;
+}
+
+html { font-size: 15px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ─── Blueprint Grid Background ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(var(--grid-accent) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-accent) 1px, transparent 1px);
+  background-size:
+    20px 20px,
+    20px 20px,
+    100px 100px,
+    100px 100px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body > * { position: relative; z-index: 1; }
+
+a { color: var(--cyan); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--text-bright); }
+
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ─── Schematic Card ─── */
+.schematic-card {
+  position: relative;
+  background: rgba(10, 22, 40, 0.85);
+  border: 1px dashed var(--border);
+  padding: 32px;
+}
+
+.schematic-card::before,
+.schematic-card::after {
+  content: '';
+  position: absolute;
+  width: var(--corner-size);
+  height: var(--corner-size);
+  border-color: var(--cyan);
+  border-style: solid;
+}
+
+.schematic-card::before {
+  top: -1px; left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.schematic-card::after {
+  top: -1px; right: -1px;
+  border-width: 2px 2px 0 0;
+}
+
+.schematic-card .corner-bl,
+.schematic-card .corner-br {
+  position: absolute;
+  width: var(--corner-size);
+  height: var(--corner-size);
+  border-color: var(--cyan);
+  border-style: solid;
+}
+
+.schematic-card .corner-bl {
+  bottom: -1px; left: -1px;
+  border-width: 0 0 2px 2px;
+}
+
+.schematic-card .corner-br {
+  bottom: -1px; right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+/* ─── Monospace Label ─── */
+.mono-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.mono-label::before {
+  content: '// ';
+  color: var(--text-dim);
+}
+
+/* ─── Section Label ─── */
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-label::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--cyan);
+  transform: rotate(45deg);
+}
+
+/* ─── Dashed Connector Lines Between Sections ─── */
+.connector {
+  width: 1px;
+  height: 60px;
+  margin: 0 auto;
+  border-left: 2px dashed var(--border);
+  position: relative;
+}
+
+.connector::before,
+.connector::after {
+  content: '';
+  position: absolute;
+  left: -5px;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--cyan);
+  background: var(--bg);
+  transform: rotate(45deg);
+}
+
+.connector::before { top: -4px; }
+.connector::after { bottom: -4px; }
+
+/* ─── Circuit Traces ─── */
+.circuit-trace {
+  position: absolute;
+  background: var(--border);
+  opacity: 0.4;
+}
+
+.circuit-trace.horizontal {
+  height: 1px;
+  width: 60px;
+}
+
+.circuit-trace.vertical {
+  width: 1px;
+  height: 60px;
+}
+
+.circuit-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--cyan);
+  border-radius: 50%;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION 1: NAV
+   ═══════════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 56px;
+  background: rgba(10, 22, 40, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+}
+
+.nav-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-brand .brand-icon {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: var(--cyan);
+  position: relative;
+}
+
+.nav-brand .brand-icon::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 6px; height: 6px;
+  border-top: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--cyan); }
+
+.nav-cta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.nav-cta::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px;
+  width: 5px; height: 5px;
+  border-top: 1px solid var(--cyan);
+  border-left: 1px solid var(--cyan);
+}
+
+.nav-cta::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; right: -2px;
+  width: 5px; height: 5px;
+  border-bottom: 1px solid var(--cyan);
+  border-right: 1px solid var(--cyan);
+}
+
+.nav-cta:hover {
+  background: var(--cyan-dim);
+  color: var(--text-bright);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hamburger span {
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--cyan);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION 2: HERO
+   ═══════════════════════════════════════════ */
+.hero {
+  padding: 140px 0 40px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-blueprint-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-family: var(--mono);
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.2;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 .highlight {
+  color: var(--cyan);
+  position: relative;
+}
+
+.hero h1 .highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-bottom: 2px dashed var(--cyan);
+  opacity: 0.5;
+}
+
+.hero-sub {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 560px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  padding: 12px 28px;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 1px dashed var(--cyan);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-primary:hover {
+  background: var(--text-bright);
+  box-shadow: 0 0 30px var(--cyan-glow);
+}
+
+.btn-secondary {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  padding: 12px 28px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-bright);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* ─── Blueprint Diagram in Hero ─── */
+.hero-diagram {
+  margin-top: 48px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+}
+
+.diagram-node {
+  padding: 10px 20px;
+  border: 1px solid var(--border-bright);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+  background: rgba(10, 22, 40, 0.9);
+}
+
+.diagram-node::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 6px; height: 6px;
+  border-top: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+.diagram-node::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 6px; height: 6px;
+  border-bottom: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+
+.diagram-connector {
+  width: 40px;
+  height: 1px;
+  border-top: 2px dashed var(--border-bright);
+  position: relative;
+}
+
+.diagram-connector::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: -4px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--cyan);
+  background: var(--bg);
+  transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION 3: TERMINAL
+   ═══════════════════════════════════════════ */
+.terminal-section {
+  padding: 20px 0 40px;
+}
+
+.terminal {
+  max-width: 680px;
+  margin: 0 auto;
+  background: rgba(6, 12, 24, 0.95);
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.terminal::before,
+.terminal::after {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  border-color: var(--cyan);
+  border-style: solid;
+}
+
+.terminal::before {
+  top: -1px; left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.terminal::after {
+  top: -1px; right: -1px;
+  border-width: 2px 2px 0 0;
+}
+
+.terminal-header {
+  padding: 10px 16px;
+  border-bottom: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.terminal-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--text-dim);
+  border-radius: 50%;
+}
+
+.terminal-dot.active { border-color: var(--cyan); background: var(--cyan-dim); }
+
+.terminal-title {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-left: auto;
+}
+
+.terminal-body {
+  padding: 20px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.terminal-line {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.terminal-prompt { color: var(--cyan); }
+.terminal-cmd { color: var(--text-bright); }
+.terminal-flag { color: var(--blue); }
+.terminal-str { color: var(--green); }
+.terminal-comment { color: var(--text-dim); font-style: italic; }
+.terminal-output { color: var(--text-muted); padding-left: 16px; }
+.terminal-success { color: var(--green); }
+
+/* ═══════════════════════════════════════════
+   SECTION 4: PROBLEM
+   ═══════════════════════════════════════════ */
+.problem-section {
+  padding: 40px 0;
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.problem-card {
+  padding: 28px;
+  position: relative;
+  background: rgba(10, 22, 40, 0.85);
+  border: 1px dashed var(--border);
+}
+
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 8px; height: 8px;
+  border-top: 2px solid var(--red);
+  border-left: 2px solid var(--red);
+}
+
+.problem-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 8px; height: 8px;
+  border-bottom: 2px solid var(--red);
+  border-right: 2px solid var(--red);
+}
+
+.problem-card .threat-id {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--red);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.problem-card h3 {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.problem-card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.problem-severity {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  margin-top: 12px;
+  border: 1px solid;
+  text-transform: uppercase;
+}
+
+.severity-critical { color: var(--red); border-color: var(--red); background: var(--red-dim); }
+.severity-high { color: var(--amber); border-color: var(--amber); background: var(--amber-dim); }
+
+/* ═══════════════════════════════════════════
+   SECTION 5: HOW IT WORKS
+   ═══════════════════════════════════════════ */
+.how-section {
+  padding: 40px 0;
+}
+
+.how-section h2 {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  color: var(--text-bright);
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: 600;
+}
+
+.how-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.how-step {
+  flex: 0 1 220px;
+  text-align: center;
+  position: relative;
+  padding: 28px 20px;
+  border: 1px dashed var(--border);
+  background: rgba(10, 22, 40, 0.85);
+}
+
+.how-step::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 8px; height: 8px;
+  border-top: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+.how-step::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 8px; height: 8px;
+  border-bottom: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+
+.step-number {
+  font-family: var(--mono);
+  font-size: 1.8rem;
+  color: var(--cyan);
+  font-weight: 700;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+.how-step h3 {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.how-step p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.step-connector {
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  position: relative;
+}
+
+.step-connector::before {
+  content: '';
+  width: 100%;
+  height: 0;
+  border-top: 2px dashed var(--border-bright);
+}
+
+.step-connector::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid var(--cyan);
+  border-bottom: 2px solid var(--cyan);
+  transform: rotate(-45deg);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION 6: CODE
+   ═══════════════════════════════════════════ */
+.code-section {
+  padding: 40px 0;
+}
+
+.code-section h2 {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  color: var(--text-bright);
+  text-align: center;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.code-section .section-sub {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+}
+
+.code-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px dashed var(--border);
+  margin-bottom: 0;
+}
+
+.code-tab {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-bottom: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.code-tab.active {
+  background: rgba(6, 12, 24, 0.95);
+  color: var(--cyan);
+  border-color: var(--border-bright);
+}
+
+.code-block {
+  background: rgba(6, 12, 24, 0.95);
+  border: 1px dashed var(--border);
+  border-top: none;
+  padding: 24px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  position: relative;
+}
+
+.code-block::before {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: -1px;
+  width: 10px; height: 10px;
+  border-bottom: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+.code-block::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 10px; height: 10px;
+  border-bottom: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+
+.code-block .kw { color: var(--blue); }
+.code-block .fn { color: var(--cyan); }
+.code-block .str { color: var(--green); }
+.code-block .cmt { color: var(--text-dim); font-style: italic; }
+.code-block .num { color: var(--amber); }
+.code-block .type { color: var(--amber); }
+
+.code-panel { display: none; }
+.code-panel.active { display: block; }
+
+/* ═══════════════════════════════════════════
+   SECTION 7: FEATURES
+   ═══════════════════════════════════════════ */
+.features-section {
+  padding: 40px 0;
+}
+
+.features-section h2 {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  color: var(--text-bright);
+  text-align: center;
+  margin-bottom: 36px;
+  font-weight: 600;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.feature-card {
+  position: relative;
+  padding: 24px;
+  background: rgba(10, 22, 40, 0.85);
+  border: 1px dashed var(--border);
+  transition: border-color 0.3s;
+}
+
+.feature-card:hover {
+  border-color: var(--border-bright);
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 8px; height: 8px;
+  border-top: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+.feature-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 8px; height: 8px;
+  border-bottom: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+
+.feature-icon {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--cyan);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  display: inline-block;
+  margin-bottom: 14px;
+  background: var(--cyan-dim);
+}
+
+.feature-card h3 {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.feature-card p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.feature-spec {
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  border-top: 1px dashed var(--border);
+  padding-top: 10px;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION 8: PRICING
+   ═══════════════════════════════════════════ */
+.pricing-section {
+  padding: 40px 0;
+}
+
+.pricing-section h2 {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  color: var(--text-bright);
+  text-align: center;
+  margin-bottom: 36px;
+  font-weight: 600;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.pricing-card {
+  position: relative;
+  padding: 32px 24px;
+  background: rgba(10, 22, 40, 0.85);
+  border: 1px dashed var(--border);
+  text-align: center;
+}
+
+.pricing-card.featured {
+  border-color: var(--cyan);
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.08);
+}
+
+.pricing-card::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 10px; height: 10px;
+  border-top: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+.pricing-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 10px; height: 10px;
+  border-bottom: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+
+.pricing-tier {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.pricing-card.featured .pricing-tier { color: var(--cyan); }
+
+.pricing-amount {
+  font-family: var(--mono);
+  font-size: 2.2rem;
+  color: var(--text-bright);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pricing-amount .period {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.pricing-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  min-height: 40px;
+}
+
+.pricing-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 24px;
+  border-top: 1px dashed var(--border);
+  padding-top: 16px;
+}
+
+.pricing-features li {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text);
+  padding: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pricing-features li::before {
+  content: '[+]';
+  color: var(--green);
+  font-size: 0.65rem;
+}
+
+.pricing-btn {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px;
+  border: 1px solid var(--border-bright);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pricing-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.pricing-card.featured .pricing-btn {
+  background: var(--cyan);
+  color: var(--bg);
+  border-color: var(--cyan);
+}
+
+.pricing-card.featured .pricing-btn:hover {
+  background: var(--text-bright);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION 9: CTA
+   ═══════════════════════════════════════════ */
+.cta-section {
+  padding: 60px 0;
+}
+
+.cta-inner {
+  text-align: center;
+  padding: 48px 32px;
+  position: relative;
+  background: rgba(10, 22, 40, 0.85);
+  border: 1px dashed var(--border-bright);
+}
+
+.cta-inner::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 14px; height: 14px;
+  border-top: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+.cta-inner::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 14px; height: 14px;
+  border-bottom: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+
+.cta-corners-extra .corner-tr {
+  position: absolute;
+  top: -1px; right: -1px;
+  width: 14px; height: 14px;
+  border-top: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+
+.cta-corners-extra .corner-bl {
+  position: absolute;
+  bottom: -1px; left: -1px;
+  width: 14px; height: 14px;
+  border-bottom: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+.cta-inner h2 {
+  font-family: var(--mono);
+  font-size: 1.6rem;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.cta-inner p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(6, 12, 24, 0.9);
+  border: 1px dashed var(--border);
+  padding: 12px 24px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+}
+
+.cta-install .prompt { color: var(--cyan); }
+
+/* ═══════════════════════════════════════════
+   SECTION 10: FOOTER
+   ═══════════════════════════════════════════ */
+.footer {
+  border-top: 1px dashed var(--border);
+  padding: 40px 0 24px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.footer-brand {
+  font-family: var(--mono);
+  font-size: 1rem;
+  color: var(--text-bright);
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+
+.footer-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+.footer-col h4 {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.footer-col ul {
+  list-style: none;
+}
+
+.footer-col li {
+  margin-bottom: 8px;
+}
+
+.footer-col a {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+
+.footer-col a:hover { color: var(--cyan); }
+
+.footer-bottom {
+  border-top: 1px dashed var(--border);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-copy {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+.footer-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--green);
+  letter-spacing: 0.08em;
+}
+
+.footer-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--green);
+}
+
+/* ─── Section Headings ─── */
+section h2 .h2-ref {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .features-grid,
+  .pricing-grid { grid-template-columns: 1fr 1fr; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .hero h1 { font-size: 2rem; }
+  .how-steps { flex-direction: column; align-items: center; }
+  .step-connector {
+    width: 1px;
+    height: 30px;
+    transform: rotate(90deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    background: rgba(10, 22, 40, 0.98);
+    border-bottom: 1px dashed var(--border);
+    padding: 16px 24px;
+    gap: 16px;
+  }
+  .features-grid,
+  .pricing-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.6rem; }
+  .hero-diagram { flex-wrap: wrap; gap: 8px; }
+  .diagram-connector { width: 20px; }
+  .container { padding: 0 16px; }
+  .schematic-card, .problem-card, .how-step, .feature-card, .pricing-card { padding: 20px; }
+  .hero { padding: 120px 0 30px; }
+  .code-block { padding: 16px; font-size: 0.7rem; }
+  .footer-bottom { flex-direction: column; gap: 12px; }
+  .cta-inner { padding: 32px 20px; }
+}
+
+/* ─── Mobile nav toggle ─── */
+.nav-links.open { z-index: 99; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ 1. NAV ═══════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <span class="brand-icon">ID</span>
+      AgentsID
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#problem">Threat Model</a></li>
+      <li><a href="#how-it-works">Architecture</a></li>
+      <li><a href="#features">Specs</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="https://github.com/agentsid/agentsid" target="_blank">GitHub</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Deploy Now</button>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════ 2. HERO ═══════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-blueprint-label">Specification Document Rev 1.0 &mdash; Identity Infrastructure for Autonomous Agents</div>
+    <h1>
+      <span class="highlight">Identity</span>, Permissions &amp;<br>Audit for AI Agents
+    </h1>
+    <p class="hero-sub">
+      Every agent gets a cryptographic identity. Every action gets logged to a tamper-proof audit trail.
+      Drop-in SDK for any MCP server.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Started</button>
+      <button class="btn-secondary" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">View Architecture</button>
+    </div>
+
+    <div class="hero-diagram">
+      <div class="diagram-node">AI Agent</div>
+      <div class="diagram-connector"></div>
+      <div class="diagram-node" style="border-color: var(--cyan);">AgentsID</div>
+      <div class="diagram-connector"></div>
+      <div class="diagram-node">MCP Server</div>
+      <div class="diagram-connector"></div>
+      <div class="diagram-node">Audit Log</div>
+    </div>
+  </div>
+</section>
+
+<div class="connector"></div>
+
+<!-- ═══════════ 3. TERMINAL ═══════════ -->
+<section class="terminal-section">
+  <div class="container">
+    <div class="section-label">Quick Start Sequence</div>
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot active"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-dot"></span>
+        <span class="terminal-title">bash &mdash; agentsid setup</span>
+      </div>
+      <div class="terminal-body">
+        <div class="terminal-line">
+          <span class="terminal-prompt">$</span>
+          <span class="terminal-cmd">npm install</span>
+          <span class="terminal-flag">@agentsid/sdk</span>
+        </div>
+        <div class="terminal-line terminal-output">+ @agentsid/sdk@2.1.0 added 3 packages</div>
+        <br>
+        <div class="terminal-line">
+          <span class="terminal-prompt">$</span>
+          <span class="terminal-cmd">npx agentsid init</span>
+          <span class="terminal-str">"My App"</span>
+        </div>
+        <div class="terminal-line terminal-output terminal-success">&#10003; Project initialized. API key written to .env</div>
+        <div class="terminal-line terminal-output terminal-success">&#10003; Config generated: agentsid.config.json</div>
+        <br>
+        <div class="terminal-line">
+          <span class="terminal-prompt">$</span>
+          <span class="terminal-cmd">npx agentsid register-agent</span>
+          <span class="terminal-flag">--name</span>
+          <span class="terminal-str">"data-analyst"</span>
+          <span class="terminal-flag">--scope</span>
+          <span class="terminal-str">"read:db"</span>
+        </div>
+        <div class="terminal-line terminal-output terminal-success">&#10003; Agent registered: agt_8f3k2m9x</div>
+        <div class="terminal-line terminal-output">  Token: aid_eyJhbGciOi...truncated</div>
+        <div class="terminal-line terminal-output">  Scopes: [read:db]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="connector"></div>
+
+<!-- ═══════════ 4. PROBLEM ═══════════ -->
+<section class="problem-section" id="problem">
+  <div class="container">
+    <div class="section-label">Threat Assessment</div>
+    <h2 style="font-family: var(--mono); font-size: 1.5rem; color: var(--text-bright); margin-bottom: 8px; font-weight: 600;">
+      <span class="h2-ref">SEC-ANALYSIS-001</span>
+      The Agent Identity Crisis
+    </h2>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">
+      AI agents are proliferating without identity controls. Here is the threat model.
+    </p>
+
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="threat-id">THREAT-001</div>
+        <h3>No Authentication</h3>
+        <p>Agents access tools and APIs without proving who they are. Any process can impersonate any agent.</p>
+        <span class="problem-severity severity-critical">Critical</span>
+      </div>
+      <div class="problem-card">
+        <div class="threat-id">THREAT-002</div>
+        <h3>Unbounded Permissions</h3>
+        <p>Every agent has full access to every tool. No principle of least privilege. One compromised agent exposes everything.</p>
+        <span class="problem-severity severity-critical">Critical</span>
+      </div>
+      <div class="problem-card">
+        <div class="threat-id">THREAT-003</div>
+        <h3>No Audit Trail</h3>
+        <p>When something goes wrong, there is no record of which agent did what. Forensics are impossible.</p>
+        <span class="problem-severity severity-high">High</span>
+      </div>
+      <div class="problem-card">
+        <div class="threat-id">THREAT-004</div>
+        <h3>Token Sprawl</h3>
+        <p>Long-lived tokens, shared secrets, hardcoded credentials. No rotation, no revocation, no lifecycle management.</p>
+        <span class="problem-severity severity-high">High</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="connector"></div>
+
+<!-- ═══════════ 5. HOW IT WORKS ═══════════ -->
+<section class="how-section" id="how-it-works">
+  <div class="container">
+    <div class="section-label">System Architecture</div>
+    <h2>
+      <span class="h2-ref">ARCH-SPEC-001</span>
+      How AgentsID Works
+    </h2>
+
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step-number">01</div>
+        <h3>Register</h3>
+        <p>Create a project and register agents with scoped permissions via SDK or CLI.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="how-step">
+        <div class="step-number">02</div>
+        <h3>Authenticate</h3>
+        <p>Agents receive signed JWT tokens. Middleware validates identity on every MCP request.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="how-step">
+        <div class="step-number">03</div>
+        <h3>Authorize</h3>
+        <p>Permission checks enforce least-privilege. Agents can only access the tools they need.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="how-step">
+        <div class="step-number">04</div>
+        <h3>Audit</h3>
+        <p>Every action is logged to a hash-chained audit trail. Tamper-proof and verifiable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="connector"></div>
+
+<!-- ═══════════ 6. CODE ═══════════ -->
+<section class="code-section" id="code">
+  <div class="container">
+    <div class="section-label">Implementation Reference</div>
+    <h2>
+      <span class="h2-ref">IMPL-REF-001</span>
+      Integration in Minutes
+    </h2>
+    <p class="section-sub">Add identity to your MCP server with a few lines of code.</p>
+
+    <div class="code-tabs">
+      <button class="code-tab active" onclick="switchTab('ts')">TypeScript</button>
+      <button class="code-tab" onclick="switchTab('py')">Python</button>
+      <button class="code-tab" onclick="switchTab('curl')">cURL</button>
+    </div>
+
+    <div class="code-block">
+      <div class="code-panel active" id="panel-ts"><pre><span class="kw">import</span> { AgentsID } <span class="kw">from</span> <span class="str">'@agentsid/sdk'</span>;
+
+<span class="cmt">// Initialize with your project key</span>
+<span class="kw">const</span> aid = <span class="kw">new</span> <span class="fn">AgentsID</span>({ <span class="fn">apiKey</span>: process.env.<span class="type">AGENTSID_KEY</span> });
+
+<span class="cmt">// Register an agent with scoped permissions</span>
+<span class="kw">const</span> { agent, token } = <span class="kw">await</span> aid.<span class="fn">registerAgent</span>({
+  <span class="fn">name</span>: <span class="str">'data-analyst'</span>,
+  <span class="fn">scopes</span>: [<span class="str">'read:database'</span>, <span class="str">'write:reports'</span>],
+  <span class="fn">metadata</span>: { <span class="fn">model</span>: <span class="str">'claude-sonnet-4-5-20250514'</span> }
+});
+
+<span class="cmt">// Add middleware to your MCP server</span>
+server.<span class="fn">use</span>(aid.<span class="fn">middleware</span>());
+
+<span class="cmt">// Validate tokens on incoming requests</span>
+<span class="kw">const</span> identity = <span class="kw">await</span> aid.<span class="fn">validate</span>(token);
+console.<span class="fn">log</span>(identity.agent_id);  <span class="cmt">// agt_8f3k2m9x</span>
+console.<span class="fn">log</span>(identity.scopes);    <span class="cmt">// ['read:database', 'write:reports']</span></pre></div>
+
+      <div class="code-panel" id="panel-py"><pre><span class="kw">from</span> agentsid <span class="kw">import</span> AgentsID
+
+<span class="cmt"># Initialize with your project key</span>
+aid = <span class="fn">AgentsID</span>(api_key=os.environ[<span class="str">"AGENTSID_KEY"</span>])
+
+<span class="cmt"># Register an agent with scoped permissions</span>
+result = aid.<span class="fn">register_agent</span>(
+    <span class="fn">name</span>=<span class="str">"data-analyst"</span>,
+    <span class="fn">scopes</span>=[<span class="str">"read:database"</span>, <span class="str">"write:reports"</span>],
+    <span class="fn">metadata</span>={<span class="str">"model"</span>: <span class="str">"claude-sonnet-4-5-20250514"</span>}
+)
+
+<span class="cmt"># Validate tokens</span>
+identity = aid.<span class="fn">validate</span>(result.token)
+<span class="fn">print</span>(identity.agent_id)   <span class="cmt"># agt_8f3k2m9x</span>
+<span class="fn">print</span>(identity.scopes)     <span class="cmt"># ['read:database', 'write:reports']</span>
+
+<span class="cmt"># Check permissions before tool execution</span>
+<span class="kw">if</span> aid.<span class="fn">check_permission</span>(identity, <span class="str">"read:database"</span>):
+    results = db.<span class="fn">query</span>(<span class="str">"SELECT * FROM analytics"</span>)</pre></div>
+
+      <div class="code-panel" id="panel-curl"><pre><span class="cmt"># Register an agent</span>
+<span class="fn">curl</span> <span class="flag">-X POST</span> https://api.agentsid.dev/v1/agents \
+  <span class="flag">-H</span> <span class="str">"Authorization: Bearer $AGENTSID_KEY"</span> \
+  <span class="flag">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="str">'{
+    "name": "data-analyst",
+    "scopes": ["read:database", "write:reports"]
+  }'</span>
+
+<span class="cmt"># Response</span>
+{
+  <span class="str">"agent_id"</span>: <span class="str">"agt_8f3k2m9x"</span>,
+  <span class="str">"token"</span>: <span class="str">"aid_eyJhbGciOi..."</span>,
+  <span class="str">"scopes"</span>: [<span class="str">"read:database"</span>, <span class="str">"write:reports"</span>]
+}
+
+<span class="cmt"># Validate a token</span>
+<span class="fn">curl</span> https://api.agentsid.dev/v1/validate \
+  <span class="flag">-H</span> <span class="str">"Authorization: Bearer aid_eyJhbGciOi..."</span></pre></div>
+    </div>
+  </div>
+</section>
+
+<div class="connector"></div>
+
+<!-- ═══════════ 7. FEATURES ═══════════ -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="section-label">Technical Specifications</div>
+    <h2>
+      <span class="h2-ref">SPEC-SHEET-001</span>
+      System Capabilities
+    </h2>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">AUTH</div>
+        <h3>Agent Authentication</h3>
+        <p>Cryptographic identity for every agent. JWT tokens with configurable TTL and automatic rotation.</p>
+        <div class="feature-spec">ALGO: HS256 / RS256 | TTL: 1h default</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">PERM</div>
+        <h3>Scoped Permissions</h3>
+        <p>Fine-grained access control. Define exactly which tools and resources each agent can access.</p>
+        <div class="feature-spec">MODEL: RBAC + Scopes | GRANULARITY: per-tool</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">AUDIT</div>
+        <h3>Hash-Chained Audit</h3>
+        <p>Every action logged to a tamper-proof chain. Cryptographic verification of log integrity.</p>
+        <div class="feature-spec">HASH: SHA-256 | CHAIN: append-only</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">DLGT</div>
+        <h3>Agent Delegation</h3>
+        <p>Agents can delegate sub-tasks with automatically scoped-down permissions. Full chain of custody.</p>
+        <div class="feature-spec">MAX DEPTH: configurable | SCOPE: inherit-down</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">SDK</div>
+        <h3>Multi-Language SDKs</h3>
+        <p>TypeScript, Python, Ruby, and Java SDKs. Drop-in middleware for any MCP server implementation.</p>
+        <div class="feature-spec">LANGS: TS, PY, RB, JV | FORMAT: REST + SDK</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">REVK</div>
+        <h3>Instant Revocation</h3>
+        <p>Revoke any agent or token immediately. Emergency kill-switch for compromised credentials.</p>
+        <div class="feature-spec">LATENCY: &lt;100ms | PROPAGATION: immediate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="connector"></div>
+
+<!-- ═══════════ 8. PRICING ═══════════ -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="section-label">Deployment Options</div>
+    <h2>
+      <span class="h2-ref">COST-MATRIX-001</span>
+      Pricing
+    </h2>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-tier">Open Source</div>
+        <div class="pricing-amount">$0<span class="period"> / forever</span></div>
+        <p class="pricing-desc">Self-host on your infrastructure. Full source code, MIT license.</p>
+        <ul class="pricing-features">
+          <li>Unlimited agents</li>
+          <li>All authentication features</li>
+          <li>Permission management</li>
+          <li>Local audit logging</li>
+          <li>Community support</li>
+        </ul>
+        <button class="pricing-btn">Clone Repository</button>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-tier">Cloud Pro</div>
+        <div class="pricing-amount">$49<span class="period"> / month</span></div>
+        <p class="pricing-desc">Managed infrastructure. Zero-config deployment with SLA guarantees.</p>
+        <ul class="pricing-features">
+          <li>Everything in Open Source</li>
+          <li>Managed cloud hosting</li>
+          <li>Dashboard &amp; analytics</li>
+          <li>99.9% uptime SLA</li>
+          <li>Priority support</li>
+          <li>Team collaboration</li>
+        </ul>
+        <button class="pricing-btn">Start Free Trial</button>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-tier">Enterprise</div>
+        <div class="pricing-amount">Custom</div>
+        <p class="pricing-desc">On-prem deployment, SSO, dedicated support, and custom SLAs.</p>
+        <ul class="pricing-features">
+          <li>Everything in Cloud Pro</li>
+          <li>On-premises deployment</li>
+          <li>SSO / SAML integration</li>
+          <li>Custom audit retention</li>
+          <li>Dedicated support engineer</li>
+          <li>Custom SLA</li>
+        </ul>
+        <button class="pricing-btn">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="connector"></div>
+
+<!-- ═══════════ 9. CTA ═══════════ -->
+<section class="cta-section" id="cta">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="cta-corners-extra">
+        <div class="corner-tr"></div>
+        <div class="corner-bl"></div>
+      </div>
+      <div class="section-label" style="justify-content: center;">Deploy Sequence</div>
+      <h2>Secure Your Agents in 5 Minutes</h2>
+      <p>One install command. Three lines of integration code. Every agent authenticated, authorized, and audited.</p>
+      <div class="cta-install">
+        <span class="prompt">$</span> npm install @agentsid/sdk
+      </div>
+      <br>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-primary">Get Started Free</button>
+        <button class="btn-secondary" onclick="window.open('https://github.com/agentsid/agentsid', '_blank')">View on GitHub</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 10. FOOTER ═══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">AgentsID</div>
+        <p class="footer-desc">
+          Identity infrastructure for autonomous AI agents. Open-source, self-hostable, built for the MCP ecosystem.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="/docs">Documentation</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">SDK Guides</a></li>
+          <li><a href="#">Examples</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="https://github.com/agentsid/agentsid" target="_blank">GitHub</a></li>
+          <li><a href="#">Discord</a></li>
+          <li><a href="#">Twitter</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 AgentsID &mdash; MIT License</span>
+      <span class="footer-status">All Systems Operational</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function switchTab(lang) {
+  document.querySelectorAll('.code-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.code-panel').forEach(function(p) { p.classList.remove('active'); });
+
+  var tabs = document.querySelectorAll('.code-tab');
+  var map = { 'ts': 0, 'py': 1, 'curl': 2 };
+  if (map[lang] !== undefined) { tabs[map[lang]].classList.add('active'); }
+
+  var panel = document.getElementById('panel-' + lang);
+  if (panel) { panel.classList.add('active'); }
+}
+</script>
+
+</body>
+</html>

@@ -14,7 +14,9 @@ const Privacy = lazy(() => import("@/pages/privacy").then((m) => ({ default: m.P
 const Blog = lazy(() => import("@/pages/blog").then((m) => ({ default: m.Blog })));
 const BlogPost = lazy(() => import("@/pages/blog-post").then((m) => ({ default: m.BlogPost })));
 const Spec = lazy(() => import("@/pages/spec").then((m) => ({ default: m.Spec })));
-const HallOfMcps = lazy(() => import("@/pages/hall-of-mcps").then((m) => ({ default: m.HallOfMcps })));
+
+const RegistryV2 = lazy(() => import("@/pages/registry-v2").then((m) => ({ default: m.RegistryV2 })));
+const RegistryServerV2 = lazy(() => import("@/pages/registry-server-v2").then((m) => ({ default: m.RegistryServerV2 })));
 const NotFound = lazy(() => import("@/pages/not-found").then((m) => ({ default: m.NotFound })));
 
 function PageLoader() {
@@ -46,7 +48,9 @@ function App() {
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/spec" element={<Spec />} />
-                <Route path="/hall-of-mcps" element={<HallOfMcps />} />
+                <Route path="/hall-of-mcps" element={<RegistryV2 />} />
+                <Route path="/registry" element={<RegistryV2 />} />
+                <Route path="/registry/:slug" element={<RegistryServerV2 />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

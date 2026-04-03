@@ -188,6 +188,30 @@ export class AgentsID {
   }
 
   // ═══════════════════════════════════════════
+  // TOKEN REFRESH
+  // ═══════════════════════════════════════════
+
+  // TODO: Add automatic token refresh logic.
+  //
+  // Currently the SDK has no auto-refresh mechanism. When an agent token is
+  // approaching expiry (the server returns `expires_at` in registration and
+  // validation responses), callers must manually call POST /agents/{id}/refresh.
+  //
+  // Desired behavior:
+  //   1. Store `expiresAt` from registerAgent / validateToken responses.
+  //   2. Before each request, check if the token expires within a configurable
+  //      threshold (default: 5 minutes). If so, call refreshToken() first.
+  //   3. Expose a `refreshToken(agentId)` public method that calls
+  //      POST /agents/{agentId}/refresh and returns the new token + expiry.
+  //   4. Emit an event or call an `onTokenRefreshed` callback so callers can
+  //      persist the new token.
+  //   5. Handle concurrent refresh attempts (only one in-flight refresh per agent).
+  //   6. Read X-RateLimit-Remaining headers from responses and surface them
+  //      via a `rateLimitInfo` property or callback so callers can show warnings.
+  //
+  // This is not yet implemented. See server endpoint: POST /api/v1/agents/{id}/refresh
+
+  // ═══════════════════════════════════════════
   // HTTP CLIENT
   // ═══════════════════════════════════════════
 

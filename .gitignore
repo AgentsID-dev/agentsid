@@ -1,11 +1,91 @@
-node_modules/
-dist/
-.venv/
+# Python
 __pycache__/
 *.pyc
-.env
-.DS_Store
-build/
+*.pyo
+.venv/
 *.egg-info/
-target/
+dist/
+build/
+.ruff_cache/
+.pytest_cache/
 
+# Node
+node_modules/
+
+# Environment / Secrets — NEVER commit these
+.env
+.env.local
+.env.production
+!.env.example
+*.pem
+*.key
+*.p12
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local config (may contain API keys)
+.agentsid/
+
+# Logs
+*.log
+
+# Build output
+web/dist/
+
+# Review artifacts
+.full-review/
+
+# Database files from scanner runs
+*.db
+*.sqlite3
+*.session
+*.duckdb
+
+# Scanner artifacts (leftover from spawning MCP servers)
+scanner/logs/
+scanner/mcp_logs/
+scanner/outputs/
+scanner/documents/
+scanner/.cache/
+scanner/.engram/
+scanner/.memorious/
+scanner/.mcp-observatory/
+scanner/.mcp-vm-blackbox/
+scanner/.knowledgebase/
+scanner/.devcontainer/
+scanner/.codeforge/
+scanner/.claude/
+scanner/.sce/
+scanner/.jac/
+scanner/data/
+scanner/mcp-all/
+scanner/wrox-project-sync/
+scanner/todos/
+scanner/document/
+scanner/api_data_storage/
+scanner/report.html
+scanner/keystore.json
+scanner/mcp_config.json
+scanner/mcp_ssh_hosts.toml
+scanner/agent.json
+scanner/agentsid.json
+scanner/test_session.session
+scanner/music_library.json
+scanner/*.bsp
+scanner/emails.duckdb
+scanner/~/
+
+# Scanner reports (too large for git — 92MB)
+scanner/reports/
+
+# Playwright artifacts
+.playwright-mcp/

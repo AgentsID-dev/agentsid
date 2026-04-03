@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+env:
+  PYTHON_VERSION: "3.12"
+  AGENTSID_DATABASE_URL: "sqlite+aiosqlite:///./test.db"
+  AGENTSID_SIGNING_SECRET: "test-secret-not-for-production-use-only-ci-64chars-padding-here"
+  AGENTSID_CORS_ORIGINS: "http://localhost:3000"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Run ruff check
+        run: ruff check server/src/
+
+      - name: Run ruff format check
+        run: ruff format --check server/src/
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install uv
+          uv pip install --system ".[dev]"
+
+      - name: Run tests with coverage
+        run: pytest --cov=src --cov-report=term-missing --cov-fail-under=80
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t agentsid-server:ci .
+
+      - name: Verify container starts and health check passes
+        run: |
+          docker run -d --name agentsid-ci \
+            -p 8000:8000 \
+            -e AGENTSID_DATABASE_URL="${{ env.AGENTSID_DATABASE_URL }}" \
+            -e AGENTSID_SIGNING_SECRET="${{ env.AGENTSID_SIGNING_SECRET }}" \
+            -e AGENTSID_CORS_ORIGINS="${{ env.AGENTSID_CORS_ORIGINS }}" \
+            agentsid-server:ci
+
+          for i in $(seq 1 15); do
+            if curl -sf http://localhost:8000/health; then
+              echo ""
+              echo "Health check passed"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Health check failed"
+          docker logs agentsid-ci
+          exit 1
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f agentsid-ci 2>/dev/null || true

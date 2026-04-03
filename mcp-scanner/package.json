@@ -1,0 +1,32 @@
+{
+  "name": "@agentsid/mcp-scanner",
+  "version": "0.2.0",
+  "description": "MCP security scanner. Scores any MCP server against the AgentsID trust framework and looks up pre-scanned results from the public registry.",
+  "type": "module",
+  "main": "src/index.mjs",
+  "bin": {
+    "agentsid-scanner": "src/index.mjs"
+  },
+  "scripts": {
+    "start": "node src/index.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "security",
+    "scanner",
+    "agentsid",
+    "trust-score",
+    "ai-agents"
+  ],
+  "mcpName": "agentsid-mcp-scanner",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevenkozeniesky02/agentsid-scanner.git"
+  },
+  "dependencies": {
+    "@agentsid/scanner": "^0.2.0",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

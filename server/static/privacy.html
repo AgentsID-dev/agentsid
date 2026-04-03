@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentsID — Privacy Policy</title>
+<style>
+/* ─── Reset & Base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #faf9f7;
+  --bg-surface: #ffffff;
+  --card: #ffffff;
+  --card-border: #e8e5e0;
+  --text: #1a1a1a;
+  --text-muted: #6b6b7b;
+  --text-dim: #9b9bab;
+  --purple: #7c5bf0;
+  --blue: #5b8cf0;
+  --green: #16a34a;
+  --amber: #d97706;
+  --amber-bg: rgba(217, 119, 6, 0.07);
+  --amber-border: rgba(217, 119, 6, 0.25);
+  --purple-bg: rgba(124, 91, 240, 0.06);
+  --blue-bg: rgba(91, 140, 240, 0.06);
+  --green-bg: rgba(22, 163, 74, 0.06);
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, Helvetica, Arial, sans-serif;
+  --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Consolas', monospace;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --transition: 0.2s ease;
+}
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+a { color: var(--blue); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--purple); text-decoration: underline; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c0c0d0; border-radius: 3px; }
+
+/* ─── Header ─── */
+.top-header {
+  position: sticky; top: 0; z-index: 100;
+  height: 56px;
+  background: rgba(250, 249, 247, 0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e8e5e0;
+  display: flex; align-items: center;
+  padding: 0 32px; gap: 16px;
+}
+.header-logo {
+  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none;
+}
+.header-logo:hover { text-decoration: none; }
+.header-divider {
+  width: 1px; height: 20px; background: #e8e5e0; flex-shrink: 0;
+}
+.header-title {
+  font-size: 0.9rem; color: var(--text-muted); font-weight: 500;
+}
+.header-back {
+  margin-left: auto;
+  font-size: 0.875rem; color: var(--text-muted); font-weight: 500;
+  padding: 6px 12px; border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  background: var(--bg-surface);
+  transition: all var(--transition);
+  text-decoration: none;
+}
+.header-back:hover {
+  color: var(--text); border-color: var(--purple);
+  text-decoration: none;
+}
+
+/* ─── Layout ─── */
+.page-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px 32px 96px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+/* ─── Table of Contents ─── */
+.toc {
+  position: sticky;
+  top: 80px;
+  font-size: 0.825rem;
+}
+.toc-heading {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.toc-list { list-style: none; }
+.toc-list li { margin-bottom: 2px; }
+.toc-list a {
+  display: block;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: all var(--transition);
+  text-decoration: none;
+  line-height: 1.4;
+}
+.toc-list a:hover {
+  color: var(--purple);
+  background: var(--purple-bg);
+  text-decoration: none;
+}
+.toc-list a.active {
+  color: var(--purple);
+  background: var(--purple-bg);
+}
+
+/* ─── Content ─── */
+.content-header {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--card-border);
+}
+.content-header h1 {
+  font-size: 2rem; font-weight: 700;
+  letter-spacing: -0.03em; line-height: 1.2;
+  margin-bottom: 12px;
+}
+.meta-row {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  font-size: 0.875rem; color: var(--text-muted);
+}
+.meta-chip {
+  padding: 3px 10px;
+  background: var(--purple-bg);
+  border: 1px solid rgba(124, 91, 240, 0.2);
+  border-radius: 20px;
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--purple);
+}
+
+/* ─── Intro summary ─── */
+.quick-summary {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 48px;
+}
+.quick-summary h3 {
+  font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.summary-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 0.875rem; line-height: 1.5;
+}
+.summary-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 5px;
+}
+.dot-green { background: var(--green); }
+.dot-red { background: #dc2626; }
+.dot-blue { background: var(--blue); }
+.dot-amber { background: var(--amber); }
+
+/* ─── Section ─── */
+.section {
+  margin-bottom: 56px;
+  scroll-margin-top: 80px;
+}
+.section h2 {
+  font-size: 1.25rem; font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+}
+.section-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  background: var(--purple-bg);
+  border-radius: 6px;
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--purple);
+  flex-shrink: 0;
+}
+.section h3 {
+  font-size: 1rem; font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--text);
+}
+.section p {
+  margin-bottom: 16px;
+  font-size: 0.9875rem;
+  color: var(--text);
+}
+.section p:last-child { margin-bottom: 0; }
+.section ul, .section ol {
+  margin: 0 0 16px 0;
+  padding-left: 24px;
+}
+.section li {
+  margin-bottom: 8px;
+  font-size: 0.9875rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+.section li:last-child { margin-bottom: 0; }
+
+/* ─── Data inventory table ─── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.875rem;
+}
+.data-table th {
+  background: var(--purple-bg);
+  font-weight: 700; text-align: left;
+  padding: 10px 14px;
+  border: 1px solid var(--card-border);
+  color: var(--text); font-size: 0.8rem;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.data-table td {
+  padding: 10px 14px;
+  border: 1px solid var(--card-border);
+  vertical-align: top; line-height: 1.5;
+  background: var(--card);
+}
+.data-table tr:hover td { background: var(--bg); }
+.badge {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 20px; font-size: 0.73rem; font-weight: 600;
+  white-space: nowrap;
+}
+.badge-contract { background: var(--blue-bg); color: var(--blue); }
+.badge-consent  { background: var(--purple-bg); color: var(--purple); }
+.badge-legit    { background: var(--green-bg); color: var(--green); }
+
+/* ─── Third party table ─── */
+.third-party-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.875rem;
+}
+.third-party-table th {
+  background: var(--purple-bg);
+  font-weight: 700; text-align: left;
+  padding: 10px 14px;
+  border: 1px solid var(--card-border);
+  color: var(--text); font-size: 0.8rem;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.third-party-table td {
+  padding: 10px 14px;
+  border: 1px solid var(--card-border);
+  vertical-align: top; line-height: 1.5;
+  background: var(--card);
+}
+.third-party-table tr:hover td { background: var(--bg); }
+
+/* ─── Callout ─── */
+.callout {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-left: 4px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.callout.green { border-left-color: var(--green); background: var(--green-bg); }
+.callout.warn  { border-left-color: var(--amber); background: var(--amber-bg); }
+.callout strong { display: block; margin-bottom: 6px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--purple); }
+.callout.green strong { color: var(--green); }
+.callout.warn  strong { color: var(--amber); }
+
+/* ─── Rights checklist ─── */
+.rights-list { list-style: none; padding: 0; margin: 0 0 16px; }
+.rights-list li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  background: var(--card);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.rights-list li:last-child { margin-bottom: 0; }
+.rights-icon {
+  font-size: 1rem; flex-shrink: 0; margin-top: 1px;
+}
+.rights-list strong { display: block; font-size: 0.875rem; margin-bottom: 2px; }
+
+/* ─── Footer ─── */
+.footer {
+  text-align: center;
+  padding: 32px;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.825rem;
+  color: var(--text-dim);
+}
+.footer a { color: var(--text-muted); }
+
+/* ─── Responsive ─── */
+@media (max-width: 860px) {
+  .page-wrap {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 20px 72px;
+  }
+  .toc {
+    position: static;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .top-header { padding: 0 20px; }
+  .content-header h1 { font-size: 1.6rem; }
+}
+@media (max-width: 480px) {
+  html { font-size: 15px; }
+  .data-table, .third-party-table { font-size: 0.8rem; }
+  .data-table th, .data-table td,
+  .third-party-table th, .third-party-table td { padding: 8px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="top-header">
+  <a href="/" class="header-logo">
+    <svg width="22" height="22" viewBox="0 0 36 36" fill="none" style="flex-shrink:0">
+      <path d="M18 6L4 14l14 8 14-8L18 6z" fill="#7c5bf0" opacity="0.25"/>
+      <path d="M18 6L4 14l14 8 14-8L18 6z" stroke="#7c5bf0" stroke-width="2" fill="none"/>
+      <path d="M4 18l14 8 14-8" stroke="#7c5bf0" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M4 24l14 8 14-8" stroke="#5b8cf0" stroke-width="2" fill="none"/>
+    </svg>
+    AgentsID
+  </a>
+  <div class="header-divider"></div>
+  <span class="header-title">Privacy Policy</span>
+  <nav style="margin-left:auto;display:flex;align-items:center;gap:16px;font-size:0.875rem;">
+    <a href="/docs" style="color:var(--text-muted);font-weight:500;text-decoration:none;">Docs</a>
+    <a href="/guides" style="color:var(--text-muted);font-weight:500;text-decoration:none;">Guides</a>
+    <a href="/dashboard" style="color:var(--text-muted);font-weight:500;text-decoration:none;">Dashboard</a>
+    <a href="https://github.com/stevenkozeniesky02/agentsid" target="_blank" style="color:var(--text-muted);font-weight:500;text-decoration:none;">GitHub</a>
+    <a href="/dashboard" style="background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;padding:6px 14px;border-radius:var(--radius);font-weight:600;font-size:0.8rem;text-decoration:none;">Start Free</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Table of Contents -->
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-heading">On this page</div>
+    <ul class="toc-list">
+      <li><a href="#who-we-are">1. Who We Are</a></li>
+      <li><a href="#data-we-collect">2. Data We Collect</a></li>
+      <li><a href="#how-we-use">3. How We Use Data</a></li>
+      <li><a href="#cookies">4. Cookies</a></li>
+      <li><a href="#sharing">5. Sharing Data</a></li>
+      <li><a href="#retention">6. Data Retention</a></li>
+      <li><a href="#security">7. Security Measures</a></li>
+      <li><a href="#your-rights">8. Your Rights</a></li>
+      <li><a href="#gdpr">9. GDPR (EU/UK)</a></li>
+      <li><a href="#ccpa">10. CCPA (California)</a></li>
+      <li><a href="#children">11. Children's Privacy</a></li>
+      <li><a href="#transfers">12. International Transfers</a></li>
+      <li><a href="#changes">13. Policy Changes</a></li>
+      <li><a href="#contact">14. Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <div class="content-header">
+      <h1>Privacy Policy</h1>
+      <div class="meta-row">
+        <span class="meta-chip">Effective March 26, 2026</span>
+        <span>Last updated: March 26, 2026</span>
+        <span>agentsid.dev</span>
+      </div>
+    </div>
+
+    <!-- Quick Summary -->
+    <div class="quick-summary">
+      <h3>The short version</h3>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-dot dot-green"></div>
+          <span>We collect only what we need to run the service — your email, project data, agent definitions, and audit logs.</span>
+        </div>
+        <div class="summary-item">
+          <div class="summary-dot dot-green"></div>
+          <span>We never store raw API keys. Only hashes.</span>
+        </div>
+        <div class="summary-item">
+          <div class="summary-dot dot-red"></div>
+          <span>We do not sell your data. Ever.</span>
+        </div>
+        <div class="summary-item">
+          <div class="summary-dot dot-blue"></div>
+          <span>Analytics (PostHog) is opt-in only, gated behind a cookie consent banner.</span>
+        </div>
+        <div class="summary-item">
+          <div class="summary-dot dot-green"></div>
+          <span>You can request export or deletion of your data at any time.</span>
+        </div>
+        <div class="summary-item">
+          <div class="summary-dot dot-amber"></div>
+          <span>Our infrastructure is hosted in the US (Railway + Supabase US West).</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1 -->
+    <section class="section" id="who-we-are">
+      <h2><span class="section-num">1</span> Who We Are</h2>
+      <p>AgentsID operates the authentication and identity platform at <strong>agentsid.dev</strong>. We are a US-based company. References to "AgentsID," "we," "us," or "our" in this policy refer to AgentsID.</p>
+      <p>This Privacy Policy describes what data we collect when you use the Service, how we use it, who we share it with, and your rights regarding it.</p>
+      <p>Questions? Email <a href="mailto:privacy@agentsid.dev">privacy@agentsid.dev</a>.</p>
+    </section>
+
+    <!-- 2 -->
+    <section class="section" id="data-we-collect">
+      <h2><span class="section-num">2</span> Data We Collect</h2>
+      <p>Here is a complete inventory of every category of data AgentsID collects, why we collect it, and its legal basis under GDPR.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>What specifically</th>
+            <th>Why</th>
+            <th>GDPR basis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Account data</strong></td>
+            <td>Email address, display name (if provided), authentication method (email/password or OAuth provider)</td>
+            <td>To create and manage your account, send transactional emails</td>
+            <td><span class="badge badge-contract">Contract</span></td>
+          </tr>
+          <tr>
+            <td><strong>Project data</strong></td>
+            <td>Project names, project settings, API key hashes (never raw keys)</td>
+            <td>To associate agents and events with your projects</td>
+            <td><span class="badge badge-contract">Contract</span></td>
+          </tr>
+          <tr>
+            <td><strong>Agent data</strong></td>
+            <td>Agent names, permission rules, delegation chain definitions, agent metadata</td>
+            <td>To register agents and enforce permissions at runtime</td>
+            <td><span class="badge badge-contract">Contract</span></td>
+          </tr>
+          <tr>
+            <td><strong>Audit log data</strong></td>
+            <td>Tool call records, allow/deny decisions, agent IDs, timestamps, tamper-evident hash chain entries</td>
+            <td>To provide the audit trail feature; integrity and forensics for your agents</td>
+            <td><span class="badge badge-contract">Contract</span></td>
+          </tr>
+          <tr>
+            <td><strong>Token metadata</strong></td>
+            <td>Token expiry, scope claims, signing metadata (no raw secrets)</td>
+            <td>HMAC token verification without storing plaintext secrets</td>
+            <td><span class="badge badge-contract">Contract</span></td>
+          </tr>
+          <tr>
+            <td><strong>Analytics data</strong></td>
+            <td>Page views, button clicks, session duration, browser/OS type (via PostHog)</td>
+            <td>To understand how the product is used and improve it</td>
+            <td><span class="badge badge-consent">Consent</span></td>
+          </tr>
+          <tr>
+            <td><strong>Technical / infrastructure</strong></td>
+            <td>IP addresses, request timestamps, HTTP response codes (server logs, short-lived)</td>
+            <td>Security monitoring, rate limiting, debugging</td>
+            <td><span class="badge badge-legit">Legitimate interest</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout green">
+        <strong>We do not collect</strong>
+        Payment card numbers (processed by Stripe directly), raw API keys (only HMAC hashes), the content of tool calls beyond what you explicitly log via the API, or any data from your end-users' sessions unless you pass it to us.
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="section" id="how-we-use">
+      <h2><span class="section-num">3</span> How We Use Your Data</h2>
+      <p>We use the data we collect for the following purposes only:</p>
+      <ul>
+        <li><strong>Provide the Service.</strong> Process API requests, verify agent tokens, enforce permission rules, write and serve audit logs.</li>
+        <li><strong>Account management.</strong> Send you confirmation and transactional emails (password reset, billing receipts, plan change notices, security alerts).</li>
+        <li><strong>Product improvement.</strong> Analyze aggregated usage patterns — with your consent via PostHog — to prioritize what to build next.</li>
+        <li><strong>Security and abuse prevention.</strong> Monitor traffic patterns to detect and block abuse, enforce rate limits, and protect platform integrity.</li>
+        <li><strong>Legal obligations.</strong> Retain records as required by applicable law, respond to lawful government requests.</li>
+      </ul>
+      <p>We do not use your data for advertising, profiling, or any purpose not listed above.</p>
+    </section>
+
+    <!-- 4 -->
+    <section class="section" id="cookies">
+      <h2><span class="section-num">4</span> Cookies</h2>
+      <p>AgentsID uses a minimal cookie setup. We ask for your consent before setting any non-essential cookies.</p>
+
+      <h3>Essential cookies (no consent required)</h3>
+      <ul>
+        <li><strong>Supabase auth session cookie</strong> — Stores your authenticated session. Required for the dashboard and API to work. Set by Supabase Auth on login; expires when your session ends or after 7 days of inactivity.</li>
+      </ul>
+
+      <h3>Analytics cookies (consent required)</h3>
+      <ul>
+        <li><strong>PostHog analytics cookies</strong> — Track page views, clicks, and session behavior to help us understand product usage. Only set after you accept analytics in the cookie consent banner. You can opt out at any time from your account settings or by dismissing the banner.</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Consent first</strong>
+        The PostHog script does not load until you accept analytics. If you decline or ignore the banner, no analytics cookies are set and no PostHog data is sent.
+      </div>
+
+      <h3>Managing cookies</h3>
+      <p>You can clear or block cookies via your browser settings. Blocking the Supabase session cookie will require you to log in every visit.</p>
+    </section>
+
+    <!-- 5 -->
+    <section class="section" id="sharing">
+      <h2><span class="section-num">5</span> Sharing Your Data</h2>
+      <p>We do not sell your data. We do not share your data with advertisers or data brokers.</p>
+      <p>We share data with the following service providers who help us operate AgentsID. Each is contractually bound to use your data only for the services they provide to us.</p>
+
+      <table class="third-party-table">
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Role</th>
+            <th>Data shared</th>
+            <th>Location</th>
+            <th>Privacy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Supabase</strong></td>
+            <td>Authentication &amp; database</td>
+            <td>Email, password hash, session data, all project/agent/audit data</td>
+            <td>US West</td>
+            <td><a href="https://supabase.com/privacy" target="_blank" rel="noopener">Policy</a></td>
+          </tr>
+          <tr>
+            <td><strong>Railway</strong></td>
+            <td>Application hosting</td>
+            <td>Request/response data (in-transit), server logs</td>
+            <td>US</td>
+            <td><a href="https://railway.com/legal/privacy" target="_blank" rel="noopener">Policy</a></td>
+          </tr>
+          <tr>
+            <td><strong>PostHog</strong></td>
+            <td>Product analytics</td>
+            <td>Page views, click events, session data (opt-in only)</td>
+            <td>US or EU (configurable)</td>
+            <td><a href="https://posthog.com/privacy" target="_blank" rel="noopener">Policy</a></td>
+          </tr>
+          <tr>
+            <td><strong>Stripe</strong> <em>(when billing is active)</em></td>
+            <td>Payment processing</td>
+            <td>Name, email, payment method data. We never see raw card numbers.</td>
+            <td>US</td>
+            <td><a href="https://stripe.com/privacy" target="_blank" rel="noopener">Policy</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Other disclosures</h3>
+      <p>We may disclose your data if required to do so by law, court order, or government authority. We will notify you of such requests to the extent permitted by law. We may also share data in connection with a merger, acquisition, or sale of all or substantially all of our assets — in which case we will notify you before your data is transferred and becomes subject to a different privacy policy.</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="section" id="retention">
+      <h2><span class="section-num">6</span> Data Retention</h2>
+      <p>We keep your data for as long as your account is active or as needed to provide the Service. Here are the specific retention rules:</p>
+
+      <ul>
+        <li><strong>Account data (email, name):</strong> Retained until you delete your account. After deletion, purged within 30 days.</li>
+        <li><strong>Project and agent data:</strong> Retained until you delete the project or your account.</li>
+        <li><strong>Audit logs:</strong> Retained per your plan tier — 7 days (Free), 30 days (Pro), 90 days (Enterprise). Logs are automatically purged after the retention window.</li>
+        <li><strong>API key hashes:</strong> Retained until the key is rotated or the project is deleted.</li>
+        <li><strong>Analytics data (PostHog):</strong> Retained for up to 1 year within PostHog's systems, subject to their retention policy.</li>
+        <li><strong>Server logs:</strong> Retained for up to 30 days for security and debugging purposes, then deleted.</li>
+        <li><strong>Billing records:</strong> Retained for 7 years as required by US financial regulations.</li>
+      </ul>
+
+      <div class="callout warn">
+        <strong>Plan downgrade</strong>
+        If you downgrade from Pro to Free, your audit logs will be trimmed to the 7-day window within 30 days. Export your logs first if you need to preserve older entries.
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="section" id="security">
+      <h2><span class="section-num">7</span> Security Measures</h2>
+      <p>We apply the following controls to protect your data:</p>
+      <ul>
+        <li><strong>Encryption in transit:</strong> All communication between your browser or API client and AgentsID uses TLS 1.2 or higher.</li>
+        <li><strong>HMAC token signing:</strong> Agent tokens are signed with HMAC-SHA256. The signing secret never leaves the server. Raw API keys are never stored — only their hashes.</li>
+        <li><strong>Tamper-evident audit logs:</strong> Each log entry is chained to the previous via a hash, making undetected modification computationally infeasible.</li>
+        <li><strong>Database access controls:</strong> Production database access is restricted by role-based policies. Application code accesses only the data necessary for each operation.</li>
+        <li><strong>Supabase Row Level Security:</strong> Data isolation between projects is enforced at the database layer, not just the application layer.</li>
+      </ul>
+      <p>Despite these measures, no system is 100% secure. If you discover a security issue, please report it to <a href="mailto:privacy@agentsid.dev">privacy@agentsid.dev</a> and we will respond promptly. We will notify affected users of any material breach in accordance with applicable law.</p>
+    </section>
+
+    <!-- 8 -->
+    <section class="section" id="your-rights">
+      <h2><span class="section-num">8</span> Your Rights</h2>
+      <p>You have the following rights regarding your personal data. To exercise any of them, email <a href="mailto:privacy@agentsid.dev">privacy@agentsid.dev</a> or use the controls in your account settings.</p>
+
+      <ul class="rights-list">
+        <li>
+          <span class="rights-icon">&#128065;</span>
+          <div>
+            <strong>Access</strong>
+            Request a copy of all personal data we hold about you. We will provide it in a machine-readable format (JSON) within 30 days.
+          </div>
+        </li>
+        <li>
+          <span class="rights-icon">&#9998;</span>
+          <div>
+            <strong>Correction</strong>
+            Update your email or other account information at any time from your account settings.
+          </div>
+        </li>
+        <li>
+          <span class="rights-icon">&#128465;</span>
+          <div>
+            <strong>Deletion</strong>
+            Request deletion of your account and all associated data. We will complete the deletion within 30 days, except for data we are required to retain by law (e.g., billing records).
+          </div>
+        </li>
+        <li>
+          <span class="rights-icon">&#128228;</span>
+          <div>
+            <strong>Export / Portability</strong>
+            Export your project data, agent configurations, and audit logs at any time from the dashboard. Raw exports are available in JSON format.
+          </div>
+        </li>
+        <li>
+          <span class="rights-icon">&#128683;</span>
+          <div>
+            <strong>Opt-out of analytics</strong>
+            Withdraw consent for PostHog analytics at any time from your account settings or by declining the cookie banner. This stops future data collection; historical data is subject to PostHog's retention.
+          </div>
+        </li>
+        <li>
+          <span class="rights-icon">&#9208;</span>
+          <div>
+            <strong>Object to processing</strong>
+            Object to processing based on legitimate interests (e.g., server logs). We will stop unless we have compelling grounds that override your interests.
+          </div>
+        </li>
+      </ul>
+
+      <p>We will respond to all rights requests within 30 days. We may need to verify your identity before fulfilling a request.</p>
+    </section>
+
+    <!-- 9 -->
+    <section class="section" id="gdpr">
+      <h2><span class="section-num">9</span> GDPR (EU and UK Users)</h2>
+      <p>If you are located in the European Union or United Kingdom, the General Data Protection Regulation (GDPR) or UK GDPR applies to our processing of your data.</p>
+
+      <h3>Lawful basis for processing</h3>
+      <ul>
+        <li><strong>Contract (Art. 6(1)(b)):</strong> Processing your account data, project data, agent data, audit logs, and token metadata is necessary to perform our contract with you — i.e., to provide the Service.</li>
+        <li><strong>Consent (Art. 6(1)(a)):</strong> Analytics tracking via PostHog. You can withdraw consent at any time without affecting the lawfulness of prior processing.</li>
+        <li><strong>Legitimate interests (Art. 6(1)(f)):</strong> Short-lived server logs for security monitoring and abuse prevention. Our interest in protecting the platform is balanced against your privacy — these logs are retained for no more than 30 days.</li>
+      </ul>
+
+      <h3>Your additional GDPR rights</h3>
+      <p>In addition to the rights in Section 8, you have the right to:</p>
+      <ul>
+        <li><strong>Restriction of processing</strong> — Request that we restrict processing of your data while a dispute is resolved.</li>
+        <li><strong>Lodge a complaint</strong> — File a complaint with your national data protection authority (e.g., the ICO in the UK, or your EU member state's supervisory authority).</li>
+      </ul>
+
+      <h3>Data transfers outside the EEA/UK</h3>
+      <p>AgentsID's infrastructure is hosted in the United States. Data transfers from the EEA or UK to the US are made under the EU-US Data Privacy Framework and/or Standard Contractual Clauses where required. Supabase and Railway maintain appropriate safeguards for these transfers.</p>
+    </section>
+
+    <!-- 10 -->
+    <section class="section" id="ccpa">
+      <h2><span class="section-num">10</span> CCPA (California Users)</h2>
+      <p>If you are a California resident, the California Consumer Privacy Act (CCPA) as amended by the CPRA grants you additional rights.</p>
+
+      <h3>Categories of personal information we collect</h3>
+      <p>We collect: identifiers (email), commercial information (billing records), internet or network activity (server logs, analytics), and professional information (project and agent configurations).</p>
+
+      <h3>Your CCPA rights</h3>
+      <ul>
+        <li><strong>Right to know:</strong> Request disclosure of the categories and specific pieces of personal information we have collected about you in the past 12 months.</li>
+        <li><strong>Right to delete:</strong> Request deletion of your personal information, subject to legal retention requirements.</li>
+        <li><strong>Right to opt-out of sale or sharing:</strong> We do not sell or share personal information for cross-context behavioral advertising. No opt-out is needed, but you may still exercise this right by emailing <a href="mailto:privacy@agentsid.dev">privacy@agentsid.dev</a>.</li>
+        <li><strong>Right to correct:</strong> Request correction of inaccurate personal information.</li>
+        <li><strong>Right to limit use of sensitive personal information:</strong> We do not collect sensitive personal information as defined by the CPRA (SSNs, financial account numbers, biometrics, etc.).</li>
+        <li><strong>Non-discrimination:</strong> We will not discriminate against you for exercising any of these rights.</li>
+      </ul>
+
+      <p>To exercise CCPA rights, email <a href="mailto:privacy@agentsid.dev">privacy@agentsid.dev</a> with the subject line "CCPA Request." We will respond within 45 days.</p>
+    </section>
+
+    <!-- 11 -->
+    <section class="section" id="children">
+      <h2><span class="section-num">11</span> Children's Privacy</h2>
+      <p>AgentsID is not directed at children under 13 years of age. We do not knowingly collect personal information from children under 13. If we become aware that we have inadvertently collected data from a child under 13, we will delete it promptly.</p>
+      <p>If you believe we have collected information from a child under 13, contact us at <a href="mailto:privacy@agentsid.dev">privacy@agentsid.dev</a>.</p>
+    </section>
+
+    <!-- 12 -->
+    <section class="section" id="transfers">
+      <h2><span class="section-num">12</span> International Transfers</h2>
+      <p>AgentsID is operated from the United States. Our primary database (Supabase) is hosted in <strong>US West (Oregon)</strong>. Our application servers (Railway) are hosted in the <strong>United States</strong>.</p>
+      <p>If you access the Service from outside the United States, your data will be transferred to and processed in the United States. US privacy laws may differ from those in your jurisdiction. By using the Service, you acknowledge this transfer.</p>
+      <p>For EU/EEA and UK users, we rely on the EU-US Data Privacy Framework and Standard Contractual Clauses to provide appropriate safeguards for cross-border data transfers.</p>
+    </section>
+
+    <!-- 13 -->
+    <section class="section" id="changes">
+      <h2><span class="section-num">13</span> Policy Changes</h2>
+      <p>We may update this Privacy Policy from time to time. When we make material changes (changes that affect what data we collect, how we use it, or your rights), we will:</p>
+      <ul>
+        <li>Update the "Last updated" date at the top of this page</li>
+        <li>Send an email notification to the address on your account at least 14 days before changes take effect</li>
+      </ul>
+      <p>Minor changes (clarifications, formatting, corrections that don't affect your rights) may be made without individual notification.</p>
+      <p>Your continued use of the Service after a material change takes effect constitutes acceptance of the updated policy.</p>
+    </section>
+
+    <!-- 14 -->
+    <section class="section" id="contact">
+      <h2><span class="section-num">14</span> Contact</h2>
+      <p>For privacy inquiries, data rights requests, or concerns about this policy:</p>
+      <ul>
+        <li>Email: <a href="mailto:privacy@agentsid.dev">privacy@agentsid.dev</a></li>
+        <li>Website: <a href="https://agentsid.dev">agentsid.dev</a></li>
+      </ul>
+      <p>We aim to respond to all privacy inquiries within 5 business days, and to fulfill data rights requests within 30 days. If you are not satisfied with our response, you have the right to lodge a complaint with your local data protection authority.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer class="footer">
+  <p>
+    <a href="/docs">Docs</a> &middot;
+    <a href="/guides">Guides</a> &middot;
+    <a href="/dashboard">Dashboard</a> &middot;
+    <a href="https://github.com/stevenkozeniesky02/agentsid" target="_blank">GitHub</a> &middot;
+    <a href="/terms">Terms</a> &middot;
+    <a href="/privacy">Privacy</a>
+  </p>
+  <p style="margin-top:8px">&copy; 2026 AgentsID</p>
+</footer>
+
+<script>
+// Highlight active TOC item on scroll
+(function() {
+  const sections = document.querySelectorAll('.section');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+  const OFFSET = 100;
+
+  function getActiveSection() {
+    let current = null;
+    sections.forEach(function(section) {
+      const top = section.getBoundingClientRect().top;
+      if (top <= OFFSET) current = section;
+    });
+    return current;
+  }
+
+  function updateToc() {
+    const active = getActiveSection();
+    tocLinks.forEach(function(link) {
+      link.classList.remove('active');
+      if (active && link.getAttribute('href') === '#' + active.id) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateToc, { passive: true });
+  updateToc();
+})();
+</script>
+
+</body>
+</html>

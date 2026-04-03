@@ -1,0 +1,10 @@
+{
+  "name": "agentsid-demo",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@agentsid/sdk": "^0.1.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^4.3.6"
+  }
+}

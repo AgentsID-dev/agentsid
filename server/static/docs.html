@@ -1,0 +1,3581 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentsID — Documentation</title>
+<style>
+/* ─── Reset & Base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #faf9f7;
+  --bg-surface: #ffffff;
+  --sidebar-bg: #ffffff;
+  --sidebar-hover: rgba(124, 91, 240, 0.05);
+  --card: #ffffff;
+  --card-border: #e8e5e0;
+  --card-glow: rgba(124, 91, 240, 0.05);
+  --code-bg: #f5f4f0;
+  --code-border: #e8e5e0;
+  --text: #1a1a1a;
+  --text-muted: #6b6b7b;
+  --text-dim: #9b9bab;
+  --green: #16a34a;
+  --green-glow: rgba(22, 163, 74, 0.3);
+  --green-bg: rgba(22, 163, 74, 0.08);
+  --red: #dc2626;
+  --red-glow: rgba(220, 38, 38, 0.3);
+  --red-bg: rgba(220, 38, 38, 0.08);
+  --amber: #d97706;
+  --amber-glow: rgba(217, 119, 6, 0.3);
+  --amber-bg: rgba(217, 119, 6, 0.08);
+  --purple: #7c5bf0;
+  --purple-glow: rgba(124, 91, 240, 0.3);
+  --purple-bg: rgba(124, 91, 240, 0.08);
+  --blue: #5b8cf0;
+  --blue-glow: rgba(91, 140, 240, 0.3);
+  --blue-bg: rgba(91, 140, 240, 0.08);
+  --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Consolas', monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-glow: 0 0 40px rgba(124, 91, 240, 0.08);
+  --transition: 0.2s ease;
+  --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="light"] {
+  --bg: #faf9f7;
+  --bg-surface: #ffffff;
+  --sidebar-bg: #ffffff;
+  --sidebar-hover: rgba(124, 91, 240, 0.05);
+  --card: #ffffff;
+  --card-border: #e8e5e0;
+  --card-glow: rgba(124, 91, 240, 0.05);
+  --code-bg: #f5f4f0;
+  --code-border: #e8e5e0;
+  --text: #1a1a1a;
+  --text-muted: #6b6b7b;
+  --text-dim: #9b9bab;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-glow: 0 0 40px rgba(124, 91, 240, 0.08);
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f1a;
+  --bg-surface: #1a1a2e;
+  --sidebar-bg: #12122a;
+  --sidebar-hover: #1e1e3a;
+  --card: #16213e;
+  --card-border: #1e2d50;
+  --card-glow: rgba(124, 91, 240, 0.08);
+  --code-bg: #0a0a15;
+  --code-border: #1e1e3a;
+  --text: #e8e8f0;
+  --text-muted: #8888a4;
+  --text-dim: #5a5a78;
+  --green: #00d4aa;
+  --green-glow: rgba(0, 212, 170, 0.3);
+  --green-bg: rgba(0, 212, 170, 0.08);
+  --red: #ff6b6b;
+  --red-glow: rgba(255, 107, 107, 0.3);
+  --red-bg: rgba(255, 107, 107, 0.08);
+  --amber: #ffd93d;
+  --amber-glow: rgba(255, 217, 61, 0.3);
+  --amber-bg: rgba(255, 217, 61, 0.08);
+  --purple: #7c5bf0;
+  --purple-glow: rgba(124, 91, 240, 0.3);
+  --purple-bg: rgba(124, 91, 240, 0.08);
+  --blue: #5b8cf0;
+  --blue-glow: rgba(91, 140, 240, 0.3);
+  --blue-bg: rgba(91, 140, 240, 0.08);
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 40px rgba(124, 91, 240, 0.15);
+}
+[data-theme="dark"] .top-header {
+  background: rgba(15, 15, 26, 0.92);
+  border-bottom: 1px solid rgba(124, 91, 240, 0.1);
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #2a2a48; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #3a3a58; }
+[data-theme="dark"] .sidebar { border-right-color: rgba(124, 91, 240, 0.08); }
+[data-theme="dark"] pre { color: #e8e8f0; }
+[data-theme="dark"] .lang-tabs { background: var(--code-bg); border-bottom-color: var(--code-border); }
+[data-theme="dark"] .lang-tab { color: #5a5a78; }
+[data-theme="dark"] .lang-tab:hover { color: #8888a4; }
+[data-theme="dark"] .copy-btn { background: var(--bg-surface); border-color: var(--card-border); color: #5a5a78; }
+[data-theme="dark"] .copy-btn:hover { color: #e8e8f0; }
+[data-theme="dark"] code { background: var(--code-bg); border-color: var(--code-border); }
+[data-theme="dark"] .terminal-body { color: #e8e8f0; }
+[data-theme="dark"] .terminal-title { color: #5a5a78; }
+[data-theme="dark"] .try-it-field input, [data-theme="dark"] .try-it-field textarea { background: var(--code-bg); border-color: var(--code-border); }
+[data-theme="dark"] .hero { border-bottom-color: rgba(124, 91, 240, 0.08); }
+[data-theme="dark"] .doc-section h2 { border-bottom-color: rgba(124, 91, 240, 0.1); }
+
+html { font-size: 14px; scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a { color: var(--blue); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--purple); }
+button { cursor: pointer; font-family: var(--sans); }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c0c0d0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a0a0b0; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #c0c0d0; }
+
+/* ─── Top Header ─── */
+.top-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 56px;
+  background: rgba(250, 249, 247, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e8e5e0;
+  display: flex; align-items: center; padding: 0 24px;
+  gap: 16px;
+}
+[data-theme="light"] .top-header {
+  background: rgba(250, 249, 247, 0.92);
+  border-bottom: 1px solid #e8e5e0;
+}
+.header-logo {
+  font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; white-space: nowrap;
+}
+.header-logo span { font-weight: 400; opacity: 0.7; }
+.header-search {
+  flex: 1; max-width: 420px; position: relative;
+}
+.header-search input {
+  width: 100%; padding: 8px 14px 8px 36px;
+  background: var(--bg-surface); border: 1px solid var(--card-border);
+  border-radius: var(--radius); color: var(--text); font-size: 0.9rem;
+  outline: none; transition: border-color var(--transition), box-shadow var(--transition);
+}
+.header-search input::placeholder { color: var(--text-dim); }
+.header-search input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(124, 91, 240, 0.15);
+}
+.header-search .search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--text-dim); font-size: 0.85rem; pointer-events: none;
+}
+.header-search .search-shortcut {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm); padding: 1px 6px; font-size: 0.7rem;
+  color: var(--text-dim); font-family: var(--mono);
+}
+.header-links {
+  display: flex; align-items: center; gap: 12px; margin-left: auto;
+}
+.header-links a {
+  color: var(--text-muted); font-size: 0.85rem; font-weight: 500;
+  padding: 6px 10px; border-radius: var(--radius-sm);
+  transition: color var(--transition), background var(--transition);
+}
+.header-links a:hover { color: var(--text); background: var(--bg-surface); }
+.theme-toggle {
+  background: var(--bg-surface); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 6px 10px; color: var(--text-muted);
+  font-size: 0.85rem; transition: all var(--transition); display: flex; align-items: center;
+}
+.theme-toggle:hover { color: var(--text); border-color: var(--purple); }
+.hamburger {
+  display: none; background: none; border: none; color: var(--text);
+  font-size: 1.3rem; padding: 6px;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  position: fixed; top: 56px; left: 0; bottom: 0; width: 260px;
+  background: var(--sidebar-bg); border-right: 1px solid #e8e5e0;
+  overflow-y: auto; padding: 16px 0; z-index: 100;
+  transition: transform var(--transition-slow);
+}
+.sidebar-section { margin-bottom: 8px; }
+.sidebar-section-title {
+  padding: 8px 20px 4px; font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim);
+  cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+  user-select: none;
+}
+.sidebar-section-title:hover { color: var(--text-muted); }
+.sidebar-section-title .chevron {
+  font-size: 0.6rem; transition: transform var(--transition);
+}
+.sidebar-section.collapsed .sidebar-section-items { display: none; }
+.sidebar-section.collapsed .chevron { transform: rotate(-90deg); }
+.sidebar-section-items { padding: 2px 0; }
+.sidebar-item {
+  display: block; padding: 5px 20px 5px 28px; font-size: 0.85rem;
+  color: var(--text-muted); transition: all var(--transition);
+  border-left: 2px solid transparent; cursor: pointer; text-decoration: none;
+}
+.sidebar-item:hover {
+  color: var(--text); background: var(--sidebar-hover); border-left-color: var(--purple);
+}
+.sidebar-item.active {
+  color: var(--purple); background: var(--purple-bg); border-left-color: var(--purple);
+  font-weight: 500;
+}
+.sidebar-item .method-badge-sm {
+  display: inline-block; font-size: 0.6rem; font-weight: 700; font-family: var(--mono);
+  padding: 0 4px; border-radius: 3px; margin-right: 6px; min-width: 32px;
+  text-align: center; vertical-align: middle;
+}
+.badge-get { background: var(--blue-bg); color: var(--blue); }
+.badge-post { background: var(--green-bg); color: var(--green); }
+.badge-put { background: var(--amber-bg); color: var(--amber); }
+.badge-patch { background: var(--amber-bg); color: var(--amber); }
+.badge-delete { background: var(--red-bg); color: var(--red); }
+
+/* ─── Main Content ─── */
+.main-content {
+  margin-left: 260px; margin-top: 56px; padding: 0;
+  min-height: calc(100vh - 56px);
+  transition: margin-left var(--transition-slow);
+}
+.content-inner {
+  max-width: 860px; margin: 0 auto; padding: 40px 48px 100px;
+}
+
+/* ─── Hero Section ─── */
+.hero {
+  text-align: center; padding: 60px 0 48px;
+  border-bottom: 1px solid #e8e5e0; margin-bottom: 48px;
+}
+.hero h1 {
+  font-size: 2.8rem; font-weight: 800; letter-spacing: -0.03em;
+  line-height: 1.15; margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--text) 0%, var(--purple) 50%, var(--blue) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero p {
+  font-size: 1.15rem; color: var(--text-muted); max-width: 500px; margin: 0 auto 36px;
+}
+.hero-steps {
+  display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+}
+.hero-step {
+  background: var(--bg-surface); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 24px 28px; width: 220px;
+  text-align: left; transition: all var(--transition);
+  position: relative;
+}
+.hero-step:hover {
+  border-color: var(--purple);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+.hero-step-number {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white; font-size: 0.8rem; font-weight: 700; margin-bottom: 12px;
+}
+.hero-step h3 {
+  font-size: 1rem; font-weight: 600; margin-bottom: 6px; color: var(--text);
+}
+.hero-step p { font-size: 0.82rem; color: var(--text-muted); margin: 0; }
+.hero-step .hero-code {
+  margin-top: 10px; font-family: var(--mono); font-size: 0.75rem;
+  color: var(--green); background: var(--code-bg); padding: 6px 10px;
+  border-radius: var(--radius-sm); border: 1px solid var(--code-border);
+}
+
+/* ─── Section headings ─── */
+.doc-section { scroll-margin-top: 72px; margin-bottom: 56px; }
+.doc-section h2 {
+  font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 8px; padding-bottom: 12px;
+  border-bottom: 1px solid #e8e5e0;
+  color: var(--text);
+}
+.doc-section h3 {
+  font-size: 1.25rem; font-weight: 600; margin: 32px 0 12px;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.doc-section h4 {
+  font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--text);
+}
+.doc-section p {
+  color: var(--text-muted); margin-bottom: 14px; line-height: 1.65;
+}
+.doc-section ul, .doc-section ol {
+  color: var(--text-muted); margin: 0 0 14px 24px; line-height: 1.7;
+}
+.doc-section li { margin-bottom: 4px; }
+.doc-section strong { color: var(--text); }
+
+/* ─── Language Tabs ─── */
+.lang-tabs {
+  display: flex; gap: 0; margin-bottom: 0;
+  border-bottom: 1px solid #e8e5e0;
+  background: #eae8e3; border-radius: var(--radius) var(--radius) 0 0;
+  padding: 0 12px;
+}
+.lang-tab {
+  padding: 8px 16px; font-size: 0.78rem; font-weight: 500;
+  color: #6b6b7b; background: none; border: none;
+  border-bottom: 2px solid transparent; transition: all var(--transition);
+  font-family: var(--sans);
+}
+.lang-tab:hover { color: #1a1a1a; }
+.lang-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+/* ─── Code Blocks ─── */
+.code-block-wrapper {
+  position: relative; margin-bottom: 20px;
+}
+.code-block-wrapper.has-tabs pre {
+  border-radius: 0 0 var(--radius) var(--radius);
+  margin-top: 0;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--code-border);
+  border-radius: var(--radius); padding: 16px 20px;
+  overflow-x: auto; font-family: var(--mono); font-size: 0.82rem;
+  line-height: 1.6; color: #1a1a1a; margin-bottom: 20px;
+  position: relative;
+}
+pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+code {
+  font-family: var(--mono); font-size: 0.85em;
+  background: rgba(124, 91, 240, 0.06); padding: 2px 6px;
+  border-radius: var(--radius-sm); color: var(--purple);
+  border: 1px solid #e8e5e0;
+}
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: #ffffff; border: 1px solid #e8e5e0;
+  border-radius: var(--radius-sm); padding: 4px 10px; font-size: 0.7rem;
+  color: #6b6b7b; cursor: pointer; transition: all var(--transition);
+  font-family: var(--sans); z-index: 5;
+}
+.copy-btn:hover { color: #1a1a1a; border-color: var(--purple); }
+.copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+/* Syntax highlighting */
+.kw { color: #7c3aed; }
+.str { color: #16a34a; }
+.fn { color: #2563eb; }
+.cmt { color: #9b9bab; font-style: italic; }
+.num { color: #b45309; }
+.type { color: #ffcb6b; }
+.op { color: #6b6b7b; }
+.prop { color: #f07178; }
+.param { color: #e8e8f0; }
+
+.dec { color: #c792ea; }
+.const { color: #82aaff; }
+.punct { color: #89ddff; }
+
+/* ─── Tables ─── */
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 20px;
+  font-size: 0.85rem;
+}
+th {
+  background: var(--bg-surface); text-align: left;
+  padding: 10px 14px; font-weight: 600; color: var(--text);
+  border-bottom: 2px solid var(--card-border); font-size: 0.8rem;
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+td {
+  padding: 10px 14px; border-bottom: 1px solid #e8e5e0;
+  color: var(--text-muted); vertical-align: top;
+}
+tr:hover td { background: rgba(124, 91, 240, 0.03); }
+td code { font-size: 0.8em; }
+
+/* ─── Endpoint Cards ─── */
+.endpoint-card {
+  background: var(--bg-surface); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden;
+  transition: all var(--transition);
+}
+.endpoint-card:hover { border-color: rgba(124, 91, 240, 0.2); }
+.endpoint-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px; cursor: pointer; user-select: none;
+}
+.endpoint-header:hover { background: rgba(124, 91, 240, 0.03); }
+.method-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
+  padding: 3px 10px; border-radius: var(--radius-sm); min-width: 54px;
+  text-align: center; letter-spacing: 0.02em;
+}
+.method-get {
+  background: var(--blue-bg); color: var(--blue);
+  box-shadow: 0 0 12px rgba(79, 140, 255, 0.1);
+}
+.method-post {
+  background: var(--green-bg); color: var(--green);
+  box-shadow: 0 0 12px rgba(0, 212, 170, 0.1);
+}
+.method-put {
+  background: var(--amber-bg); color: var(--amber);
+  box-shadow: 0 0 12px rgba(255, 217, 61, 0.1);
+}
+.method-patch {
+  background: var(--amber-bg); color: var(--amber);
+  box-shadow: 0 0 12px rgba(255, 217, 61, 0.1);
+}
+.method-delete {
+  background: var(--red-bg); color: var(--red);
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.1);
+}
+.endpoint-path {
+  font-family: var(--mono); font-size: 0.88rem; color: var(--text); font-weight: 500;
+}
+.endpoint-desc {
+  font-size: 0.82rem; color: var(--text-dim); margin-left: auto;
+}
+.endpoint-chevron {
+  color: var(--text-dim); font-size: 0.7rem; transition: transform var(--transition);
+  margin-left: 8px;
+}
+.endpoint-card.expanded .endpoint-chevron { transform: rotate(90deg); }
+.endpoint-body {
+  display: none; padding: 0 20px 20px; border-top: 1px solid rgba(124, 91, 240, 0.06);
+}
+.endpoint-card.expanded .endpoint-body { display: block; padding-top: 20px; }
+
+/* ─── Try It Panel ─── */
+.try-it-panel {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 20px; margin-top: 16px;
+}
+.try-it-panel h4 {
+  font-size: 0.85rem; font-weight: 600; margin: 0 0 12px;
+  color: var(--text); display: flex; align-items: center; gap: 8px;
+}
+.try-it-panel h4::before { content: ""; }
+.try-it-field {
+  margin-bottom: 10px;
+}
+.try-it-field label {
+  display: block; font-size: 0.75rem; font-weight: 500;
+  color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.try-it-field input, .try-it-field textarea {
+  width: 100%; padding: 8px 12px; background: #faf9f7;
+  border: 1px solid #e8e5e0; border-radius: var(--radius-sm);
+  color: var(--text); font-family: var(--mono); font-size: 0.82rem;
+  outline: none; transition: border-color var(--transition);
+}
+.try-it-field textarea { min-height: 80px; resize: vertical; }
+.try-it-field input:focus, .try-it-field textarea:focus {
+  border-color: var(--purple);
+}
+.try-it-run {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  border: none; color: white; padding: 8px 20px; border-radius: var(--radius);
+  font-size: 0.82rem; font-weight: 600; transition: all var(--transition);
+  margin-top: 4px;
+}
+.try-it-run:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124, 91, 240, 0.3); }
+.try-it-run:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.try-it-response {
+  margin-top: 12px;
+}
+.try-it-response pre {
+  margin: 0; max-height: 300px; overflow-y: auto;
+}
+
+/* ─── Visual Diagrams ─── */
+.diagram {
+  background: var(--bg-surface); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 32px 24px;
+  margin: 20px 0; text-align: center;
+}
+.diagram-flow {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+}
+.diagram-node {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: 12px 20px;
+  font-size: 0.82rem; font-weight: 500; color: var(--text);
+  min-width: 100px; text-align: center;
+}
+.diagram-node.node-user {
+  border-color: var(--blue); background: var(--blue-bg);
+}
+.diagram-node.node-agent {
+  border-color: var(--purple); background: var(--purple-bg);
+}
+.diagram-node.node-token {
+  border-color: var(--green); background: var(--green-bg);
+}
+.diagram-node.node-deny {
+  border-color: var(--red); background: var(--red-bg);
+}
+.diagram-node.node-allow {
+  border-color: var(--green); background: var(--green-bg);
+}
+.diagram-node.node-default {
+  border-color: var(--amber); background: var(--amber-bg);
+}
+.diagram-node .node-label {
+  font-size: 0.68rem; color: var(--text-dim); display: block;
+  text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;
+}
+.diagram-arrow {
+  color: var(--text-dim); font-size: 1.2rem; flex-shrink: 0;
+}
+.diagram-caption {
+  margin-top: 16px; font-size: 0.78rem; color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ─── Audit Visual ─── */
+.audit-entries {
+  display: flex; flex-direction: column; gap: 8px;
+  margin: 16px 0;
+}
+.audit-entry {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px; background: var(--bg-surface);
+  border-radius: var(--radius); border: 1px solid var(--card-border);
+  font-size: 0.8rem; font-family: var(--mono);
+}
+.audit-entry.allow-entry { border-left: 3px solid var(--green); }
+.audit-entry.deny-entry { border-left: 3px solid var(--red); }
+.audit-action {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  min-width: 44px; text-align: center;
+}
+.audit-action.action-allow { color: var(--green); }
+.audit-action.action-deny { color: var(--red); }
+.audit-tool { color: var(--text); }
+.audit-agent { color: var(--text-dim); margin-left: auto; font-size: 0.72rem; }
+.audit-time { color: var(--text-dim); font-size: 0.72rem; }
+
+/* ─── Validation Pipeline ─── */
+.pipeline {
+  display: flex; flex-direction: column; gap: 0; margin: 20px 0;
+}
+.pipeline-step {
+  display: flex; align-items: flex-start; gap: 16px; padding: 16px 0;
+  position: relative;
+}
+.pipeline-step:not(:last-child)::after {
+  content: ''; position: absolute; left: 17px; top: 48px; bottom: -4px;
+  width: 2px; background: linear-gradient(to bottom, var(--purple), transparent);
+}
+.pipeline-num {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 0.8rem; font-weight: 700;
+}
+.pipeline-info h4 { margin: 0 0 4px; font-size: 0.92rem; }
+.pipeline-info p { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
+.pipeline-info .pipeline-tag {
+  display: inline-block; font-size: 0.68rem; padding: 1px 8px;
+  border-radius: 10px; margin-left: 8px; font-weight: 500;
+}
+.pipeline-tag.no-db { background: var(--green-bg); color: var(--green); }
+.pipeline-tag.uses-db { background: var(--amber-bg); color: var(--amber); }
+
+/* ─── Pricing ─── */
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin: 24px 0;
+}
+.pricing-card {
+  background: var(--bg-surface); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 28px 24px;
+  transition: all var(--transition); position: relative;
+}
+.pricing-card:hover { border-color: var(--purple); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.pricing-card.featured {
+  border-color: var(--purple);
+  box-shadow: var(--shadow-glow);
+}
+.pricing-card.featured::before {
+  content: 'Most Popular'; position: absolute; top: -10px; left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white; padding: 2px 14px; border-radius: 10px;
+  font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pricing-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+.pricing-price {
+  font-size: 2.2rem; font-weight: 800; margin: 12px 0 4px;
+  background: linear-gradient(135deg, var(--text), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.pricing-price span { font-size: 0.9rem; font-weight: 400; }
+.pricing-period { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 20px; }
+.pricing-features { list-style: none; padding: 0; margin: 0; }
+.pricing-features li {
+  padding: 6px 0; font-size: 0.82rem; color: var(--text-muted);
+  display: flex; align-items: center; gap: 8px;
+}
+.pricing-features li::before {
+  content: ''; display: inline-block; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--green); flex-shrink: 0;
+}
+
+/* ─── CLI Reference ─── */
+.terminal-block {
+  background: #f5f4f0; border: 1px solid #e8e5e0; border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 20px;
+}
+.terminal-header {
+  background: #eae8e3; padding: 8px 14px; display: flex; align-items: center; gap: 6px;
+  border-bottom: 1px solid #e8e5e0;
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-dot.r { background: #ff5f57; }
+.terminal-dot.y { background: #febc2e; }
+.terminal-dot.g { background: #28c840; }
+.terminal-title {
+  margin-left: 8px; font-size: 0.72rem; color: #9b9bab;
+  font-family: var(--mono);
+}
+.terminal-body {
+  padding: 14px 18px; font-family: var(--mono); font-size: 0.8rem;
+  line-height: 1.7; color: #1a1a1a;
+}
+.terminal-body .prompt { color: #16a34a; }
+.terminal-body .output { color: #6b6b7b; }
+.terminal-body .flag { color: #7c3aed; }
+.terminal-body .arg { color: #16a34a; }
+
+/* ─── Callout ─── */
+.callout {
+  background: var(--purple-bg); border-left: 3px solid var(--purple);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 14px 18px; margin: 16px 0; font-size: 0.85rem;
+}
+.callout.callout-warn {
+  background: var(--amber-bg); border-left-color: var(--amber);
+}
+.callout.callout-danger {
+  background: var(--red-bg); border-left-color: var(--red);
+}
+.callout strong { color: var(--text); display: block; margin-bottom: 4px; }
+.callout p { margin: 0; color: var(--text-muted); }
+
+/* ─── FAQ ─── */
+.faq-item {
+  border-bottom: 1px solid rgba(124, 91, 240, 0.06);
+}
+.faq-question {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; cursor: pointer; font-weight: 500; color: var(--text);
+  font-size: 0.92rem; user-select: none;
+}
+.faq-question:hover { color: var(--purple); }
+.faq-chevron { font-size: 0.7rem; color: var(--text-dim); transition: transform var(--transition); }
+.faq-item.open .faq-chevron { transform: rotate(90deg); }
+.faq-answer {
+  display: none; padding: 0 0 14px; font-size: 0.85rem;
+  color: var(--text-muted); line-height: 1.6;
+}
+.faq-item.open .faq-answer { display: block; }
+
+/* ─── Search Results ─── */
+.search-results {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--bg-surface); border: 1px solid var(--card-border);
+  border-radius: var(--radius); margin-top: 4px; max-height: 400px;
+  overflow-y: auto; box-shadow: var(--shadow-lg); display: none; z-index: 300;
+}
+.search-results.visible { display: block; }
+.search-result-item {
+  padding: 10px 14px; cursor: pointer; border-bottom: 1px solid rgba(124, 91, 240, 0.05);
+  font-size: 0.85rem; color: var(--text-muted);
+  transition: background var(--transition);
+}
+.search-result-item:hover { background: var(--sidebar-hover); color: var(--text); }
+.search-result-item .search-section {
+  font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.search-result-item mark {
+  background: rgba(124, 91, 240, 0.2); color: var(--purple);
+  border-radius: 2px; padding: 0 2px;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .content-inner { padding: 32px 28px 80px; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 380px; margin: 24px auto; }
+}
+@media (max-width: 768px) {
+  .hamburger { display: block; }
+  .sidebar { transform: translateX(-100%); width: 280px; }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; }
+  .content-inner { padding: 24px 16px 80px; }
+  .hero h1 { font-size: 2rem; }
+  .hero-steps { flex-direction: column; align-items: center; }
+  .endpoint-desc { display: none; }
+  .header-links a.hide-mobile { display: none; }
+  .diagram-flow { flex-direction: column; }
+  .diagram-arrow { transform: rotate(90deg); }
+}
+
+/* ─── Overlay for mobile sidebar ─── */
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+.sidebar-overlay.visible { display: block; }
+
+/* ─── Feature comparison ─── */
+.comparison-table { overflow-x: auto; }
+.comparison-table table { min-width: 600px; }
+.comparison-table td:first-child { font-weight: 500; color: var(--text); }
+.check { color: var(--green); font-weight: 700; }
+.cross { color: var(--text-dim); }
+
+/* ─── Inline code in headings ─── */
+h2 code, h3 code, h4 code {
+  font-size: 0.85em; background: var(--code-bg); padding: 2px 8px;
+  border-radius: var(--radius-sm); border: 1px solid var(--code-border);
+}
+</style>
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_4zukYmgXUIpQuxJWUqMOeZ6yWaptGbtxOgW3i9anI3m',{api_host:'https://us.i.posthog.com',defaults:'2026-01-30',person_profiles:'identified_only',opt_out_capturing_by_default:true})
+</script>
+</head>
+<body>
+
+<!-- ─── Top Header ─── -->
+<header class="top-header">
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">&#9776;</button>
+  <a href="/" class="header-logo"><svg width="24" height="24" viewBox="0 0 36 36" fill="none" style="vertical-align:-5px;margin-right:8px;"><path d="M18 6L4 14l14 8 14-8L18 6z" fill="#7c5bf0" opacity="0.25"/><path d="M18 6L4 14l14 8 14-8L18 6z" stroke="#7c5bf0" stroke-width="2" fill="none"/><path d="M4 18l14 8 14-8" stroke="#7c5bf0" stroke-width="2" fill="none" opacity="0.6"/><path d="M4 24l14 8 14-8" stroke="#5b8cf0" stroke-width="2" fill="none"/></svg>AgentsID <span>docs</span></a>
+  <div class="header-search">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="Search documentation..." autocomplete="off">
+    <span class="search-shortcut">/</span>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+  <nav class="header-links">
+    <a href="/docs" class="hide-mobile">Docs</a>
+    <a href="/guides" class="hide-mobile">Guides</a>
+    <a href="/dashboard" class="hide-mobile">Dashboard</a>
+    <a href="https://github.com/stevenkozeniesky02/agentsid" target="_blank" class="hide-mobile">GitHub</a>
+    <a href="/dashboard" class="hide-mobile btn-start-free" style="background:linear-gradient(135deg,#7c5bf0,#5b8cf0);color:#fff;padding:5px 14px;border-radius:6px;font-weight:600;font-size:12px;">Start Free</a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+      <span id="themeIcon">&#9790;</span>
+    </button>
+  </nav>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ─── Sidebar ─── -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">Getting Started <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#getting-started">Overview</a>
+      <a class="sidebar-item" href="#installation">Installation</a>
+      <a class="sidebar-item" href="#quickstart">Quick Start</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">Core Concepts <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#agent-identity">Agent Identity</a>
+      <a class="sidebar-item" href="#permissions">Permissions</a>
+      <a class="sidebar-item" href="#advanced-permissions">Advanced Permissions</a>
+      <a class="sidebar-item" href="#delegation">Delegation Chains</a>
+      <a class="sidebar-item" href="#audit-trail">Audit Trail</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">API Reference <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#api-projects"><span class="method-badge-sm badge-post">POST</span>Create Project</a>
+      <a class="sidebar-item" href="#api-register-agent"><span class="method-badge-sm badge-post">POST</span>Register Agent</a>
+      <a class="sidebar-item" href="#api-list-agents"><span class="method-badge-sm badge-get">GET</span>List Agents</a>
+      <a class="sidebar-item" href="#api-get-agent"><span class="method-badge-sm badge-get">GET</span>Get Agent</a>
+      <a class="sidebar-item" href="#api-update-agent"><span class="method-badge-sm badge-patch">PATCH</span>Update Agent</a>
+      <a class="sidebar-item" href="#api-refresh-token"><span class="method-badge-sm badge-post">POST</span>Refresh Token</a>
+      <a class="sidebar-item" href="#api-delegate"><span class="method-badge-sm badge-post">POST</span>Delegate</a>
+      <a class="sidebar-item" href="#api-revoke-agent"><span class="method-badge-sm badge-delete">DEL</span>Revoke Agent</a>
+      <a class="sidebar-item" href="#api-set-permissions"><span class="method-badge-sm badge-put">PUT</span>Set Permissions</a>
+      <a class="sidebar-item" href="#api-get-permissions"><span class="method-badge-sm badge-get">GET</span>Get Permissions</a>
+      <a class="sidebar-item" href="#api-check-permission"><span class="method-badge-sm badge-post">POST</span>Check Permission</a>
+      <a class="sidebar-item" href="#api-validate"><span class="method-badge-sm badge-post">POST</span>Validate Token</a>
+      <a class="sidebar-item" href="#api-introspect"><span class="method-badge-sm badge-post">POST</span>Introspect</a>
+      <a class="sidebar-item" href="#api-audit-log"><span class="method-badge-sm badge-get">GET</span>Audit Log</a>
+      <a class="sidebar-item" href="#api-audit-stats"><span class="method-badge-sm badge-get">GET</span>Audit Stats</a>
+      <a class="sidebar-item" href="#api-audit-verify"><span class="method-badge-sm badge-get">GET</span>Verify Chain</a>
+      <a class="sidebar-item" href="#api-usage"><span class="method-badge-sm badge-get">GET</span>Usage</a>
+      <a class="sidebar-item" href="#api-list-approvals"><span class="method-badge-sm badge-get">GET</span>List Approvals</a>
+      <a class="sidebar-item" href="#api-approve"><span class="method-badge-sm badge-post">POST</span>Approve</a>
+      <a class="sidebar-item" href="#api-reject"><span class="method-badge-sm badge-post">POST</span>Reject</a>
+      <a class="sidebar-item" href="#api-approval-count"><span class="method-badge-sm badge-get">GET</span>Approval Count</a>
+      <a class="sidebar-item" href="#api-create-webhook"><span class="method-badge-sm badge-post">POST</span>Create Webhook</a>
+      <a class="sidebar-item" href="#api-list-webhooks"><span class="method-badge-sm badge-get">GET</span>List Webhooks</a>
+      <a class="sidebar-item" href="#api-delete-webhook"><span class="method-badge-sm badge-delete">DEL</span>Delete Webhook</a>
+      <a class="sidebar-item" href="#api-test-webhook"><span class="method-badge-sm badge-post">POST</span>Test Webhook</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">SDK Reference <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#sdk-init">Initialization</a>
+      <a class="sidebar-item" href="#sdk-agents">Agent Methods</a>
+      <a class="sidebar-item" href="#sdk-permissions">Permission Methods</a>
+      <a class="sidebar-item" href="#sdk-validation">Validation Methods</a>
+      <a class="sidebar-item" href="#sdk-audit">Audit Methods</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">CLI Reference <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#cli-init">init</a>
+      <a class="sidebar-item" href="#cli-register">register-agent</a>
+      <a class="sidebar-item" href="#cli-list">list-agents</a>
+      <a class="sidebar-item" href="#cli-revoke">revoke</a>
+      <a class="sidebar-item" href="#cli-audit">audit</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">Security <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#security-tokens">Token Format</a>
+      <a class="sidebar-item" href="#security-validation">Validation Pipeline</a>
+      <a class="sidebar-item" href="#security-permissions">Permission Engine</a>
+      <a class="sidebar-item" href="#security-hash-chain">Hash Chain Integrity</a>
+      <a class="sidebar-item" href="#security-key-rotation">Key Rotation</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">Pricing <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#pricing">Plans</a>
+      <a class="sidebar-item" href="#pricing-faq">FAQ</a>
+    </div>
+  </div>
+
+</aside>
+
+<!-- ─── Main Content ─── -->
+<main class="main-content">
+<div class="content-inner">
+
+<!-- ════════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ════════════════════════════════════════════ -->
+<section class="hero" id="getting-started">
+  <h1>Get your agents authenticated<br>in 5 minutes</h1>
+  <p>Identity, permissions, and audit for AI agents. Drop-in SDK for any MCP server.</p>
+  <div class="hero-steps">
+    <div class="hero-step">
+      <div class="hero-step-number">1</div>
+      <h3>Install</h3>
+      <p>Add the SDK to your project with one command.</p>
+      <div class="hero-code">npm install @agentsid/sdk</div>
+    </div>
+    <div class="hero-step">
+      <div class="hero-step-number">2</div>
+      <h3>Init</h3>
+      <p>Create a project and get your API key.</p>
+      <div class="hero-code">npx agentsid init "My App"</div>
+    </div>
+    <div class="hero-step">
+      <div class="hero-step-number">3</div>
+      <h3>Protect</h3>
+      <p>Register agents and add middleware to your MCP server.</p>
+      <div class="hero-code">aid.registerAgent({...})</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- INSTALLATION -->
+<!-- ════════════════════════════════════════════ -->
+<section class="doc-section" id="installation">
+  <h2>Installation</h2>
+  <p>Choose your language and install the AgentsID SDK.</p>
+
+  <div class="code-block-wrapper has-tabs">
+    <div class="lang-tabs" data-tab-group="install">
+      <button class="lang-tab active" data-tab="typescript" onclick="switchInstallTab(this, 'typescript')">npm</button>
+      <button class="lang-tab" data-tab="python" onclick="switchInstallTab(this, 'python')">pip</button>
+      <button class="lang-tab" data-tab="ruby" onclick="switchInstallTab(this, 'ruby')">gem</button>
+      <button class="lang-tab" data-tab="java" onclick="switchInstallTab(this, 'java')">maven</button>
+    </div>
+    <pre id="install-typescript"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>npm install @agentsid/sdk</code></pre>
+    <pre id="install-python" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>pip install agentsid</code></pre>
+    <pre id="install-ruby" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>gem install agentsid</code></pre>
+    <pre id="install-java" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">&lt;dependency&gt;</span>
+  <span class="kw">&lt;groupId&gt;</span><span class="str">dev.agentsid</span><span class="kw">&lt;/groupId&gt;</span>
+  <span class="kw">&lt;artifactId&gt;</span><span class="str">agentsid-sdk</span><span class="kw">&lt;/artifactId&gt;</span>
+<span class="kw">&lt;/dependency&gt;</span></code></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- QUICK START -->
+<!-- ════════════════════════════════════════════ -->
+<section class="doc-section" id="quickstart">
+  <h2>Quick Start</h2>
+  <p>Follow these five steps to go from zero to fully protected MCP server.</p>
+
+  <h3>Step 1: Install the SDK</h3>
+  <p>See the <a href="#installation">Installation</a> section above for your language.</p>
+
+  <h3>Step 2: Create a project</h3>
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>npx agentsid init <span class="str">"My App"</span></code></pre>
+  <p>This creates a project and prints your API key. Store it securely -- you will not see it again.</p>
+
+  <h3>Step 3: Register an agent</h3>
+  <div class="code-block-wrapper has-tabs">
+    <div class="lang-tabs" data-tab-group="lang">
+      <button class="lang-tab active" data-lang="typescript" onclick="switchLang('typescript')">TypeScript</button>
+      <button class="lang-tab" data-lang="python" onclick="switchLang('python')">Python</button>
+      <button class="lang-tab" data-lang="ruby" onclick="switchLang('ruby')">Ruby</button>
+      <button class="lang-tab" data-lang="java" onclick="switchLang('java')">Java</button>
+    </div>
+    <pre class="lang-code lang-typescript"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">import</span> { AgentsID } <span class="kw">from</span> <span class="str">'@agentsid/sdk'</span>;
+
+<span class="kw">const</span> aid = <span class="kw">new</span> <span class="fn">AgentsID</span>({
+  projectKey: <span class="str">'aid_proj_...'</span>
+});
+
+<span class="kw">const</span> { agent, token } = <span class="kw">await</span> aid.<span class="fn">registerAgent</span>({
+  name: <span class="str">'research-assistant'</span>,
+  onBehalfOf: <span class="str">'user_abc'</span>,
+  permissions: [<span class="str">'search_memories'</span>, <span class="str">'save_memory'</span>],
+  ttlHours: <span class="num">24</span>
+});
+
+console.<span class="fn">log</span>(<span class="str">'Agent ID:'</span>, agent.id);
+console.<span class="fn">log</span>(<span class="str">'Token:'</span>, token);</code></pre>
+    <pre class="lang-code lang-python" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">from</span> agentsid <span class="kw">import</span> AgentsID
+
+aid = <span class="fn">AgentsID</span>(project_key=<span class="str">"aid_proj_..."</span>)
+
+agent = <span class="kw">await</span> aid.<span class="fn">register_agent</span>(
+    name=<span class="str">"research-assistant"</span>,
+    on_behalf_of=<span class="str">"user_abc"</span>,
+    permissions=[<span class="str">"search_memories"</span>, <span class="str">"save_memory"</span>],
+    ttl=<span class="str">"24h"</span>,
+)
+
+<span class="fn">print</span>(<span class="str">"Agent ID:"</span>, agent.id)
+<span class="fn">print</span>(<span class="str">"Token:"</span>, agent.token)</code></pre>
+    <pre class="lang-code lang-ruby" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">require</span> <span class="str">'agentsid'</span>
+
+aid = <span class="type">AgentsID</span>::<span class="type">Client</span>.<span class="fn">new</span>(project_key: <span class="str">'aid_proj_...'</span>)
+
+result = aid.<span class="fn">register_agent</span>(
+  name: <span class="str">'research-assistant'</span>,
+  on_behalf_of: <span class="str">'user_abc'</span>,
+  permissions: [<span class="str">'search_memories'</span>, <span class="str">'save_memory'</span>],
+  ttl_hours: <span class="num">24</span>
+)
+
+<span class="fn">puts</span> <span class="str">"Agent ID: </span>#{result.agent.id}<span class="str">"</span>
+<span class="fn">puts</span> <span class="str">"Token: </span>#{result.token}<span class="str">"</span></code></pre>
+    <pre class="lang-code lang-java" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">import</span> dev.agentsid.sdk.AgentsID;
+
+<span class="type">AgentsID</span> aid = <span class="kw">new</span> <span class="fn">AgentsID</span>(<span class="str">"aid_proj_..."</span>);
+
+<span class="type">RegisterResult</span> result = aid.<span class="fn">registerAgent</span>(
+    <span class="str">"research-assistant"</span>,
+    <span class="str">"user_abc"</span>,
+    <span class="type">List</span>.<span class="fn">of</span>(<span class="str">"search_memories"</span>, <span class="str">"save_memory"</span>),
+    <span class="num">24</span>
+);
+
+<span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Agent ID: "</span> + result.<span class="fn">getAgentId</span>());
+<span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Token: "</span> + result.<span class="fn">getToken</span>());</code></pre>
+  </div>
+
+  <h3>Step 4: Add middleware to your MCP server</h3>
+  <div class="code-block-wrapper has-tabs">
+    <div class="lang-tabs" data-tab-group="lang">
+      <button class="lang-tab active" data-lang="typescript" onclick="switchLang('typescript')">TypeScript</button>
+      <button class="lang-tab" data-lang="python" onclick="switchLang('python')">Python</button>
+      <button class="lang-tab" data-lang="ruby" onclick="switchLang('ruby')">Ruby</button>
+      <button class="lang-tab" data-lang="java" onclick="switchLang('java')">Java</button>
+    </div>
+    <pre class="lang-code lang-typescript"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">import</span> { agentsIdMiddleware } <span class="kw">from</span> <span class="str">'@agentsid/sdk/mcp'</span>;
+
+<span class="cmt">// Wrap your MCP server's tool handler</span>
+server.<span class="fn">use</span>(<span class="fn">agentsIdMiddleware</span>({
+  projectKey: <span class="str">'aid_proj_...'</span>,
+  <span class="cmt">// Extracts the agent token from the request context</span>
+  getToken: (req) =&gt; req.headers[<span class="str">'x-agent-token'</span>],
+}));
+
+<span class="cmt">// Every tool call is now validated:</span>
+<span class="cmt">// 1. Token signature verified</span>
+<span class="cmt">// 2. Permissions checked</span>
+<span class="cmt">// 3. Action logged to audit trail</span></code></pre>
+    <pre class="lang-code lang-python" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">from</span> agentsid.mcp <span class="kw">import</span> agentsid_middleware
+
+<span class="cmt"># Wrap your MCP server's tool handler</span>
+app.<span class="fn">add_middleware</span>(<span class="fn">agentsid_middleware</span>(
+    project_key=<span class="str">"aid_proj_..."</span>,
+    <span class="cmt"># Extracts the agent token from the request context</span>
+    get_token=<span class="kw">lambda</span> req: req.headers.<span class="fn">get</span>(<span class="str">"x-agent-token"</span>),
+))
+
+<span class="cmt"># Every tool call is now validated:</span>
+<span class="cmt"># 1. Token signature verified</span>
+<span class="cmt"># 2. Permissions checked</span>
+<span class="cmt"># 3. Action logged to audit trail</span></code></pre>
+    <pre class="lang-code lang-ruby" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">require</span> <span class="str">'agentsid/mcp'</span>
+
+<span class="cmt"># Wrap your MCP server's tool handler</span>
+use <span class="type">AgentsID</span>::<span class="type">MCP</span>::<span class="type">Middleware</span>,
+  project_key: <span class="str">'aid_proj_...'</span>,
+  get_token: -&gt;(req) { req.headers[<span class="str">'X-Agent-Token'</span>] }
+
+<span class="cmt"># Every tool call is now validated:</span>
+<span class="cmt"># 1. Token signature verified</span>
+<span class="cmt"># 2. Permissions checked</span>
+<span class="cmt"># 3. Action logged to audit trail</span></code></pre>
+    <pre class="lang-code lang-java" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">import</span> dev.agentsid.sdk.mcp.AgentsIdMiddleware;
+
+<span class="cmt">// Add middleware to your MCP server</span>
+server.<span class="fn">addMiddleware</span>(<span class="kw">new</span> <span class="fn">AgentsIdMiddleware</span>(
+    <span class="str">"aid_proj_..."</span>,
+    req -&gt; req.<span class="fn">getHeader</span>(<span class="str">"X-Agent-Token"</span>)
+));
+
+<span class="cmt">// Every tool call is now validated:</span>
+<span class="cmt">// 1. Token signature verified</span>
+<span class="cmt">// 2. Permissions checked</span>
+<span class="cmt">// 3. Action logged to audit trail</span></code></pre>
+  </div>
+
+  <h3>Step 5: Check the dashboard</h3>
+  <p>Open your <a href="/dashboard">AgentsID Dashboard</a> to see agents, permissions, and the real-time audit log. Every tool call your agents make is tracked and visible.</p>
+
+  <div class="callout">
+    <strong>That is it.</strong>
+    <p>Your agents now have verifiable identities, per-tool permissions, and a complete audit trail. Every action is traceable to a human.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- CORE CONCEPTS -->
+<!-- ════════════════════════════════════════════ -->
+
+<!-- Agent Identity -->
+<section class="doc-section" id="agent-identity">
+  <h2>Agent Identity</h2>
+  <p>Every agent gets a unique, verifiable identity backed by an HMAC-signed token. This is not a shared API key -- it is a specific identity for a specific agent instance, traceable to the human who authorized it.</p>
+
+  <div class="diagram">
+    <div class="diagram-flow">
+      <div class="diagram-node node-user">
+        <span class="node-label">Human</span>
+        user_abc
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node node-agent">
+        <span class="node-label">Agent</span>
+        research-assistant
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node node-token">
+        <span class="node-label">Token</span>
+        aid_tok_...
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node">
+        <span class="node-label">Validate</span>
+        HMAC-SHA256
+      </div>
+    </div>
+    <div class="diagram-caption">Agent tokens are self-validating -- signature verification requires no database call.</div>
+  </div>
+
+  <div class="code-block-wrapper has-tabs">
+    <div class="lang-tabs" data-tab-group="lang">
+      <button class="lang-tab active" data-lang="typescript" onclick="switchLang('typescript')">TypeScript</button>
+      <button class="lang-tab" data-lang="python" onclick="switchLang('python')">Python</button>
+      <button class="lang-tab" data-lang="ruby" onclick="switchLang('ruby')">Ruby</button>
+      <button class="lang-tab" data-lang="java" onclick="switchLang('java')">Java</button>
+    </div>
+    <pre class="lang-code lang-typescript"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">const</span> { agent, token } = <span class="kw">await</span> aid.<span class="fn">registerAgent</span>({
+  name: <span class="str">'research-assistant'</span>,
+  onBehalfOf: <span class="str">'user_abc'</span>,
+  permissions: [<span class="str">'search_memories'</span>, <span class="str">'save_memory'</span>],
+  ttlHours: <span class="num">24</span>,
+  metadata: { framework: <span class="str">'langchain'</span>, model: <span class="str">'claude-sonnet-4'</span> }
+});
+
+<span class="cmt">// agent.id = "agt_7x9k2mNpQ4rS1tUv"</span>
+<span class="cmt">// agent.status = "active"</span>
+<span class="cmt">// agent.expiresAt = "2026-03-26T14:30:00Z"</span></code></pre>
+    <pre class="lang-code lang-python" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>agent = <span class="kw">await</span> aid.<span class="fn">register_agent</span>(
+    name=<span class="str">"research-assistant"</span>,
+    on_behalf_of=<span class="str">"user_abc"</span>,
+    permissions=[<span class="str">"search_memories"</span>, <span class="str">"save_memory"</span>],
+    ttl=<span class="str">"24h"</span>,
+    metadata={<span class="str">"framework"</span>: <span class="str">"langchain"</span>, <span class="str">"model"</span>: <span class="str">"claude-sonnet-4"</span>}
+)
+
+<span class="cmt"># agent.id = "agt_7x9k2mNpQ4rS1tUv"</span>
+<span class="cmt"># agent.status = "active"</span>
+<span class="cmt"># agent.expires_at = "2026-03-26T14:30:00Z"</span></code></pre>
+    <pre class="lang-code lang-ruby" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>result = aid.<span class="fn">register_agent</span>(
+  name: <span class="str">'research-assistant'</span>,
+  on_behalf_of: <span class="str">'user_abc'</span>,
+  permissions: [<span class="str">'search_memories'</span>, <span class="str">'save_memory'</span>],
+  ttl_hours: <span class="num">24</span>,
+  metadata: { framework: <span class="str">'langchain'</span>, model: <span class="str">'claude-sonnet-4'</span> }
+)
+
+<span class="cmt"># result.agent.id = "agt_7x9k2mNpQ4rS1tUv"</span></code></pre>
+    <pre class="lang-code lang-java" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="type">RegisterResult</span> result = aid.<span class="fn">registerAgent</span>(
+    <span class="str">"research-assistant"</span>,
+    <span class="str">"user_abc"</span>,
+    <span class="type">List</span>.<span class="fn">of</span>(<span class="str">"search_memories"</span>, <span class="str">"save_memory"</span>),
+    <span class="num">24</span>,
+    <span class="type">Map</span>.<span class="fn">of</span>(<span class="str">"framework"</span>, <span class="str">"langchain"</span>)
+);
+
+<span class="cmt">// result.getAgentId() = "agt_7x9k2mNpQ4rS1tUv"</span></code></pre>
+  </div>
+</section>
+
+<!-- Permissions -->
+<section class="doc-section" id="permissions">
+  <h2>Permissions</h2>
+  <p>AgentsID uses a deny-first permission engine. If no rule explicitly allows an action, it is denied. Deny rules always take priority over allow rules.</p>
+
+  <div class="diagram">
+    <div class="diagram-flow">
+      <div class="diagram-node node-deny">
+        <span class="node-label">Step 1</span>
+        Check Deny Rules
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node node-allow">
+        <span class="node-label">Step 2</span>
+        Check Allow Rules
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node node-default">
+        <span class="node-label">Step 3</span>
+        Default Deny
+      </div>
+    </div>
+    <div class="diagram-caption">Deny rules are always evaluated first. If nothing explicitly allows, the action is denied.</div>
+  </div>
+
+  <h3>Pattern Matching</h3>
+  <p>Tool patterns support Unix-style wildcard matching. Use <code>*</code> to match any characters.</p>
+
+  <table>
+    <thead>
+      <tr><th>Pattern</th><th>Matches</th><th>Does Not Match</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>save_memory</code></td><td>save_memory</td><td>save_note, delete_memory</td></tr>
+      <tr><td><code>save_*</code></td><td>save_memory, save_note, save_file</td><td>delete_memory</td></tr>
+      <tr><td><code>*_memory</code></td><td>save_memory, delete_memory</td><td>save_note</td></tr>
+      <tr><td><code>*</code></td><td>Everything</td><td>(nothing excluded)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="code-block-wrapper has-tabs">
+    <div class="lang-tabs" data-tab-group="lang">
+      <button class="lang-tab active" data-lang="typescript" onclick="switchLang('typescript')">TypeScript</button>
+      <button class="lang-tab" data-lang="python" onclick="switchLang('python')">Python</button>
+      <button class="lang-tab" data-lang="ruby" onclick="switchLang('ruby')">Ruby</button>
+      <button class="lang-tab" data-lang="java" onclick="switchLang('java')">Java</button>
+    </div>
+    <pre class="lang-code lang-typescript"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">await</span> aid.<span class="fn">setPermissions</span>(agent.id, [
+  { toolPattern: <span class="str">'search_*'</span>,  action: <span class="str">'allow'</span> },
+  { toolPattern: <span class="str">'save_memory'</span>, action: <span class="str">'allow'</span>,
+    conditions: { category: [<span class="str">'note'</span>, <span class="str">'preference'</span>] } },
+  { toolPattern: <span class="str">'delete_*'</span>,  action: <span class="str">'deny'</span>, priority: <span class="num">10</span> },
+]);
+
+<span class="cmt">// Check a permission</span>
+<span class="kw">const</span> result = <span class="kw">await</span> aid.<span class="fn">checkPermission</span>(agent.id, <span class="str">'delete_memory'</span>);
+<span class="cmt">// result.allowed = false</span>
+<span class="cmt">// result.reason = "Denied by rule: delete_*"</span></code></pre>
+    <pre class="lang-code lang-python" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">await</span> aid.<span class="fn">set_permissions</span>(agent.id, [
+    {<span class="str">"tool_pattern"</span>: <span class="str">"search_*"</span>,  <span class="str">"action"</span>: <span class="str">"allow"</span>},
+    {<span class="str">"tool_pattern"</span>: <span class="str">"save_memory"</span>, <span class="str">"action"</span>: <span class="str">"allow"</span>,
+     <span class="str">"conditions"</span>: {<span class="str">"category"</span>: [<span class="str">"note"</span>, <span class="str">"preference"</span>]}},
+    {<span class="str">"tool_pattern"</span>: <span class="str">"delete_*"</span>,  <span class="str">"action"</span>: <span class="str">"deny"</span>, <span class="str">"priority"</span>: <span class="num">10</span>},
+])
+
+<span class="cmt"># Check a permission</span>
+result = <span class="kw">await</span> aid.<span class="fn">check_permission</span>(agent.id, <span class="str">"delete_memory"</span>)
+<span class="cmt"># result.allowed = False</span>
+<span class="cmt"># result.reason = "Denied by rule: delete_*"</span></code></pre>
+    <pre class="lang-code lang-ruby" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>aid.<span class="fn">set_permissions</span>(agent.id, [
+  { tool_pattern: <span class="str">'search_*'</span>,  action: <span class="str">'allow'</span> },
+  { tool_pattern: <span class="str">'save_memory'</span>, action: <span class="str">'allow'</span>,
+    conditions: { category: [<span class="str">'note'</span>, <span class="str">'preference'</span>] } },
+  { tool_pattern: <span class="str">'delete_*'</span>,  action: <span class="str">'deny'</span>, priority: <span class="num">10</span> },
+])
+
+<span class="cmt"># Check a permission</span>
+result = aid.<span class="fn">check_permission</span>(agent.id, <span class="str">'delete_memory'</span>)
+<span class="cmt"># result.allowed = false</span></code></pre>
+    <pre class="lang-code lang-java" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>aid.<span class="fn">setPermissions</span>(agentId, <span class="type">List</span>.<span class="fn">of</span>(
+    <span class="kw">new</span> <span class="type">Rule</span>(<span class="str">"search_*"</span>,  <span class="str">"allow"</span>),
+    <span class="kw">new</span> <span class="type">Rule</span>(<span class="str">"save_memory"</span>, <span class="str">"allow"</span>,
+        <span class="type">Map</span>.<span class="fn">of</span>(<span class="str">"category"</span>, <span class="type">List</span>.<span class="fn">of</span>(<span class="str">"note"</span>, <span class="str">"preference"</span>))),
+    <span class="kw">new</span> <span class="type">Rule</span>(<span class="str">"delete_*"</span>,  <span class="str">"deny"</span>, <span class="num">10</span>)
+));
+
+<span class="cmt">// Check a permission</span>
+<span class="type">CheckResult</span> result = aid.<span class="fn">checkPermission</span>(agentId, <span class="str">"delete_memory"</span>);
+<span class="cmt">// result.isAllowed() = false</span></code></pre>
+  </div>
+</section>
+
+<!-- Advanced Permission Controls -->
+<section class="doc-section" id="advanced-permissions">
+  <h2>Advanced Permission Controls</h2>
+  <p>Permission rules support optional advanced fields for fine-grained control beyond simple allow/deny. These fields are set via the <a href="#api-set-permissions">Set Permissions</a> endpoint.</p>
+
+  <h3>Resource Scoping</h3>
+  <p>Use the <code>conditions</code> field to constrain which parameters a tool call can use. All conditions must match (AND logic). Values can be a single value or a list of allowed values.</p>
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"tool_pattern"</span>: <span class="str">"save_memory"</span>,
+  <span class="str">"action"</span>: <span class="str">"allow"</span>,
+  <span class="str">"conditions"</span>: { <span class="str">"category"</span>: [<span class="str">"note"</span>, <span class="str">"preference"</span>] }
+}</code></pre>
+
+  <h3>Time-based Permissions</h3>
+  <p>Use the <code>schedule</code> field to restrict a rule to specific hours and days. If the current time is outside the window, the rule is skipped during evaluation.</p>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>hours_start</code></td><td>integer</td><td>Start hour, inclusive (0-23)</td></tr>
+      <tr><td><code>hours_end</code></td><td>integer</td><td>End hour, exclusive (0-24)</td></tr>
+      <tr><td><code>timezone</code></td><td>string</td><td>IANA timezone name (default: <code>UTC</code>)</td></tr>
+      <tr><td><code>days</code></td><td>string[]</td><td>Days of week: <code>mon</code>, <code>tue</code>, <code>wed</code>, <code>thu</code>, <code>fri</code>, <code>sat</code>, <code>sun</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Rate Limiting</h3>
+  <p>Apply a sliding-window rate limit to an allow rule using the <code>rate_limit</code> field. When exceeded, the check returns <code>allowed: false</code> with a rate limit reason.</p>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>max</code></td><td>integer</td><td>Maximum calls in window (1-100,000)</td></tr>
+      <tr><td><code>per</code></td><td>string</td><td>Window size: <code>second</code>, <code>minute</code>, <code>hour</code>, or <code>day</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Data Classification</h3>
+  <p>Use the <code>data_level</code> field to restrict which classification levels a tool can access. Valid levels: <code>public</code>, <code>internal</code>, <code>confidential</code>. If the tool call does not include a <code>data_level</code> parameter, the check passes regardless.</p>
+
+  <h3>Approval Gates</h3>
+  <p>Set <code>requires_approval: true</code> to hold matching actions for human review. The permission check returns <code>pending_approval: true</code> instead of <code>allowed: true</code>. Use the <a href="#api-list-approvals">Approvals</a> endpoints to approve or reject.</p>
+
+  <h3>Combined Example</h3>
+  <p>A single rule can combine all advanced fields:</p>
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"tool_pattern"</span>: <span class="str">"transfer_funds"</span>,
+  <span class="str">"action"</span>: <span class="str">"allow"</span>,
+  <span class="str">"conditions"</span>: { <span class="str">"currency"</span>: [<span class="str">"USD"</span>, <span class="str">"EUR"</span>] },
+  <span class="str">"schedule"</span>: {
+    <span class="str">"hours_start"</span>: <span class="num">9</span>,
+    <span class="str">"hours_end"</span>: <span class="num">17</span>,
+    <span class="str">"timezone"</span>: <span class="str">"US/Eastern"</span>,
+    <span class="str">"days"</span>: [<span class="str">"mon"</span>, <span class="str">"tue"</span>, <span class="str">"wed"</span>, <span class="str">"thu"</span>, <span class="str">"fri"</span>]
+  },
+  <span class="str">"rate_limit"</span>: { <span class="str">"max"</span>: <span class="num">5</span>, <span class="str">"per"</span>: <span class="str">"hour"</span> },
+  <span class="str">"data_level"</span>: [<span class="str">"confidential"</span>],
+  <span class="str">"requires_approval"</span>: <span class="kw">true</span>,
+  <span class="str">"priority"</span>: <span class="num">100</span>
+}</code></pre>
+
+  <div class="callout callout-info">
+    <strong>Evaluation order.</strong>
+    <p>Advanced fields are evaluated after pattern matching: schedule is checked first, then rate limit, then data level, then approval gate. If any check fails, the rule does not apply.</p>
+  </div>
+</section>
+
+<!-- Delegation Chains -->
+<section class="doc-section" id="delegation">
+  <h2>Delegation Chains</h2>
+  <p>Every agent action is traceable to a human. When agents delegate to sub-agents, permissions can only narrow at each hop -- they can never expand.</p>
+
+  <div class="diagram">
+    <div class="diagram-flow">
+      <div class="diagram-node node-user">
+        <span class="node-label">Human</span>
+        user_abc<br><small style="color:var(--text-dim);font-size:0.7rem">read, write, delete</small>
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node node-agent">
+        <span class="node-label">Agent A</span>
+        coordinator<br><small style="color:var(--text-dim);font-size:0.7rem">read, write</small>
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node node-agent">
+        <span class="node-label">Agent B</span>
+        sub-researcher<br><small style="color:var(--text-dim);font-size:0.7rem">read</small>
+      </div>
+    </div>
+    <div class="diagram-caption">Permissions narrow at each delegation hop. Agent B cannot receive "write" because Agent A chose not to delegate it.</div>
+  </div>
+
+  <div class="code-block-wrapper has-tabs">
+    <div class="lang-tabs" data-tab-group="lang">
+      <button class="lang-tab active" data-lang="typescript" onclick="switchLang('typescript')">TypeScript</button>
+      <button class="lang-tab" data-lang="python" onclick="switchLang('python')">Python</button>
+      <button class="lang-tab" data-lang="ruby" onclick="switchLang('ruby')">Ruby</button>
+      <button class="lang-tab" data-lang="java" onclick="switchLang('java')">Java</button>
+    </div>
+    <pre class="lang-code lang-typescript"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="cmt">// Parent agent delegates to a child with narrowed permissions</span>
+<span class="kw">const</span> child = <span class="kw">await</span> aid.<span class="fn">delegate</span>({
+  parentAgentId: <span class="str">'agt_7x9k2mNpQ4rS1tUv'</span>,
+  parentToken: <span class="str">'aid_tok_...'</span>,
+  childName: <span class="str">'sub-researcher'</span>,
+  childPermissions: [<span class="str">'search_memories'</span>], <span class="cmt">// subset of parent's</span>
+  ttlHours: <span class="num">12</span>
+});
+
+<span class="cmt">// child.agent.id = "agt_newChildId"</span>
+<span class="cmt">// child.token = "aid_tok_childToken..."</span></code></pre>
+    <pre class="lang-code lang-python" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="cmt"># Parent agent delegates to a child with narrowed permissions</span>
+child = <span class="kw">await</span> aid.<span class="fn">delegate</span>(
+    parent_agent_id=<span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    parent_token=<span class="str">"aid_tok_..."</span>,
+    child_name=<span class="str">"sub-researcher"</span>,
+    child_permissions=[<span class="str">"search_memories"</span>],  <span class="cmt"># subset of parent's</span>
+    ttl_hours=<span class="num">12</span>,
+)
+
+<span class="cmt"># child.agent.id = "agt_newChildId"</span>
+<span class="cmt"># child.token = "aid_tok_childToken..."</span></code></pre>
+    <pre class="lang-code lang-ruby" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="cmt"># Parent agent delegates to a child with narrowed permissions</span>
+child = aid.<span class="fn">delegate</span>(
+  parent_agent_id: <span class="str">'agt_7x9k2mNpQ4rS1tUv'</span>,
+  parent_token: <span class="str">'aid_tok_...'</span>,
+  child_name: <span class="str">'sub-researcher'</span>,
+  child_permissions: [<span class="str">'search_memories'</span>],
+  ttl_hours: <span class="num">12</span>
+)</code></pre>
+    <pre class="lang-code lang-java" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="type">DelegateResult</span> child = aid.<span class="fn">delegate</span>(
+    <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    <span class="str">"aid_tok_..."</span>,
+    <span class="str">"sub-researcher"</span>,
+    <span class="type">List</span>.<span class="fn">of</span>(<span class="str">"search_memories"</span>),
+    <span class="num">12</span>
+);</code></pre>
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>Scope narrowing is enforced server-side.</strong>
+    <p>If a child requests a permission the parent does not have, the delegation is rejected with HTTP 403.</p>
+  </div>
+</section>
+
+<!-- Audit Trail -->
+<section class="doc-section" id="audit-trail">
+  <h2>Audit Trail</h2>
+  <p>Every token validation and permission check is recorded in an append-only audit log. The log is cryptographically chained using SHA-256, making tampering detectable.</p>
+
+  <div class="audit-entries">
+    <div class="audit-entry allow-entry">
+      <span class="audit-action action-allow">ALLOW</span>
+      <span class="audit-tool">search_memories</span>
+      <span class="audit-agent">agt_7x9k...Q4rS</span>
+      <span class="audit-time">14:35:00</span>
+    </div>
+    <div class="audit-entry allow-entry">
+      <span class="audit-action action-allow">ALLOW</span>
+      <span class="audit-tool">save_memory</span>
+      <span class="audit-agent">agt_7x9k...Q4rS</span>
+      <span class="audit-time">14:35:12</span>
+    </div>
+    <div class="audit-entry deny-entry">
+      <span class="audit-action action-deny">DENY</span>
+      <span class="audit-tool">delete_memory</span>
+      <span class="audit-agent">agt_7x9k...Q4rS</span>
+      <span class="audit-time">14:35:28</span>
+    </div>
+    <div class="audit-entry allow-entry">
+      <span class="audit-action action-allow">ALLOW</span>
+      <span class="audit-tool">list_categories</span>
+      <span class="audit-agent">agt_abc1...f456</span>
+      <span class="audit-time">14:36:01</span>
+    </div>
+    <div class="audit-entry deny-entry">
+      <span class="audit-action action-deny">DENY</span>
+      <span class="audit-tool">save_memory</span>
+      <span class="audit-agent">agt_abc1...f456</span>
+      <span class="audit-time">14:36:15</span>
+    </div>
+  </div>
+
+  <div class="code-block-wrapper has-tabs">
+    <div class="lang-tabs" data-tab-group="lang">
+      <button class="lang-tab active" data-lang="typescript" onclick="switchLang('typescript')">TypeScript</button>
+      <button class="lang-tab" data-lang="python" onclick="switchLang('python')">Python</button>
+      <button class="lang-tab" data-lang="ruby" onclick="switchLang('ruby')">Ruby</button>
+      <button class="lang-tab" data-lang="java" onclick="switchLang('java')">Java</button>
+    </div>
+    <pre class="lang-code lang-typescript"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="cmt">// Query audit log for a specific agent</span>
+<span class="kw">const</span> logs = <span class="kw">await</span> aid.<span class="fn">getAuditLog</span>({
+  agentId: <span class="str">'agt_7x9k2mNpQ4rS1tUv'</span>,
+  action: <span class="str">'deny'</span>,
+  since: <span class="str">'2026-03-25T00:00:00Z'</span>,
+  limit: <span class="num">50</span>
+});
+
+<span class="cmt">// Get aggregate stats</span>
+<span class="kw">const</span> stats = <span class="kw">await</span> aid.<span class="fn">getAuditStats</span>({ days: <span class="num">7</span> });
+<span class="cmt">// stats.totalEvents = 1523</span>
+<span class="cmt">// stats.denyRatePct = 8.1</span>
+
+<span class="cmt">// Verify chain integrity</span>
+<span class="kw">const</span> verification = <span class="kw">await</span> aid.<span class="fn">verifyAuditChain</span>();
+<span class="cmt">// verification.verified = true</span></code></pre>
+    <pre class="lang-code lang-python" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="cmt"># Query audit log for a specific agent</span>
+logs = <span class="kw">await</span> aid.<span class="fn">get_audit_log</span>(
+    agent_id=<span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    action=<span class="str">"deny"</span>,
+    since=<span class="str">"2026-03-25"</span>,
+    limit=<span class="num">50</span>
+)
+
+<span class="cmt"># Get aggregate stats</span>
+stats = <span class="kw">await</span> aid.<span class="fn">get_audit_stats</span>(days=<span class="num">7</span>)
+<span class="cmt"># stats.total_events = 1523</span>
+<span class="cmt"># stats.deny_rate_pct = 8.1</span>
+
+<span class="cmt"># Verify chain integrity</span>
+verification = <span class="kw">await</span> aid.<span class="fn">verify_audit_chain</span>()
+<span class="cmt"># verification.verified = True</span></code></pre>
+    <pre class="lang-code lang-ruby" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="cmt"># Query audit log for a specific agent</span>
+logs = aid.<span class="fn">get_audit_log</span>(
+  agent_id: <span class="str">'agt_7x9k2mNpQ4rS1tUv'</span>,
+  action: <span class="str">'deny'</span>,
+  since: <span class="str">'2026-03-25'</span>,
+  limit: <span class="num">50</span>
+)
+
+<span class="cmt"># Get aggregate stats</span>
+stats = aid.<span class="fn">get_audit_stats</span>(days: <span class="num">7</span>)
+
+<span class="cmt"># Verify chain integrity</span>
+verification = aid.<span class="fn">verify_audit_chain</span></code></pre>
+    <pre class="lang-code lang-java" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="cmt">// Query audit log for a specific agent</span>
+<span class="type">AuditLog</span> logs = aid.<span class="fn">getAuditLog</span>(
+    <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    <span class="str">"deny"</span>,
+    <span class="str">"2026-03-25T00:00:00Z"</span>,
+    <span class="num">50</span>
+);
+
+<span class="cmt">// Get aggregate stats</span>
+<span class="type">AuditStats</span> stats = aid.<span class="fn">getAuditStats</span>(<span class="num">7</span>);
+
+<span class="cmt">// Verify chain integrity</span>
+<span class="type">VerifyResult</span> v = aid.<span class="fn">verifyAuditChain</span>();</code></pre>
+  </div>
+
+  <h3>Hash Chain Integrity</h3>
+  <div class="diagram">
+    <div class="diagram-flow">
+      <div class="diagram-node" style="border-color:var(--text-dim)">
+        <span class="node-label">Entry 1</span>
+        hash(genesis + data)
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node" style="border-color:var(--text-dim)">
+        <span class="node-label">Entry 2</span>
+        hash(prev + data)
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node" style="border-color:var(--text-dim)">
+        <span class="node-label">Entry 3</span>
+        hash(prev + data)
+      </div>
+      <div class="diagram-arrow">&#8594;</div>
+      <div class="diagram-node" style="border-color:var(--text-dim)">
+        <span class="node-label">Entry N</span>
+        hash(prev + data)
+      </div>
+    </div>
+    <div class="diagram-caption">Each entry's hash covers the previous entry's hash, forming a tamper-evident chain. Modifying any entry breaks all subsequent hashes.</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- API REFERENCE -->
+<!-- ════════════════════════════════════════════ -->
+<section class="doc-section" id="api-reference">
+  <h2>API Reference</h2>
+  <p>Base URL: <code>https://api.agentsid.dev/api/v1</code> (hosted) or <code>http://localhost:8000/api/v1</code> (self-hosted).</p>
+  <p>All endpoints (except project creation and health) require a project API key in the <code>Authorization</code> header:</p>
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>Authorization: Bearer aid_proj_&lt;your_project_key&gt;</code></pre>
+
+  <h3>Projects</h3>
+
+  <!-- Create Project -->
+  <div class="endpoint-card" id="api-projects">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/projects/</span>
+      <span class="endpoint-desc">Create a new project and receive an API key</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p><strong>Rate limit:</strong> 5 requests per minute per IP. No authentication required.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>string</td><td>Yes</td><td>Project name (1-255 characters)</td></tr>
+          <tr><td><code>email</code></td><td>string</td><td>No</td><td>Owner email address</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>201 Created</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"project"</span>: {
+    <span class="str">"id"</span>: <span class="str">"proj_a1b2c3d4e5f6"</span>,
+    <span class="str">"name"</span>: <span class="str">"my-app"</span>,
+    <span class="str">"plan"</span>: <span class="str">"free"</span>,
+    <span class="str">"created_at"</span>: <span class="str">"2026-03-25 14:30:00+00:00"</span>
+  },
+  <span class="str">"api_key"</span>: <span class="str">"aid_proj_xR7kM2pQ9..."</span>
+}</code></pre>
+      <div class="callout callout-warn">
+        <strong>Store the api_key securely.</strong>
+        <p>The API key is shown once and cannot be retrieved again.</p>
+      </div>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST https://api.agentsid.dev/api/v1/projects/ \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"name": "my-app", "email": "dev@example.com"}'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>422</code></td><td>Invalid name or email format</td></tr>
+          <tr><td><code>429</code></td><td>Rate limit exceeded</td></tr>
+        </tbody>
+      </table>
+
+      <div class="try-it-panel">
+        <h4>Try It</h4>
+        <div class="try-it-field">
+          <label>Project Name</label>
+          <input type="text" id="tryit-project-name" placeholder="my-app" value="my-test-project">
+        </div>
+        <div class="try-it-field">
+          <label>Email (optional)</label>
+          <input type="text" id="tryit-project-email" placeholder="dev@example.com">
+        </div>
+        <button class="try-it-run" onclick="tryCreateProject()">Run Request</button>
+        <div class="try-it-response" id="tryit-project-response"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Agents</h3>
+
+  <!-- Register Agent -->
+  <div class="endpoint-card" id="api-register-agent">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/agents/</span>
+      <span class="endpoint-desc">Register a new agent identity</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Create a new agent identity, issue its first token, set up delegation chain and permission rules.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>string</td><td>Yes</td><td>Agent name (1-255 characters)</td></tr>
+          <tr><td><code>on_behalf_of</code></td><td>string</td><td>Yes</td><td>Human user ID who authorized this agent</td></tr>
+          <tr><td><code>permissions</code></td><td>string[]</td><td>No</td><td>Tool patterns to allow (max 100). Default: none.</td></tr>
+          <tr><td><code>ttl_hours</code></td><td>integer</td><td>No</td><td>Token lifetime in hours (1-720)</td></tr>
+          <tr><td><code>metadata</code></td><td>object</td><td>No</td><td>Arbitrary key-value pairs (max 10KB)</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>201 Created</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"agent"</span>: {
+    <span class="str">"id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    <span class="str">"name"</span>: <span class="str">"research-assistant"</span>,
+    <span class="str">"status"</span>: <span class="str">"active"</span>,
+    <span class="str">"created_by"</span>: <span class="str">"user_abc"</span>,
+    <span class="str">"expires_at"</span>: <span class="str">"2026-03-26 14:30:00+00:00"</span>,
+    <span class="str">"created_at"</span>: <span class="str">"2026-03-25 14:30:00+00:00"</span>
+  },
+  <span class="str">"token"</span>: <span class="str">"aid_tok_eyJzdWIiOiJhZ3RfN3g5azJt..."</span>,
+  <span class="str">"token_id"</span>: <span class="str">"tok_a1b2c3d4e5f6"</span>,
+  <span class="str">"expires_at"</span>: <span class="str">"2026-03-26 14:30:00+00:00"</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST https://api.agentsid.dev/api/v1/agents/ \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "research-assistant",
+    "on_behalf_of": "user_abc",
+    "permissions": ["search_memories", "save_memory"],
+    "ttl_hours": 24
+  }'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>422</code></td><td>Validation error (name too long, ttl out of range, metadata over 10KB)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="try-it-panel">
+        <h4>Try It</h4>
+        <div class="try-it-field">
+          <label>API Key</label>
+          <input type="text" id="tryit-register-key" placeholder="aid_proj_...">
+        </div>
+        <div class="try-it-field">
+          <label>Request Body</label>
+          <textarea id="tryit-register-body">{
+  "name": "test-agent",
+  "on_behalf_of": "user_123",
+  "permissions": ["search_*"],
+  "ttl_hours": 24
+}</textarea>
+        </div>
+        <button class="try-it-run" onclick="tryRegisterAgent()">Run Request</button>
+        <div class="try-it-response" id="tryit-register-response"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- List Agents -->
+  <div class="endpoint-card" id="api-list-agents">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/agents/</span>
+      <span class="endpoint-desc">List all agents in the project</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Query Parameters</h4>
+      <table>
+        <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>status</code></td><td>string</td><td>(all)</td><td>Filter by: <code>active</code>, <code>revoked</code>, <code>expired</code></td></tr>
+          <tr><td><code>limit</code></td><td>integer</td><td>50</td><td>Results per page (1-200)</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>[
+  {
+    <span class="str">"id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    <span class="str">"name"</span>: <span class="str">"research-assistant"</span>,
+    <span class="str">"project_id"</span>: <span class="str">"proj_a1b2c3d4e5f6"</span>,
+    <span class="str">"created_by"</span>: <span class="str">"user_abc"</span>,
+    <span class="str">"status"</span>: <span class="str">"active"</span>,
+    <span class="str">"expires_at"</span>: <span class="str">"2026-03-26 14:30:00+00:00"</span>,
+    <span class="str">"metadata"</span>: {<span class="str">"framework"</span>: <span class="str">"langchain"</span>},
+    <span class="str">"created_at"</span>: <span class="str">"2026-03-25 14:30:00+00:00"</span>,
+    <span class="str">"revoked_at"</span>: <span class="kw">null</span>
+  }
+]</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl <span class="str">"https://api.agentsid.dev/api/v1/agents/?status=active&limit=10"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody><tr><td><code>401</code></td><td>Invalid or missing API key</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Get Agent -->
+  <div class="endpoint-card" id="api-get-agent">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/agents/{agent_id}</span>
+      <span class="endpoint-desc">Get details for a specific agent</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+  <span class="str">"name"</span>: <span class="str">"research-assistant"</span>,
+  <span class="str">"project_id"</span>: <span class="str">"proj_a1b2c3d4e5f6"</span>,
+  <span class="str">"created_by"</span>: <span class="str">"user_abc"</span>,
+  <span class="str">"status"</span>: <span class="str">"active"</span>,
+  <span class="str">"expires_at"</span>: <span class="str">"2026-03-26 14:30:00+00:00"</span>,
+  <span class="str">"metadata"</span>: {<span class="str">"framework"</span>: <span class="str">"langchain"</span>},
+  <span class="str">"created_at"</span>: <span class="str">"2026-03-25 14:30:00+00:00"</span>,
+  <span class="str">"revoked_at"</span>: <span class="kw">null</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl https://api.agentsid.dev/api/v1/agents/agt_7x9k2mNpQ4rS1tUv \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Agent not found or does not belong to this project</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Update Agent -->
+  <div class="endpoint-card" id="api-update-agent">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-patch">PATCH</span>
+      <span class="endpoint-path">/api/v1/agents/{agent_id}</span>
+      <span class="endpoint-desc">Update agent name or metadata</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Update an agent's name or metadata. Does not affect tokens or permissions.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>string</td><td>No</td><td>New agent name (1-255 characters)</td></tr>
+          <tr><td><code>metadata</code></td><td>object</td><td>No</td><td>Replace metadata (max 10KB JSON)</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+  <span class="str">"name"</span>: <span class="str">"updated-agent-name"</span>,
+  <span class="str">"project_id"</span>: <span class="str">"proj_a1b2c3d4e5f6"</span>,
+  <span class="str">"status"</span>: <span class="str">"active"</span>,
+  <span class="str">"metadata"</span>: {<span class="str">"version"</span>: <span class="str">"2.0"</span>},
+  <span class="str">"created_at"</span>: <span class="str">"2026-03-25 14:30:00+00:00"</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X PATCH https://api.agentsid.dev/api/v1/agents/agt_7x9k2mNpQ4rS1tUv \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"name": "updated-agent-name"}'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Agent not found</td></tr>
+          <tr><td><code>422</code></td><td>Validation error</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Refresh Token -->
+  <div class="endpoint-card" id="api-refresh-token">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/agents/{agent_id}/refresh</span>
+      <span class="endpoint-desc">Issue a new token, revoking all previous tokens</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Request Body (optional)</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>ttl_hours</code></td><td>integer</td><td>No</td><td>New token lifetime in hours (1-720)</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"agent_id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+  <span class="str">"token"</span>: <span class="str">"aid_tok_newtoken..."</span>,
+  <span class="str">"token_id"</span>: <span class="str">"tok_f6e5d4c3b2a1"</span>,
+  <span class="str">"expires_at"</span>: <span class="str">"2026-03-27 14:30:00+00:00"</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST https://api.agentsid.dev/api/v1/agents/agt_7x9k2mNpQ4rS1tUv/refresh \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"ttl_hours": 48}'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Agent not found or revoked</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Delegate -->
+  <div class="endpoint-card" id="api-delegate">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/agents/delegate</span>
+      <span class="endpoint-desc">Create a child agent with narrowed permissions</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>The parent agent's token is validated and child permissions must be a subset of the parent's permissions.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>parent_agent_id</code></td><td>string</td><td>Yes</td><td>ID of the parent agent</td></tr>
+          <tr><td><code>parent_token</code></td><td>string</td><td>Yes</td><td>Valid token belonging to the parent</td></tr>
+          <tr><td><code>child_name</code></td><td>string</td><td>Yes</td><td>Name for the child agent</td></tr>
+          <tr><td><code>child_permissions</code></td><td>string[]</td><td>Yes</td><td>Permissions (must be subset of parent's)</td></tr>
+          <tr><td><code>ttl_hours</code></td><td>integer</td><td>No</td><td>Token lifetime in hours (1-720)</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>201 Created</code></h4>
+      <p>Same response format as Register Agent.</p>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST https://api.agentsid.dev/api/v1/agents/delegate \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "parent_agent_id": "agt_7x9k2mNpQ4rS1tUv",
+    "parent_token": "aid_tok_eyJzdWIiOi...",
+    "child_name": "sub-researcher",
+    "child_permissions": ["search_memories"],
+    "ttl_hours": 12
+  }'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>403</code></td><td>Permission scope violation -- child permissions exceed parent's scope</td></tr>
+          <tr><td><code>404</code></td><td>Parent agent not found</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Revoke Agent -->
+  <div class="endpoint-card" id="api-revoke-agent">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-delete">DELETE</span>
+      <span class="endpoint-path">/api/v1/agents/{agent_id}</span>
+      <span class="endpoint-desc">Permanently revoke an agent</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>All tokens are immediately invalidated. This action cannot be undone.</p>
+      <h4>Response <code>204 No Content</code></h4>
+      <p>No response body.</p>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X DELETE https://api.agentsid.dev/api/v1/agents/agt_7x9k2mNpQ4rS1tUv \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Agent not found</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3>Permissions</h3>
+
+  <!-- Set Permissions -->
+  <div class="endpoint-card" id="api-set-permissions">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-put">PUT</span>
+      <span class="endpoint-path">/api/v1/agents/{agent_id}/permissions</span>
+      <span class="endpoint-desc">Replace all permission rules for an agent</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Any existing rules are deleted and replaced with the provided set.</p>
+      <h4>Request Body (array of rule objects)</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>tool_pattern</code></td><td>string</td><td>Yes</td><td>Tool name or wildcard pattern. Supports <code>*</code> wildcards.</td></tr>
+          <tr><td><code>action</code></td><td>string</td><td>No</td><td><code>allow</code> or <code>deny</code>. Defaults to <code>allow</code>.</td></tr>
+          <tr><td><code>conditions</code></td><td>object</td><td>No</td><td>Key-value constraints on tool parameters (AND logic).</td></tr>
+          <tr><td><code>priority</code></td><td>integer</td><td>No</td><td>Rule priority (0-1000). Higher = evaluated first.</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"agent_id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+  <span class="str">"rules"</span>: [
+    {<span class="str">"tool_pattern"</span>: <span class="str">"search_memories"</span>, <span class="str">"action"</span>: <span class="str">"allow"</span>, <span class="str">"conditions"</span>: <span class="kw">null</span>, <span class="str">"priority"</span>: <span class="num">0</span>},
+    {<span class="str">"tool_pattern"</span>: <span class="str">"save_memory"</span>, <span class="str">"action"</span>: <span class="str">"allow"</span>,
+     <span class="str">"conditions"</span>: {<span class="str">"category"</span>: [<span class="str">"note"</span>, <span class="str">"preference"</span>]}, <span class="str">"priority"</span>: <span class="num">1</span>},
+    {<span class="str">"tool_pattern"</span>: <span class="str">"delete_*"</span>, <span class="str">"action"</span>: <span class="str">"deny"</span>, <span class="str">"conditions"</span>: <span class="kw">null</span>, <span class="str">"priority"</span>: <span class="num">10</span>}
+  ]
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X PUT https://api.agentsid.dev/api/v1/agents/agt_7x9k2mNpQ4rS1tUv/permissions \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'[
+    {"tool_pattern": "search_*", "action": "allow"},
+    {"tool_pattern": "delete_*", "action": "deny", "priority": 10}
+  ]'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Agent not found</td></tr>
+          <tr><td><code>422</code></td><td>Validation error (invalid action, pattern too long)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Get Permissions -->
+  <div class="endpoint-card" id="api-get-permissions">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/agents/{agent_id}/permissions</span>
+      <span class="endpoint-desc">Get current permission rules for an agent</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Returns rules ordered by priority (highest first).</p>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"agent_id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+  <span class="str">"rules"</span>: [
+    {<span class="str">"tool_pattern"</span>: <span class="str">"delete_*"</span>, <span class="str">"action"</span>: <span class="str">"deny"</span>, <span class="str">"priority"</span>: <span class="num">10</span>},
+    {<span class="str">"tool_pattern"</span>: <span class="str">"save_memory"</span>, <span class="str">"action"</span>: <span class="str">"allow"</span>, <span class="str">"priority"</span>: <span class="num">1</span>},
+    {<span class="str">"tool_pattern"</span>: <span class="str">"search_memories"</span>, <span class="str">"action"</span>: <span class="str">"allow"</span>, <span class="str">"priority"</span>: <span class="num">0</span>}
+  ]
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl https://api.agentsid.dev/api/v1/agents/agt_7x9k2mNpQ4rS1tUv/permissions \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Agent not found</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Check Permission -->
+  <div class="endpoint-card" id="api-check-permission">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/check</span>
+      <span class="endpoint-desc">Check if an agent can call a specific tool</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Does not log to the audit trail. Use <code>/validate</code> for audited checks.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>agent_id</code></td><td>string</td><td>Yes</td><td>Agent ID to check</td></tr>
+          <tr><td><code>tool</code></td><td>string</td><td>Yes</td><td>Tool name to check</td></tr>
+          <tr><td><code>params</code></td><td>object</td><td>No</td><td>Tool parameters for condition evaluation</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code> (allowed)</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"allowed"</span>: <span class="kw">true</span>,
+  <span class="str">"reason"</span>: <span class="str">"Allowed by rule: save_memory"</span>,
+  <span class="str">"matched_rule"</span>: {
+    <span class="str">"tool_pattern"</span>: <span class="str">"save_memory"</span>,
+    <span class="str">"action"</span>: <span class="str">"allow"</span>
+  }
+}</code></pre>
+      <h4>Response <code>200 OK</code> (denied)</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"allowed"</span>: <span class="kw">false</span>,
+  <span class="str">"reason"</span>: <span class="str">"No matching rule -- default deny"</span>,
+  <span class="str">"matched_rule"</span>: <span class="kw">null</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST https://api.agentsid.dev/api/v1/check \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"agent_id": "agt_7x9k2mNpQ4rS1tUv", "tool": "delete_memory"}'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Agent not found</td></tr>
+          <tr><td><code>422</code></td><td>Validation error</td></tr>
+        </tbody>
+      </table>
+
+      <div class="try-it-panel">
+        <h4>Try It</h4>
+        <div class="try-it-field">
+          <label>API Key</label>
+          <input type="text" id="tryit-check-key" placeholder="aid_proj_...">
+        </div>
+        <div class="try-it-field">
+          <label>Agent ID</label>
+          <input type="text" id="tryit-check-agent" placeholder="agt_...">
+        </div>
+        <div class="try-it-field">
+          <label>Tool Name</label>
+          <input type="text" id="tryit-check-tool" placeholder="delete_memory" value="delete_memory">
+        </div>
+        <button class="try-it-run" onclick="tryCheckPermission()">Run Request</button>
+        <div class="try-it-response" id="tryit-check-response"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Validation</h3>
+
+  <!-- Validate Token -->
+  <div class="endpoint-card" id="api-validate">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/validate</span>
+      <span class="endpoint-desc">Validate an agent token and optionally check permission</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Validates signature, expiry, and revocation status. Every call is logged to the audit trail.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>token</code></td><td>string</td><td>Yes</td><td>Agent token to validate (max 5000 chars)</td></tr>
+          <tr><td><code>tool</code></td><td>string</td><td>No</td><td>Tool name to check permission for</td></tr>
+          <tr><td><code>params</code></td><td>object</td><td>No</td><td>Tool parameters for condition evaluation</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code> (valid, tool allowed)</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"valid"</span>: <span class="kw">true</span>,
+  <span class="str">"agent_id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+  <span class="str">"project_id"</span>: <span class="str">"proj_a1b2c3d4e5f6"</span>,
+  <span class="str">"delegated_by"</span>: <span class="str">"user_abc"</span>,
+  <span class="str">"expires_at"</span>: <span class="num">1711411200</span>,
+  <span class="str">"permission"</span>: {
+    <span class="str">"allowed"</span>: <span class="kw">true</span>,
+    <span class="str">"reason"</span>: <span class="str">"Allowed by rule: save_memory"</span>,
+    <span class="str">"matched_rule"</span>: {<span class="str">"tool_pattern"</span>: <span class="str">"save_memory"</span>, <span class="str">"action"</span>: <span class="str">"allow"</span>}
+  }
+}</code></pre>
+      <h4>Response <code>200 OK</code> (invalid token)</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"valid"</span>: <span class="kw">false</span>,
+  <span class="str">"reason"</span>: <span class="str">"Token validation failed"</span>
+}</code></pre>
+      <div class="callout">
+        <strong>Intentionally generic error.</strong>
+        <p>The same message is returned for expired tokens, invalid signatures, revoked tokens, and project mismatches to prevent information leakage.</p>
+      </div>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST https://api.agentsid.dev/api/v1/validate \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "token": "aid_tok_eyJzdWIiOiJhZ3RfN3g5azJt...",
+    "tool": "save_memory",
+    "params": {"category": "note"}
+  }'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing project API key</td></tr>
+          <tr><td><code>422</code></td><td>Validation error (empty token, invalid tool name)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="try-it-panel">
+        <h4>Try It</h4>
+        <div class="try-it-field">
+          <label>API Key</label>
+          <input type="text" id="tryit-validate-key" placeholder="aid_proj_...">
+        </div>
+        <div class="try-it-field">
+          <label>Agent Token</label>
+          <input type="text" id="tryit-validate-token" placeholder="aid_tok_...">
+        </div>
+        <div class="try-it-field">
+          <label>Tool (optional)</label>
+          <input type="text" id="tryit-validate-tool" placeholder="save_memory">
+        </div>
+        <button class="try-it-run" onclick="tryValidateToken()">Run Request</button>
+        <div class="try-it-response" id="tryit-validate-response"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Introspect -->
+  <div class="endpoint-card" id="api-introspect">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/introspect</span>
+      <span class="endpoint-desc">Full token introspection with decoded claims</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Returns decoded claims, agent details, permission rules, and delegation chain. Intended for debugging and admin dashboards.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>token</code></td><td>string</td><td>Yes</td><td>Agent token to introspect</td></tr>
+          <tr><td><code>tool</code></td><td>string</td><td>No</td><td>Tool name to check permission for</td></tr>
+          <tr><td><code>params</code></td><td>object</td><td>No</td><td>Tool parameters for condition evaluation</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code> (active)</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"active"</span>: <span class="kw">true</span>,
+  <span class="str">"agent"</span>: {
+    <span class="str">"id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    <span class="str">"name"</span>: <span class="str">"research-assistant"</span>,
+    <span class="str">"status"</span>: <span class="str">"active"</span>
+  },
+  <span class="str">"claims"</span>: {
+    <span class="str">"sub"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    <span class="str">"prj"</span>: <span class="str">"proj_a1b2c3d4e5f6"</span>,
+    <span class="str">"dby"</span>: <span class="str">"user_abc"</span>,
+    <span class="str">"iat"</span>: <span class="num">1711324800</span>,
+    <span class="str">"exp"</span>: <span class="num">1711411200</span>,
+    <span class="str">"jti"</span>: <span class="str">"tok_a1b2c3d4e5f6"</span>
+  },
+  <span class="str">"permissions"</span>: [
+    {<span class="str">"tool_pattern"</span>: <span class="str">"search_memories"</span>, <span class="str">"action"</span>: <span class="str">"allow"</span>}
+  ],
+  <span class="str">"delegation_chain"</span>: [
+    {<span class="str">"type"</span>: <span class="str">"user"</span>, <span class="str">"id"</span>: <span class="str">"user_abc"</span>},
+    {<span class="str">"type"</span>: <span class="str">"agent"</span>, <span class="str">"id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>}
+  ]
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST https://api.agentsid.dev/api/v1/introspect \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"token": "aid_tok_eyJzdWIiOi..."}'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing project API key</td></tr>
+          <tr><td><code>422</code></td><td>Validation error</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3>Audit</h3>
+
+  <!-- Audit Log -->
+  <div class="endpoint-card" id="api-audit-log">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/audit/</span>
+      <span class="endpoint-desc">Query the audit log with filters</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Results are ordered newest-first.</p>
+      <h4>Query Parameters</h4>
+      <table>
+        <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>agent_id</code></td><td>string</td><td>(all)</td><td>Filter by agent ID</td></tr>
+          <tr><td><code>tool</code></td><td>string</td><td>(all)</td><td>Filter by tool name (exact match)</td></tr>
+          <tr><td><code>action</code></td><td>string</td><td>(all)</td><td>Filter by <code>allow</code> or <code>deny</code></td></tr>
+          <tr><td><code>since</code></td><td>string</td><td>(all)</td><td>ISO 8601 datetime</td></tr>
+          <tr><td><code>limit</code></td><td>integer</td><td>100</td><td>Results per page (1-500)</td></tr>
+          <tr><td><code>offset</code></td><td>integer</td><td>0</td><td>Pagination offset</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"entries"</span>: [
+    {
+      <span class="str">"id"</span>: <span class="num">42</span>,
+      <span class="str">"agent_id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+      <span class="str">"delegated_by"</span>: <span class="str">"user_abc"</span>,
+      <span class="str">"tool"</span>: <span class="str">"save_memory"</span>,
+      <span class="str">"action"</span>: <span class="str">"allow"</span>,
+      <span class="str">"params"</span>: {<span class="str">"category"</span>: <span class="str">"note"</span>},
+      <span class="str">"result"</span>: <span class="str">"success"</span>,
+      <span class="str">"delegation_chain"</span>: [
+        {<span class="str">"type"</span>: <span class="str">"user"</span>, <span class="str">"id"</span>: <span class="str">"user_abc"</span>},
+        {<span class="str">"type"</span>: <span class="str">"agent"</span>, <span class="str">"id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>}
+      ],
+      <span class="str">"created_at"</span>: <span class="str">"2026-03-25 14:35:00+00:00"</span>
+    }
+  ],
+  <span class="str">"total"</span>: <span class="num">1</span>,
+  <span class="str">"limit"</span>: <span class="num">100</span>,
+  <span class="str">"offset"</span>: <span class="num">0</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl <span class="str">"https://api.agentsid.dev/api/v1/audit/?agent_id=agt_7x9k2mNpQ4rS1tUv&action=deny&limit=50"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody><tr><td><code>401</code></td><td>Invalid or missing API key</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Audit Stats -->
+  <div class="endpoint-card" id="api-audit-stats">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/audit/stats</span>
+      <span class="endpoint-desc">Get aggregate audit statistics</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Query Parameters</h4>
+      <table>
+        <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>days</code></td><td>integer</td><td>30</td><td>Lookback period (1-365)</td></tr>
+        </tbody>
+      </table>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"period_days"</span>: <span class="num">30</span>,
+  <span class="str">"total_events"</span>: <span class="num">1523</span>,
+  <span class="str">"by_action"</span>: { <span class="str">"allow"</span>: <span class="num">1400</span>, <span class="str">"deny"</span>: <span class="num">123</span> },
+  <span class="str">"by_tool"</span>: {
+    <span class="str">"save_memory"</span>: <span class="num">800</span>,
+    <span class="str">"search_memories"</span>: <span class="num">500</span>,
+    <span class="str">"delete_memory"</span>: <span class="num">123</span>,
+    <span class="str">"list_categories"</span>: <span class="num">100</span>
+  },
+  <span class="str">"deny_rate_pct"</span>: <span class="num">8.1</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl <span class="str">"https://api.agentsid.dev/api/v1/audit/stats?days=7"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+    </div>
+  </div>
+
+  <!-- Audit Verify -->
+  <div class="endpoint-card" id="api-audit-verify">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/audit/verify</span>
+      <span class="endpoint-desc">Verify audit hash chain integrity</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <h4>Response <code>200 OK</code> (chain intact)</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"verified"</span>: <span class="kw">true</span>,
+  <span class="str">"entries_checked"</span>: <span class="num">1523</span>,
+  <span class="str">"message"</span>: <span class="str">"All entries verified -- chain intact"</span>
+}</code></pre>
+      <h4>Response <code>200 OK</code> (chain broken)</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"verified"</span>: <span class="kw">false</span>,
+  <span class="str">"entries_checked"</span>: <span class="num">1523</span>,
+  <span class="str">"broken_at_id"</span>: <span class="num">42</span>,
+  <span class="str">"message"</span>: <span class="str">"Integrity chain broken at entry 42 -- possible tampering"</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl <span class="str">"https://api.agentsid.dev/api/v1/audit/verify"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+    </div>
+  </div>
+
+  <!-- Usage -->
+  <div class="endpoint-card" id="api-usage">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/audit/usage</span>
+      <span class="endpoint-desc">Get plan limits and current usage</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Returns current usage stats and plan limits for the authenticated project.</p>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"events_this_month"</span>: <span class="num">1200</span>,
+  <span class="str">"events_limit"</span>: <span class="num">10000</span>,
+  <span class="str">"agents_active"</span>: <span class="num">5</span>,
+  <span class="str">"agents_limit"</span>: <span class="num">25</span>,
+  <span class="str">"plan"</span>: <span class="str">"free"</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl <span class="str">"https://api.agentsid.dev/api/v1/audit/usage"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+    </div>
+  </div>
+
+  <h3>Approvals</h3>
+  <p>Human-in-the-loop authorization for sensitive agent actions. When a permission rule has <code>requires_approval: true</code>, matching tool calls are held for human review.</p>
+
+  <!-- List Approvals -->
+  <div class="endpoint-card" id="api-list-approvals">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/approvals/</span>
+      <span class="endpoint-desc">List pending approvals</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Retrieve all pending approval requests for the project.</p>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>[
+  {
+    <span class="str">"id"</span>: <span class="num">1</span>,
+    <span class="str">"agent_id"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,
+    <span class="str">"tool"</span>: <span class="str">"delete_user"</span>,
+    <span class="str">"params"</span>: { <span class="str">"user_id"</span>: <span class="str">"usr_123"</span> },
+    <span class="str">"status"</span>: <span class="str">"pending"</span>,
+    <span class="str">"requested_at"</span>: <span class="str">"2026-03-25 14:30:00+00:00"</span>
+  }
+]</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl <span class="str">"https://api.agentsid.dev/api/v1/approvals/"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+    </div>
+  </div>
+
+  <!-- Approve -->
+  <div class="endpoint-card" id="api-approve">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/approvals/{id}/approve</span>
+      <span class="endpoint-desc">Approve a pending action</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Approve a pending action, allowing the agent to proceed.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>decided_by</code></td><td>string</td><td>Yes</td><td>Identifier of the human approver</td></tr>
+          <tr><td><code>reason</code></td><td>string</td><td>No</td><td>Optional reason for the decision</td></tr>
+        </tbody>
+      </table>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"decided_by"</span>: <span class="str">"admin@example.com"</span>,
+  <span class="str">"reason"</span>: <span class="str">"Verified with user"</span>
+}</code></pre>
+      <h4>Response</h4>
+      <p>Returns the updated approval record with <code>status: "approved"</code>.</p>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST <span class="str">"https://api.agentsid.dev/api/v1/approvals/1/approve"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"decided_by": "admin@example.com"}'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Pending approval not found</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Reject -->
+  <div class="endpoint-card" id="api-reject">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/approvals/{id}/reject</span>
+      <span class="endpoint-desc">Reject a pending action</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Reject a pending action, blocking the agent from proceeding.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>decided_by</code></td><td>string</td><td>Yes</td><td>Identifier of the human rejector</td></tr>
+          <tr><td><code>reason</code></td><td>string</td><td>No</td><td>Optional reason for the rejection</td></tr>
+        </tbody>
+      </table>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"decided_by"</span>: <span class="str">"admin@example.com"</span>,
+  <span class="str">"reason"</span>: <span class="str">"Action not authorized for this context"</span>
+}</code></pre>
+      <h4>Response</h4>
+      <p>Returns the updated approval record with <code>status: "rejected"</code>.</p>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST <span class="str">"https://api.agentsid.dev/api/v1/approvals/1/reject"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"decided_by": "admin@example.com", "reason": "Not authorized"}'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Pending approval not found</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Approval Count -->
+  <div class="endpoint-card" id="api-approval-count">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/approvals/count</span>
+      <span class="endpoint-desc">Get pending approval count</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Get the count of pending approvals for the project. Useful for dashboard badges and polling.</p>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"pending_count"</span>: <span class="num">3</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl <span class="str">"https://api.agentsid.dev/api/v1/approvals/count"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+    </div>
+  </div>
+
+  <h3>Webhooks</h3>
+  <p>Subscribe to real-time event notifications. AgentsID sends HTTP POST requests to your configured URLs when events occur.</p>
+
+  <div class="callout callout-info">
+    <strong>Supported events:</strong>
+    <p><code>agent.created</code>, <code>agent.revoked</code>, <code>agent.denied</code>, <code>limit.approaching</code>, <code>limit.reached</code>, <code>approval.requested</code>, <code>approval.decided</code>, <code>chain.broken</code></p>
+  </div>
+
+  <!-- Create Webhook -->
+  <div class="endpoint-card" id="api-create-webhook">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/webhooks/</span>
+      <span class="endpoint-desc">Create a webhook subscription</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Register a new webhook endpoint to receive event notifications.</p>
+      <h4>Request Body</h4>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>string</td><td>Yes</td><td>Webhook name (1-255 characters)</td></tr>
+          <tr><td><code>url</code></td><td>string</td><td>Yes</td><td>Destination URL (1-2000 characters)</td></tr>
+          <tr><td><code>events</code></td><td>string[]</td><td>Yes</td><td>Events to subscribe to (at least one)</td></tr>
+          <tr><td><code>secret</code></td><td>string</td><td>No</td><td>Signing secret for payload verification</td></tr>
+        </tbody>
+      </table>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"name"</span>: <span class="str">"slack-alerts"</span>,
+  <span class="str">"url"</span>: <span class="str">"https://hooks.slack.com/services/T00/B00/xxx"</span>,
+  <span class="str">"events"</span>: [<span class="str">"agent.denied"</span>, <span class="str">"approval.requested"</span>],
+  <span class="str">"secret"</span>: <span class="str">"whsec_my_signing_secret"</span>
+}</code></pre>
+      <h4>Response <code>201 Created</code></h4>
+      <p>Returns the created webhook record.</p>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST <span class="str">"https://api.agentsid.dev/api/v1/webhooks/"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "slack-alerts",
+    "url": "https://hooks.slack.com/services/T00/B00/xxx",
+    "events": ["agent.denied", "approval.requested"]
+  }'</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>400</code></td><td>Invalid event name or URL</td></tr>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- List Webhooks -->
+  <div class="endpoint-card" id="api-list-webhooks">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/v1/webhooks/</span>
+      <span class="endpoint-desc">List all webhooks</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>List all webhooks for the project.</p>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>[
+  {
+    <span class="str">"id"</span>: <span class="num">1</span>,
+    <span class="str">"name"</span>: <span class="str">"slack-alerts"</span>,
+    <span class="str">"url"</span>: <span class="str">"https://hooks.slack.com/services/T00/B00/xxx"</span>,
+    <span class="str">"events"</span>: [<span class="str">"agent.denied"</span>, <span class="str">"approval.requested"</span>],
+    <span class="str">"created_at"</span>: <span class="str">"2026-03-25 14:30:00+00:00"</span>
+  }
+]</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl <span class="str">"https://api.agentsid.dev/api/v1/webhooks/"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+    </div>
+  </div>
+
+  <!-- Delete Webhook -->
+  <div class="endpoint-card" id="api-delete-webhook">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-delete">DELETE</span>
+      <span class="endpoint-path">/api/v1/webhooks/{id}</span>
+      <span class="endpoint-desc">Delete a webhook</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Remove a webhook subscription.</p>
+      <h4>Response <code>204 No Content</code></h4>
+      <p>No response body.</p>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X DELETE <span class="str">"https://api.agentsid.dev/api/v1/webhooks/1"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span></code></pre>
+      <h4>Errors</h4>
+      <table>
+        <thead><tr><th>Code</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td><code>404</code></td><td>Webhook not found</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Test Webhook -->
+  <div class="endpoint-card" id="api-test-webhook">
+    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/v1/webhooks/test</span>
+      <span class="endpoint-desc">Send a test webhook payload</span>
+      <span class="endpoint-chevron">&#9656;</span>
+    </div>
+    <div class="endpoint-body">
+      <p>Send a test payload to verify your webhook endpoint is reachable. Sends a <code>test.ping</code> event.</p>
+      <h4>Request Body</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"name"</span>: <span class="str">"test"</span>,
+  <span class="str">"url"</span>: <span class="str">"https://your-endpoint.com/webhook"</span>,
+  <span class="str">"events"</span>: [<span class="str">"test.ping"</span>],
+  <span class="str">"secret"</span>: <span class="str">"whsec_optional_secret"</span>
+}</code></pre>
+      <h4>Response <code>200 OK</code></h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  <span class="str">"sent"</span>: <span class="kw">true</span>,
+  <span class="str">"url"</span>: <span class="str">"https://your-endpoint.com/webhook"</span>
+}</code></pre>
+      <h4>curl Example</h4>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>curl -X POST <span class="str">"https://api.agentsid.dev/api/v1/webhooks/test"</span> \
+  -H <span class="str">"Authorization: Bearer aid_proj_xR7kM2pQ9..."</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "url": "https://your-endpoint.com/webhook",
+    "events": ["test.ping"]
+  }'</span></code></pre>
+    </div>
+  </div>
+
+  <h3>Common Error Responses</h3>
+  <p>All errors follow this format:</p>
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{ <span class="str">"detail"</span>: <span class="str">"Error description"</span> }</code></pre>
+  <table>
+    <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>400</code></td><td>Bad request</td></tr>
+      <tr><td><code>401</code></td><td>Invalid or missing API key</td></tr>
+      <tr><td><code>404</code></td><td>Resource not found</td></tr>
+      <tr><td><code>422</code></td><td>Validation error (request body failed schema validation)</td></tr>
+      <tr><td><code>429</code></td><td>Rate limit exceeded</td></tr>
+      <tr><td><code>500</code></td><td>Internal server error (details logged server-side)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SDK REFERENCE -->
+<!-- ════════════════════════════════════════════ -->
+<section class="doc-section" id="sdk-reference">
+  <h2>SDK Reference</h2>
+
+  <div id="sdk-init">
+  <h3>Initialization</h3>
+  <div class="code-block-wrapper has-tabs">
+    <div class="lang-tabs" data-tab-group="lang">
+      <button class="lang-tab active" data-lang="typescript" onclick="switchLang('typescript')">TypeScript</button>
+      <button class="lang-tab" data-lang="python" onclick="switchLang('python')">Python</button>
+      <button class="lang-tab" data-lang="ruby" onclick="switchLang('ruby')">Ruby</button>
+      <button class="lang-tab" data-lang="java" onclick="switchLang('java')">Java</button>
+    </div>
+    <pre class="lang-code lang-typescript"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">import</span> { AgentsID } <span class="kw">from</span> <span class="str">'@agentsid/sdk'</span>;
+
+<span class="kw">const</span> aid = <span class="kw">new</span> <span class="fn">AgentsID</span>({
+  projectKey: <span class="str">'aid_proj_...'</span>,
+  baseUrl: <span class="str">'https://api.agentsid.dev'</span>,  <span class="cmt">// optional, defaults to hosted</span>
+});</code></pre>
+    <pre class="lang-code lang-python" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">from</span> agentsid <span class="kw">import</span> AgentsID
+
+aid = <span class="fn">AgentsID</span>(
+    project_key=<span class="str">"aid_proj_..."</span>,
+    base_url=<span class="str">"https://api.agentsid.dev"</span>,  <span class="cmt"># optional</span>
+)</code></pre>
+    <pre class="lang-code lang-ruby" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">require</span> <span class="str">'agentsid'</span>
+
+aid = <span class="type">AgentsID</span>::<span class="type">Client</span>.<span class="fn">new</span>(
+  project_key: <span class="str">'aid_proj_...'</span>,
+  base_url: <span class="str">'https://api.agentsid.dev'</span>  <span class="cmt"># optional</span>
+)</code></pre>
+    <pre class="lang-code lang-java" style="display:none"><button class="copy-btn" onclick="copyCode(this)">Copy</button><code><span class="kw">import</span> dev.agentsid.sdk.AgentsID;
+
+<span class="type">AgentsID</span> aid = <span class="kw">new</span> <span class="type">AgentsID</span>.<span class="fn">Builder</span>(<span class="str">"aid_proj_..."</span>)
+    .<span class="fn">baseUrl</span>(<span class="str">"https://api.agentsid.dev"</span>)  <span class="cmt">// optional</span>
+    .<span class="fn">build</span>();</code></pre>
+  </div>
+  </div>
+
+  <div id="sdk-agents">
+  <h3>Agent Methods</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>registerAgent</code></td>
+        <td>name, onBehalfOf, permissions?, ttlHours?, metadata?</td>
+        <td>{ agent, token, tokenId, expiresAt }</td>
+        <td>Create a new agent and issue its first token</td>
+      </tr>
+      <tr>
+        <td><code>getAgent</code></td>
+        <td>agentId</td>
+        <td>Agent</td>
+        <td>Get agent details by ID</td>
+      </tr>
+      <tr>
+        <td><code>listAgents</code></td>
+        <td>status?, limit?</td>
+        <td>Agent[]</td>
+        <td>List agents, optionally filtered by status</td>
+      </tr>
+      <tr>
+        <td><code>updateAgent</code></td>
+        <td>agentId, name?, metadata?</td>
+        <td>Agent</td>
+        <td>Update agent name or metadata</td>
+      </tr>
+      <tr>
+        <td><code>refreshToken</code></td>
+        <td>agentId, ttlHours?</td>
+        <td>{ token, tokenId, expiresAt }</td>
+        <td>Issue new token, revoke all previous</td>
+      </tr>
+      <tr>
+        <td><code>delegate</code></td>
+        <td>parentAgentId, parentToken, childName, childPermissions, ttlHours?</td>
+        <td>{ agent, token, tokenId, expiresAt }</td>
+        <td>Create child agent with narrowed permissions</td>
+      </tr>
+      <tr>
+        <td><code>revokeAgent</code></td>
+        <td>agentId</td>
+        <td>void</td>
+        <td>Permanently revoke an agent and all tokens</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div id="sdk-permissions">
+  <h3>Permission Methods</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>setPermissions</code></td>
+        <td>agentId, rules[]</td>
+        <td>{ agentId, rules[] }</td>
+        <td>Replace all permission rules</td>
+      </tr>
+      <tr>
+        <td><code>getPermissions</code></td>
+        <td>agentId</td>
+        <td>{ agentId, rules[] }</td>
+        <td>Get current permission rules</td>
+      </tr>
+      <tr>
+        <td><code>checkPermission</code></td>
+        <td>agentId, tool, params?</td>
+        <td>{ allowed, reason, matchedRule }</td>
+        <td>Check if agent can call a tool (not audited)</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div id="sdk-validation">
+  <h3>Validation Methods</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>validateToken</code></td>
+        <td>token, tool?, params?</td>
+        <td>{ valid, agentId?, permission? }</td>
+        <td>Validate token + check permission (audited)</td>
+      </tr>
+      <tr>
+        <td><code>introspect</code></td>
+        <td>token, tool?, params?</td>
+        <td>{ active, agent?, claims?, permissions?, delegationChain? }</td>
+        <td>Full token introspection</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div id="sdk-audit">
+  <h3>Audit Methods</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Parameters</th><th>Returns</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>getAuditLog</code></td>
+        <td>agentId?, tool?, action?, since?, limit?, offset?</td>
+        <td>{ entries[], total, limit, offset }</td>
+        <td>Query audit log with filters</td>
+      </tr>
+      <tr>
+        <td><code>getAuditStats</code></td>
+        <td>days?</td>
+        <td>{ totalEvents, byAction, byTool, denyRatePct }</td>
+        <td>Aggregate statistics</td>
+      </tr>
+      <tr>
+        <td><code>verifyAuditChain</code></td>
+        <td>(none)</td>
+        <td>{ verified, entriesChecked, message }</td>
+        <td>Verify hash chain integrity</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- CLI REFERENCE -->
+<!-- ════════════════════════════════════════════ -->
+<section class="doc-section" id="cli-reference">
+  <h2>CLI Reference</h2>
+  <p>The AgentsID CLI is included with the npm package. Use <code>npx agentsid</code> to run commands.</p>
+
+  <div id="cli-init">
+  <h3><code>init</code></h3>
+  <p>Create a new project and receive your API key.</p>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+      <span class="terminal-title">Terminal</span>
+    </div>
+    <div class="terminal-body">
+<span class="prompt">$</span> npx agentsid init <span class="arg">"My Production App"</span><br>
+<br>
+<span class="output">Creating project "My Production App"...</span><br>
+<span class="output">Project created successfully!</span><br>
+<br>
+<span class="output">  Project ID:  proj_a1b2c3d4e5f6</span><br>
+<span class="output">  API Key:     aid_proj_xR7kM2pQ9...</span><br>
+<span class="output">  Plan:        free</span><br>
+<br>
+<span class="output">  Store your API key securely. It will not be shown again.</span><br>
+    </div>
+  </div>
+  </div>
+
+  <div id="cli-register">
+  <h3><code>register-agent</code></h3>
+  <p>Register a new agent and print its token.</p>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+      <span class="terminal-title">Terminal</span>
+    </div>
+    <div class="terminal-body">
+<span class="prompt">$</span> npx agentsid register-agent \<br>
+&nbsp;&nbsp;<span class="flag">--name</span> <span class="arg">"research-assistant"</span> \<br>
+&nbsp;&nbsp;<span class="flag">--on-behalf-of</span> <span class="arg">"user_abc"</span> \<br>
+&nbsp;&nbsp;<span class="flag">--permissions</span> <span class="arg">"search_memories,save_memory"</span> \<br>
+&nbsp;&nbsp;<span class="flag">--ttl</span> <span class="arg">24</span><br>
+<br>
+<span class="output">Agent registered!</span><br>
+<br>
+<span class="output">  Agent ID:   agt_7x9k2mNpQ4rS1tUv</span><br>
+<span class="output">  Token:      aid_tok_eyJzdWIiOi...</span><br>
+<span class="output">  Expires:    2026-03-26T14:30:00Z</span><br>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>Flag</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>--name</code></td><td>Yes</td><td>Agent name</td></tr>
+      <tr><td><code>--on-behalf-of</code></td><td>Yes</td><td>Human user ID</td></tr>
+      <tr><td><code>--permissions</code></td><td>No</td><td>Comma-separated tool patterns</td></tr>
+      <tr><td><code>--ttl</code></td><td>No</td><td>Token lifetime in hours</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div id="cli-list">
+  <h3><code>list-agents</code></h3>
+  <p>List all agents in the current project.</p>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+      <span class="terminal-title">Terminal</span>
+    </div>
+    <div class="terminal-body">
+<span class="prompt">$</span> npx agentsid list-agents <span class="flag">--status</span> <span class="arg">active</span><br>
+<br>
+<span class="output">ID                       NAME                  STATUS    EXPIRES</span><br>
+<span class="output">agt_7x9k2mNpQ4rS1tUv    research-assistant    active    2026-03-26T14:30:00Z</span><br>
+<span class="output">agt_abc123def456         data-processor        active    2026-03-28T10:00:00Z</span><br>
+    </div>
+  </div>
+  </div>
+
+  <div id="cli-revoke">
+  <h3><code>revoke</code></h3>
+  <p>Permanently revoke an agent.</p>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+      <span class="terminal-title">Terminal</span>
+    </div>
+    <div class="terminal-body">
+<span class="prompt">$</span> npx agentsid revoke <span class="arg">agt_7x9k2mNpQ4rS1tUv</span><br>
+<br>
+<span class="output">Agent agt_7x9k2mNpQ4rS1tUv revoked. All tokens invalidated.</span><br>
+    </div>
+  </div>
+  </div>
+
+  <div id="cli-audit">
+  <h3><code>audit</code></h3>
+  <p>Query the audit log.</p>
+  <div class="terminal-block">
+    <div class="terminal-header">
+      <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+      <span class="terminal-title">Terminal</span>
+    </div>
+    <div class="terminal-body">
+<span class="prompt">$</span> npx agentsid audit <span class="flag">--agent</span> <span class="arg">agt_7x9k2mNpQ4rS1tUv</span> <span class="flag">--since</span> <span class="arg">2026-03-25</span> <span class="flag">--limit</span> <span class="arg">5</span><br>
+<br>
+<span class="output">TIME                  ACTION   TOOL               RESULT</span><br>
+<span class="output">2026-03-25 14:35:28   DENY     delete_memory      blocked</span><br>
+<span class="output">2026-03-25 14:35:12   ALLOW    save_memory        success</span><br>
+<span class="output">2026-03-25 14:35:00   ALLOW    search_memories    success</span><br>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>Flag</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>--agent</code></td><td>No</td><td>Filter by agent ID</td></tr>
+      <tr><td><code>--tool</code></td><td>No</td><td>Filter by tool name</td></tr>
+      <tr><td><code>--action</code></td><td>No</td><td>Filter by <code>allow</code> or <code>deny</code></td></tr>
+      <tr><td><code>--since</code></td><td>No</td><td>ISO 8601 date/datetime</td></tr>
+      <tr><td><code>--limit</code></td><td>No</td><td>Number of results (default 100)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECURITY MODEL -->
+<!-- ════════════════════════════════════════════ -->
+<section class="doc-section" id="security-model">
+  <h2>Security Model</h2>
+
+  <div id="security-tokens">
+  <h3>Token Format (HMAC-SHA256)</h3>
+  <p>AgentsID uses HMAC-SHA256 signed tokens rather than JWTs. Tokens are self-validating -- the server can verify authenticity without a database call for the signature and expiry checks.</p>
+
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>aid_tok_<span class="cmt">&lt;base64url(json_payload)&gt;</span>.<span class="cmt">&lt;base64url(hmac_signature)&gt;</span>
+
+<span class="cmt">Token Claims:</span>
+{
+  <span class="str">"sub"</span>: <span class="str">"agt_7x9k2mNpQ4rS1tUv"</span>,  <span class="cmt">// Agent ID</span>
+  <span class="str">"prj"</span>: <span class="str">"proj_a1b2c3d4e5f6"</span>,    <span class="cmt">// Project ID</span>
+  <span class="str">"dby"</span>: <span class="str">"user_abc"</span>,            <span class="cmt">// Delegated by (human or parent agent)</span>
+  <span class="str">"iat"</span>: <span class="num">1711324800</span>,            <span class="cmt">// Issued at (Unix timestamp)</span>
+  <span class="str">"exp"</span>: <span class="num">1711411200</span>,            <span class="cmt">// Expires at (Unix timestamp)</span>
+  <span class="str">"jti"</span>: <span class="str">"tok_a1b2c3d4e5f6"</span>     <span class="cmt">// Token ID (for revocation)</span>
+}</code></pre>
+  </div>
+
+  <div id="security-validation">
+  <h3>Validation Pipeline</h3>
+  <p>Token validation follows a strict five-step pipeline. Every step must pass. Failure at any step short-circuits to denial.</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <div class="pipeline-num">1</div>
+      <div class="pipeline-info">
+        <h4>Signature Verification <span class="pipeline-tag no-db">No DB call</span></h4>
+        <p>Recompute HMAC-SHA256 using the server's signing secret. Compare with constant-time comparison (<code>hmac.compare_digest</code>) to prevent timing attacks.</p>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">2</div>
+      <div class="pipeline-info">
+        <h4>Expiry Check <span class="pipeline-tag no-db">No DB call</span></h4>
+        <p>Decode base64url payload and compare the <code>exp</code> claim against current Unix timestamp.</p>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">3</div>
+      <div class="pipeline-info">
+        <h4>Project Ownership Check <span class="pipeline-tag no-db">No DB call</span></h4>
+        <p>Compare the <code>prj</code> claim against the authenticated API key's project. Prevents cross-project token use.</p>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">4</div>
+      <div class="pipeline-info">
+        <h4>Revocation Check <span class="pipeline-tag uses-db">DB call</span></h4>
+        <p>Look up the <code>jti</code> (token ID) in the database. If not found or revoked, reject. Fail-closed: unknown token IDs are treated as revoked.</p>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">5</div>
+      <div class="pipeline-info">
+        <h4>Permission Check (optional) <span class="pipeline-tag uses-db">DB call</span></h4>
+        <p>If a <code>tool</code> was specified, evaluate permission rules using the deny-first engine.</p>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="security-permissions">
+  <h3>Permission Engine: Deny-First</h3>
+  <p>The permission engine evaluates rules in three phases. Within each phase, rules are ordered by priority (highest first).</p>
+
+  <table>
+    <thead><tr><th>Tool Call</th><th>Params</th><th>Result</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td><code>delete_memory</code></td><td>any</td><td style="color:var(--red)">Denied</td><td>Matches <code>delete_*</code> deny rule</td></tr>
+      <tr><td><code>save_memory</code></td><td><code>{"category":"note"}</code></td><td style="color:var(--green)">Allowed</td><td>Matches <code>save_memory</code> with valid condition</td></tr>
+      <tr><td><code>save_memory</code></td><td><code>{"category":"secret"}</code></td><td style="color:var(--red)">Denied</td><td>Condition fails, default deny</td></tr>
+      <tr><td><code>save_memory</code></td><td>(none)</td><td style="color:var(--red)">Denied</td><td>Condition requires params, fail-closed</td></tr>
+      <tr><td><code>search_memories</code></td><td>any</td><td style="color:var(--green)">Allowed</td><td>Matches <code>search_*</code> allow rule</td></tr>
+      <tr><td><code>list_categories</code></td><td>any</td><td style="color:var(--red)">Denied</td><td>No matching rule, default deny</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div id="security-hash-chain">
+  <h3>Hash Chain Integrity</h3>
+  <p>Each audit entry is cryptographically linked to its predecessor using SHA-256. The hash covers the project ID, agent ID, tool, action, result, delegated_by, params, error_message, and the previous entry's hash.</p>
+
+  <div class="callout callout-danger">
+    <strong>Tamper-evident.</strong>
+    <p>Modifying, inserting, or deleting any audit entry breaks the chain from that point forward. The <code>/audit/verify</code> endpoint detects broken links.</p>
+  </div>
+
+  <p>The first entry in a project's chain uses the sentinel value <code>"genesis"</code> as its previous hash. Concurrent writes are serialized using <code>SELECT ... FOR UPDATE</code> to prevent chain forks.</p>
+  </div>
+
+  <div id="security-key-rotation">
+  <h3>Key Rotation</h3>
+  <p>The <code>AGENTSID_SIGNING_SECRET</code> environment variable holds the server-side signing key. To rotate without invalidating active tokens:</p>
+  <ol>
+    <li>Set <code>AGENTSID_SIGNING_SECRET_PREVIOUS</code> to the old secret.</li>
+    <li>Set <code>AGENTSID_SIGNING_SECRET</code> to the new secret.</li>
+    <li>The server validates against the current secret first, then falls back to the previous secret.</li>
+    <li>Once all tokens signed with the old secret have expired, remove <code>AGENTSID_SIGNING_SECRET_PREVIOUS</code>.</li>
+  </ol>
+
+  <h3>Security Headers</h3>
+  <table>
+    <thead><tr><th>Header</th><th>Value</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>Strict-Transport-Security</code></td><td>max-age=31536000; includeSubDomains</td><td>Forces HTTPS for 1 year</td></tr>
+      <tr><td><code>X-Content-Type-Options</code></td><td>nosniff</td><td>Prevents MIME type sniffing</td></tr>
+      <tr><td><code>X-Frame-Options</code></td><td>DENY</td><td>Prevents clickjacking</td></tr>
+      <tr><td><code>Cache-Control</code></td><td>no-store</td><td>Prevents caching of tokens</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Threat Model</h3>
+  <table>
+    <thead><tr><th>Threat</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Token forgery</td><td>HMAC-SHA256 signature with server-side secret</td></tr>
+      <tr><td>Replay after revocation</td><td>Revocation check via <code>jti</code> lookup</td></tr>
+      <tr><td>Timing attacks</td><td>Constant-time comparison (<code>hmac.compare_digest</code>)</td></tr>
+      <tr><td>Cross-project token use</td><td>Token <code>prj</code> claim verified against API key's project</td></tr>
+      <tr><td>Permission escalation</td><td>Scope narrowing enforced on delegation</td></tr>
+      <tr><td>Sensitive data in logs</td><td>Automatic redaction of password, secret, token, api_key, credential, key</td></tr>
+      <tr><td>Error message leakage</td><td>Generic error messages; details server-side only</td></tr>
+      <tr><td>Project creation spam</td><td>Rate limited to 5/minute per IP</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PRICING -->
+<!-- ════════════════════════════════════════════ -->
+<section class="doc-section" id="pricing">
+  <h2>Pricing</h2>
+  <p>Start free, scale as your agents grow.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>Free</h3>
+      <div class="pricing-price">$0</div>
+      <div class="pricing-period">forever</div>
+      <ul class="pricing-features">
+        <li>3 agents</li>
+        <li>1,000 validations/month</li>
+        <li>7-day audit retention</li>
+        <li>Community support</li>
+        <li>Single project</li>
+      </ul>
+    </div>
+    <div class="pricing-card featured">
+      <h3>Pro</h3>
+      <div class="pricing-price">$29<span>/mo</span></div>
+      <div class="pricing-period">per project</div>
+      <ul class="pricing-features">
+        <li>Unlimited agents</li>
+        <li>100,000 validations/month</li>
+        <li>90-day audit retention</li>
+        <li>Email support</li>
+        <li>Up to 5 projects</li>
+        <li>Webhook notifications</li>
+        <li>Custom token TTL</li>
+      </ul>
+    </div>
+    <div class="pricing-card">
+      <h3>Enterprise</h3>
+      <div class="pricing-price">Custom</div>
+      <div class="pricing-period">contact sales</div>
+      <ul class="pricing-features">
+        <li>Unlimited everything</li>
+        <li>Unlimited validations</li>
+        <li>Unlimited audit retention</li>
+        <li>Dedicated support + SLA</li>
+        <li>Unlimited projects</li>
+        <li>Self-hosted option</li>
+        <li>SSO / SAML</li>
+        <li>Audit export API</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Feature Comparison</h3>
+  <div class="comparison-table">
+  <table>
+    <thead><tr><th>Feature</th><th>Free</th><th>Pro</th><th>Enterprise</th></tr></thead>
+    <tbody>
+      <tr><td>Agents</td><td>3</td><td>Unlimited</td><td>Unlimited</td></tr>
+      <tr><td>Validations/month</td><td>1,000</td><td>100,000</td><td>Unlimited</td></tr>
+      <tr><td>Audit retention</td><td>7 days</td><td>90 days</td><td>Unlimited</td></tr>
+      <tr><td>Projects</td><td>1</td><td>5</td><td>Unlimited</td></tr>
+      <tr><td>Delegation chains</td><td class="check">Yes</td><td class="check">Yes</td><td class="check">Yes</td></tr>
+      <tr><td>Permission engine</td><td class="check">Yes</td><td class="check">Yes</td><td class="check">Yes</td></tr>
+      <tr><td>Hash chain verification</td><td class="check">Yes</td><td class="check">Yes</td><td class="check">Yes</td></tr>
+      <tr><td>MCP middleware</td><td class="check">Yes</td><td class="check">Yes</td><td class="check">Yes</td></tr>
+      <tr><td>Webhooks</td><td class="cross">--</td><td class="check">Yes</td><td class="check">Yes</td></tr>
+      <tr><td>Self-hosted</td><td class="cross">--</td><td class="cross">--</td><td class="check">Yes</td></tr>
+      <tr><td>SSO / SAML</td><td class="cross">--</td><td class="cross">--</td><td class="check">Yes</td></tr>
+      <tr><td>Audit export</td><td class="cross">--</td><td class="cross">--</td><td class="check">Yes</td></tr>
+      <tr><td>SLA</td><td class="cross">--</td><td class="cross">--</td><td class="check">Yes</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PRICING FAQ -->
+<!-- ════════════════════════════════════════════ -->
+<section class="doc-section" id="pricing-faq">
+  <h3>FAQ</h3>
+
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">What counts as a validation?<span class="faq-chevron">&#9656;</span></div>
+    <div class="faq-answer">Every call to <code>/api/v1/validate</code> counts as one validation. The <code>/check</code> endpoint (which does not write to the audit trail) does not count. Token introspection via <code>/introspect</code> also counts as a validation.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">Can I self-host AgentsID?<span class="faq-chevron">&#9656;</span></div>
+    <div class="faq-answer">Yes. AgentsID is open source under the MIT license. The self-hosted option is a single FastAPI application backed by PostgreSQL. Enterprise customers get dedicated support for self-hosted deployments.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">How are tokens different from JWTs?<span class="faq-chevron">&#9656;</span></div>
+    <div class="faq-answer">AgentsID tokens use HMAC-SHA256 with a simpler structure than JWT. They include agent-specific claims (delegation chain, project scoping) and are designed specifically for agent-to-server authentication rather than general-purpose web auth. The signing secret never leaves the server.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">What happens when my free tier limit is reached?<span class="faq-chevron">&#9656;</span></div>
+    <div class="faq-answer">Validation requests will return HTTP 429 until the next billing cycle or until you upgrade. Your agents, tokens, and audit data are not affected -- they are just temporarily unable to perform new validations.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">Is there a data processing agreement (DPA) available?<span class="faq-chevron">&#9656;</span></div>
+    <div class="faq-answer">Yes. Enterprise customers can request a DPA. Contact sales@agentsid.dev for details.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">How do I report a security vulnerability?<span class="faq-chevron">&#9656;</span></div>
+    <div class="faq-answer">Email security@agentsid.dev with a description, reproduction steps, and potential impact. We acknowledge within 48 hours. Do not open public GitHub issues for security vulnerabilities.</div>
+  </div>
+</section>
+
+</div><!-- end content-inner -->
+</main>
+
+<footer style="text-align:center;padding:32px;border-top:1px solid var(--card-border);font-size:0.825rem;color:var(--text-dim);">
+  <a href="/docs" style="color:var(--text-muted);margin:0 8px;">Docs</a> &middot;
+  <a href="/guides" style="color:var(--text-muted);margin:0 8px;">Guides</a> &middot;
+  <a href="/dashboard" style="color:var(--text-muted);margin:0 8px;">Dashboard</a> &middot;
+  <a href="https://github.com/stevenkozeniesky02/agentsid" target="_blank" style="color:var(--text-muted);margin:0 8px;">GitHub</a> &middot;
+  <a href="/terms" style="color:var(--text-muted);margin:0 8px;">Terms</a> &middot;
+  <a href="/privacy" style="color:var(--text-muted);margin:0 8px;">Privacy</a>
+  <div style="margin-top:8px;">&copy; 2026 AgentsID</div>
+</footer>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ════════════════════════════════════════════ -->
+<script>
+// ─── Language Switcher (global, persists across all code blocks) ───
+let currentLang = 'typescript';
+
+function switchLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('[data-tab-group="lang"]').forEach(tabGroup => {
+    tabGroup.querySelectorAll('.lang-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.getAttribute('data-lang') === lang);
+    });
+  });
+  document.querySelectorAll('.lang-code').forEach(block => {
+    const isMatch = block.classList.contains('lang-' + lang);
+    block.style.display = isMatch ? '' : 'none';
+  });
+}
+
+// ─── Install Tab Switcher ───
+function switchInstallTab(btn, lang) {
+  const tabGroup = btn.parentElement;
+  tabGroup.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['typescript', 'python', 'ruby', 'java'].forEach(l => {
+    const el = document.getElementById('install-' + l);
+    if (el) el.style.display = l === lang ? '' : 'none';
+  });
+}
+
+// ─── Copy Code ───
+function copyCode(btn) {
+  const pre = btn.closest('pre');
+  const code = pre.querySelector('code');
+  const text = code ? code.textContent : pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ─── Endpoint Cards ───
+function toggleEndpoint(header) {
+  const card = header.closest('.endpoint-card');
+  card.classList.toggle('expanded');
+}
+
+// ─── Sidebar Section Collapse ───
+function toggleSection(title) {
+  title.closest('.sidebar-section').classList.toggle('collapsed');
+}
+
+// ─── FAQ Toggle ───
+function toggleFaq(question) {
+  question.closest('.faq-item').classList.toggle('open');
+}
+
+// ─── Mobile Sidebar ───
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('visible');
+}
+
+// ─── Theme Toggle ───
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('themeIcon').textContent = next === 'dark' ? '\u263E' : '\u2600';
+  try { localStorage.setItem('agentsid-docs-theme', next); } catch(e) {}
+}
+
+// Restore theme on load
+(function() {
+  try {
+    const saved = localStorage.getItem('agentsid-docs-theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+      document.getElementById('themeIcon').textContent = saved === 'dark' ? '\u263E' : '\u2600';
+    }
+  } catch(e) {}
+})();
+
+// ─── Scroll Spy (active sidebar item) ───
+function updateActiveSection() {
+  const sections = document.querySelectorAll('.doc-section, .hero');
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
+  let current = '';
+
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= 100) {
+      current = section.id;
+    }
+  });
+
+  // Also check sub-sections within doc-sections
+  document.querySelectorAll('[id]').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top <= 100 && rect.top > -rect.height) {
+      current = el.id;
+    }
+  });
+
+  sidebarItems.forEach(item => {
+    const href = item.getAttribute('href');
+    if (href === '#' + current) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+}
+
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  if (scrollTimeout) cancelAnimationFrame(scrollTimeout);
+  scrollTimeout = requestAnimationFrame(updateActiveSection);
+});
+
+// ─── Smooth scroll for sidebar links ───
+document.querySelectorAll('.sidebar-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(item.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Close mobile sidebar
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('visible');
+    }
+  });
+});
+
+// ─── Search ───
+const searchIndex = [];
+document.querySelectorAll('.sidebar-item').forEach(item => {
+  const href = item.getAttribute('href');
+  const text = item.textContent.trim();
+  const section = item.closest('.sidebar-section');
+  const sectionTitle = section ? section.querySelector('.sidebar-section-title').textContent.trim().replace(/[^a-zA-Z ]/g, '') : '';
+  searchIndex.push({ text, href, section: sectionTitle });
+});
+
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase().trim();
+  if (!query) {
+    searchResults.classList.remove('visible');
+    searchResults.innerHTML = '';
+    return;
+  }
+
+  const matches = searchIndex.filter(item =>
+    item.text.toLowerCase().includes(query) ||
+    item.section.toLowerCase().includes(query)
+  );
+
+  if (matches.length === 0) {
+    searchResults.innerHTML = '<div class="search-result-item"><span class="search-section">No results</span></div>';
+  } else {
+    searchResults.innerHTML = matches.map(m => {
+      const highlighted = m.text.replace(
+        new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'),
+        '<mark>$1</mark>'
+      );
+      return '<div class="search-result-item" onclick="navigateTo(\'' + m.href + '\')">' +
+        '<span class="search-section">' + m.section + '</span><br>' +
+        highlighted +
+        '</div>';
+    }).join('');
+  }
+  searchResults.classList.add('visible');
+});
+
+searchInput.addEventListener('blur', () => {
+  setTimeout(() => searchResults.classList.remove('visible'), 200);
+});
+
+searchInput.addEventListener('focus', () => {
+  if (searchInput.value.trim()) {
+    searchInput.dispatchEvent(new Event('input'));
+  }
+});
+
+// Keyboard shortcut: "/" to focus search
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+    searchInput.focus();
+  }
+  if (e.key === 'Escape') {
+    searchInput.blur();
+    searchResults.classList.remove('visible');
+  }
+});
+
+function navigateTo(href) {
+  const target = document.querySelector(href);
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // If it's an endpoint card, expand it
+    const card = target.closest('.endpoint-card');
+    if (card && !card.classList.contains('expanded')) {
+      card.classList.add('expanded');
+    }
+  }
+  searchResults.classList.remove('visible');
+  searchInput.value = '';
+}
+
+// ─── Try It: Create Project ───
+async function tryCreateProject() {
+  const name = document.getElementById('tryit-project-name').value;
+  const email = document.getElementById('tryit-project-email').value;
+  const responseDiv = document.getElementById('tryit-project-response');
+  responseDiv.innerHTML = '<pre style="color:var(--text-dim)">Sending request...</pre>';
+
+  try {
+    const body = { name };
+    if (email) body.email = email;
+
+    const res = await fetch(window.location.origin + '/api/v1/projects/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    responseDiv.innerHTML = '<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>' +
+      '<span class="cmt">// ' + res.status + ' ' + res.statusText + '</span>\n' +
+      syntaxHighlightJSON(JSON.stringify(data, null, 2)) +
+      '</code></pre>';
+  } catch (err) {
+    responseDiv.innerHTML = '<pre><code><span class="cmt">// Error</span>\n' + escapeHtml(err.message) + '</code></pre>';
+  }
+}
+
+// ─── Try It: Register Agent ───
+async function tryRegisterAgent() {
+  const key = document.getElementById('tryit-register-key').value;
+  const bodyText = document.getElementById('tryit-register-body').value;
+  const responseDiv = document.getElementById('tryit-register-response');
+  responseDiv.innerHTML = '<pre style="color:var(--text-dim)">Sending request...</pre>';
+
+  try {
+    const res = await fetch(window.location.origin + '/api/v1/agents/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: bodyText
+    });
+    const data = await res.json();
+    responseDiv.innerHTML = '<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>' +
+      '<span class="cmt">// ' + res.status + ' ' + res.statusText + '</span>\n' +
+      syntaxHighlightJSON(JSON.stringify(data, null, 2)) +
+      '</code></pre>';
+  } catch (err) {
+    responseDiv.innerHTML = '<pre><code><span class="cmt">// Error</span>\n' + escapeHtml(err.message) + '</code></pre>';
+  }
+}
+
+// ─── Try It: Check Permission ───
+async function tryCheckPermission() {
+  const key = document.getElementById('tryit-check-key').value;
+  const agentId = document.getElementById('tryit-check-agent').value;
+  const tool = document.getElementById('tryit-check-tool').value;
+  const responseDiv = document.getElementById('tryit-check-response');
+  responseDiv.innerHTML = '<pre style="color:var(--text-dim)">Sending request...</pre>';
+
+  try {
+    const res = await fetch(window.location.origin + '/api/v1/check', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify({ agent_id: agentId, tool: tool })
+    });
+    const data = await res.json();
+    responseDiv.innerHTML = '<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>' +
+      '<span class="cmt">// ' + res.status + ' ' + res.statusText + '</span>\n' +
+      syntaxHighlightJSON(JSON.stringify(data, null, 2)) +
+      '</code></pre>';
+  } catch (err) {
+    responseDiv.innerHTML = '<pre><code><span class="cmt">// Error</span>\n' + escapeHtml(err.message) + '</code></pre>';
+  }
+}
+
+// ─── Try It: Validate Token ───
+async function tryValidateToken() {
+  const key = document.getElementById('tryit-validate-key').value;
+  const token = document.getElementById('tryit-validate-token').value;
+  const tool = document.getElementById('tryit-validate-tool').value;
+  const responseDiv = document.getElementById('tryit-validate-response');
+  responseDiv.innerHTML = '<pre style="color:var(--text-dim)">Sending request...</pre>';
+
+  try {
+    const body = { token: token };
+    if (tool) body.tool = tool;
+
+    const res = await fetch(window.location.origin + '/api/v1/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    responseDiv.innerHTML = '<pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>' +
+      '<span class="cmt">// ' + res.status + ' ' + res.statusText + '</span>\n' +
+      syntaxHighlightJSON(JSON.stringify(data, null, 2)) +
+      '</code></pre>';
+  } catch (err) {
+    responseDiv.innerHTML = '<pre><code><span class="cmt">// Error</span>\n' + escapeHtml(err.message) + '</code></pre>';
+  }
+}
+
+// ─── JSON Syntax Highlighter ───
+function syntaxHighlightJSON(json) {
+  return escapeHtml(json)
+    .replace(/"([^"]+)":/g, '<span class="str">"$1"</span>:')
+    .replace(/: "([^"]*)"/g, ': <span class="str">"$1"</span>')
+    .replace(/: (\d+)/g, ': <span class="num">$1</span>')
+    .replace(/: (true|false|null)/g, ': <span class="kw">$1</span>');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ─── Initialize ───
+document.addEventListener('DOMContentLoaded', () => {
+  updateActiveSection();
+  switchLang('typescript');
+});
+</script>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e5e0;padding:14px 24px;z-index:9999;box-shadow:0 -2px 10px rgba(0,0,0,0.06);">
+  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <p style="margin:0;font-size:13px;color:#6b6b7b;line-height:1.5;flex:1;min-width:200px;">We use cookies to understand how you use our site and improve your experience. <a href="/docs#privacy" style="color:#7c5bf0;text-decoration:underline;">Learn more</a></p>
+    <div style="display:flex;gap:8px;flex-shrink:0;">
+      <button onclick="declineCookies()" style="padding:8px 16px;border:1px solid #e8e5e0;border-radius:8px;background:#fff;color:#6b6b7b;font-size:13px;cursor:pointer;">Decline</button>
+      <button onclick="acceptCookies()" style="padding:8px 16px;border:none;border-radius:8px;background:linear-gradient(135deg,#7c5bf0,#5b8cf0);color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Accept</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var consent = localStorage.getItem('cookie_consent');
+  if (consent === 'accepted') {
+    if (window.posthog) posthog.opt_in_capturing();
+  } else if (consent === 'declined') {
+    // stay opted out
+  } else {
+    document.getElementById('cookieBanner').style.display = 'block';
+  }
+})();
+function acceptCookies() {
+  localStorage.setItem('cookie_consent', 'accepted');
+  document.getElementById('cookieBanner').style.display = 'none';
+  if (window.posthog) posthog.opt_in_capturing();
+}
+function declineCookies() {
+  localStorage.setItem('cookie_consent', 'declined');
+  document.getElementById('cookieBanner').style.display = 'none';
+}
+</script>
+
+</body>
+</html>

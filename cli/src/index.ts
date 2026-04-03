@@ -3,7 +3,7 @@
  * AgentsID CLI
  *
  * Usage:
- *   npx agentsid init                              Create a new project
+ *   npx agentsid init [--lang=typescript|python]     Create a project + starter MCP server
  *   npx agentsid register <name> --user <user_id>   Register an agent
  *   npx agentsid list                               List agents
  *   npx agentsid revoke <agent_id>                  Revoke an agent
@@ -15,6 +15,7 @@
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
+import { createInterface } from "node:readline";
 
 const CONFIG_DIR = join(homedir(), ".agentsid");
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
@@ -78,6 +79,110 @@ async function request(
   return data;
 }
 
+function prompt(question: string): Promise<string> {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+function tsServerTemplate(projectKey: string): string {
+  return `import { createHttpMiddleware } from '@agentsid/sdk';
+import http from 'http';
+
+const guard = createHttpMiddleware({
+  projectKey: process.env.AGENTSID_PROJECT_KEY || '${projectKey}',
+});
+
+// Define your tools
+const tools = {
+  search_notes: async (params) => {
+    return { results: ['Note 1', 'Note 2'] };
+  },
+  save_note: async (params) => {
+    return { saved: true };
+  },
+  delete_note: async (params) => {
+    return { deleted: true };
+  },
+};
+
+// MCP-style tool handler with AgentsID protection
+const server = http.createServer(async (req, res) => {
+  if (req.method === 'POST' && req.url === '/tools') {
+    let body = '';
+    for await (const chunk of req) body += chunk;
+    const { tool, params, token } = JSON.parse(body);
+
+    // AgentsID validates every tool call
+    const auth = await guard.validate(token, tool);
+    if (!auth.valid || !auth.permission?.allowed) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Blocked by AgentsID', reason: auth.permission?.reason }));
+      return;
+    }
+
+    const result = await tools[tool]?.(params) ?? { error: 'Unknown tool' };
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(result));
+    return;
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ name: 'my-agentsid-server', tools: Object.keys(tools) }));
+});
+
+server.listen(3001, () => console.log('Protected MCP server running on http://localhost:3001'));
+`;
+}
+
+function pyServerTemplate(projectKey: string): string {
+  return `import asyncio
+import json
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from agentsid import AgentsID
+
+aid = AgentsID(project_key="${projectKey}")
+
+tools = {
+    "search_notes": lambda params: {"results": ["Note 1", "Note 2"]},
+    "save_note": lambda params: {"saved": True},
+    "delete_note": lambda params: {"deleted": True},
+}
+
+class Handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        if self.path == "/tools":
+            length = int(self.headers.get("Content-Length", 0))
+            data = json.loads(self.rfile.read(length))
+            tool, params, token = data["tool"], data.get("params", {}), data["token"]
+
+            # AgentsID validates every tool call
+            loop = asyncio.new_event_loop()
+            result = loop.run_until_complete(aid.validate(token, tool))
+            if not result.get("valid") or not result.get("permission", {}).get("allowed"):
+                self.send_response(403)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "Blocked by AgentsID"}).encode())
+                return
+
+            output = tools.get(tool, lambda p: {"error": "Unknown tool"})(params)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(output).encode())
+
+if __name__ == "__main__":
+    server = HTTPServer(("", 3001), Handler)
+    print("Protected MCP server running on http://localhost:3001")
+    server.serve_forever()
+`;
+}
+
 // ═══════════════════════════════════════════
 // COMMANDS
 // ═══════════════════════════════════════════
@@ -103,7 +208,34 @@ async function cmdInit() {
   console.log(`  ID:      ${data.project.id}`);
   console.log(`  API Key: ${data.api_key}`);
   console.log(`\nConfig saved to ${CONFIG_FILE}`);
-  console.log(`\nNext: agentsid register my-agent --user user_123`);
+
+  // Scaffold a starter MCP server
+  const langArg = args.find((a) => a.startsWith("--lang="))?.split("=")[1];
+  const langAnswer = langArg || await prompt("\nLanguage for starter MCP server? [typescript/python] (default: typescript): ");
+  const lang = langAnswer.toLowerCase().startsWith("p") ? "python" : "typescript";
+
+  const projectKey = data.api_key;
+  const outputDir = process.cwd();
+
+  if (lang === "python") {
+    const fileName = "agentsid_server.py";
+    const filePath = join(outputDir, fileName);
+    writeFileSync(filePath, pyServerTemplate(projectKey));
+    console.log(`\n  Created ${fileName}`);
+    console.log(`\nNext steps:`);
+    console.log(`  1. pip install agentsid`);
+    console.log(`  2. python ${fileName}`);
+    console.log(`  3. Open https://agentsid.dev/dashboard to see your agents`);
+  } else {
+    const fileName = "agentsid-server.mjs";
+    const filePath = join(outputDir, fileName);
+    writeFileSync(filePath, tsServerTemplate(projectKey));
+    console.log(`\n  Created ${fileName}`);
+    console.log(`\nNext steps:`);
+    console.log(`  1. npm install @agentsid/sdk`);
+    console.log(`  2. node ${fileName}`);
+    console.log(`  3. Open https://agentsid.dev/dashboard to see your agents`);
+  }
 }
 
 async function cmdRegister() {
@@ -251,7 +383,7 @@ async function cmdHelp() {
 AgentsID CLI — Identity and auth for AI agents
 
 Commands:
-  init [name]                      Create a project and save config
+  init [name] [--lang=ts|python]   Create a project, scaffold MCP server
   register <name> --user <id>      Register an agent
   list [--status active|revoked]   List agents
   revoke <agent_id>                Revoke an agent

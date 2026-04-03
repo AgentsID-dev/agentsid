@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentsID — Terms of Service</title>
+<style>
+/* ─── Reset & Base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #faf9f7;
+  --bg-surface: #ffffff;
+  --card: #ffffff;
+  --card-border: #e8e5e0;
+  --text: #1a1a1a;
+  --text-muted: #6b6b7b;
+  --text-dim: #9b9bab;
+  --purple: #7c5bf0;
+  --blue: #5b8cf0;
+  --amber: #d97706;
+  --amber-bg: rgba(217, 119, 6, 0.07);
+  --amber-border: rgba(217, 119, 6, 0.25);
+  --purple-bg: rgba(124, 91, 240, 0.06);
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, Helvetica, Arial, sans-serif;
+  --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Consolas', monospace;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --transition: 0.2s ease;
+}
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+a { color: var(--blue); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--purple); text-decoration: underline; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c0c0d0; border-radius: 3px; }
+
+/* ─── Header ─── */
+.top-header {
+  position: sticky; top: 0; z-index: 100;
+  height: 56px;
+  background: rgba(250, 249, 247, 0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e8e5e0;
+  display: flex; align-items: center;
+  padding: 0 32px; gap: 16px;
+}
+.header-logo {
+  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none;
+}
+.header-logo:hover { text-decoration: none; }
+.header-divider {
+  width: 1px; height: 20px; background: #e8e5e0; flex-shrink: 0;
+}
+.header-title {
+  font-size: 0.9rem; color: var(--text-muted); font-weight: 500;
+}
+.header-back {
+  margin-left: auto;
+  font-size: 0.875rem; color: var(--text-muted); font-weight: 500;
+  padding: 6px 12px; border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  background: var(--bg-surface);
+  transition: all var(--transition);
+  text-decoration: none;
+}
+.header-back:hover {
+  color: var(--text); border-color: var(--purple);
+  text-decoration: none;
+}
+
+/* ─── Layout ─── */
+.page-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px 32px 96px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+/* ─── Table of Contents (sticky sidebar) ─── */
+.toc {
+  position: sticky;
+  top: 80px;
+  font-size: 0.825rem;
+}
+.toc-heading {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.toc-list { list-style: none; }
+.toc-list li { margin-bottom: 2px; }
+.toc-list a {
+  display: block;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: all var(--transition);
+  text-decoration: none;
+  line-height: 1.4;
+}
+.toc-list a:hover {
+  color: var(--purple);
+  background: var(--purple-bg);
+  text-decoration: none;
+}
+.toc-list a.active {
+  color: var(--purple);
+  background: var(--purple-bg);
+}
+
+/* ─── Content ─── */
+.content-header {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--card-border);
+}
+.content-header h1 {
+  font-size: 2rem; font-weight: 700;
+  letter-spacing: -0.03em; line-height: 1.2;
+  margin-bottom: 12px;
+}
+.meta-row {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  font-size: 0.875rem; color: var(--text-muted);
+}
+.meta-chip {
+  padding: 3px 10px;
+  background: var(--purple-bg);
+  border: 1px solid rgba(124, 91, 240, 0.2);
+  border-radius: 20px;
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--purple);
+}
+
+/* ─── Disclaimer Banner ─── */
+.disclaimer-banner {
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 48px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.disclaimer-banner strong { color: var(--amber); }
+
+/* ─── Section ─── */
+.section {
+  margin-bottom: 56px;
+  scroll-margin-top: 80px;
+}
+.section h2 {
+  font-size: 1.25rem; font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+}
+.section-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  background: var(--purple-bg);
+  border-radius: 6px;
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--purple);
+  flex-shrink: 0;
+}
+.section h3 {
+  font-size: 1rem; font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--text);
+}
+.section p {
+  margin-bottom: 16px;
+  color: var(--text);
+  font-size: 0.9875rem;
+}
+.section p:last-child { margin-bottom: 0; }
+.section ul, .section ol {
+  margin: 0 0 16px 0;
+  padding-left: 24px;
+}
+.section li {
+  margin-bottom: 8px;
+  font-size: 0.9875rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+.section li:last-child { margin-bottom: 0; }
+
+/* ─── Callout box ─── */
+.callout {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-left: 4px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.callout.warn {
+  border-left-color: var(--amber);
+  background: var(--amber-bg);
+}
+.callout strong { display: block; margin-bottom: 6px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--purple); }
+.callout.warn strong { color: var(--amber); }
+
+/* ─── Plan table ─── */
+.plan-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.9rem;
+}
+.plan-table th {
+  background: var(--purple-bg);
+  font-weight: 700;
+  text-align: left;
+  padding: 10px 16px;
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.plan-table td {
+  padding: 10px 16px;
+  border: 1px solid var(--card-border);
+  vertical-align: top;
+  line-height: 1.5;
+  background: var(--card);
+}
+.plan-table tr:hover td { background: var(--bg); }
+
+/* ─── Footer ─── */
+.footer {
+  text-align: center;
+  padding: 32px;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.825rem;
+  color: var(--text-dim);
+}
+.footer a { color: var(--text-muted); }
+
+/* ─── Responsive ─── */
+@media (max-width: 860px) {
+  .page-wrap {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 20px 72px;
+  }
+  .toc {
+    position: static;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+  .top-header { padding: 0 20px; }
+  .content-header h1 { font-size: 1.6rem; }
+}
+@media (max-width: 480px) {
+  html { font-size: 15px; }
+  .plan-table { font-size: 0.8rem; }
+  .plan-table th, .plan-table td { padding: 8px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="top-header">
+  <a href="/" class="header-logo">
+    <svg width="22" height="22" viewBox="0 0 36 36" fill="none" style="flex-shrink:0">
+      <path d="M18 6L4 14l14 8 14-8L18 6z" fill="#7c5bf0" opacity="0.25"/>
+      <path d="M18 6L4 14l14 8 14-8L18 6z" stroke="#7c5bf0" stroke-width="2" fill="none"/>
+      <path d="M4 18l14 8 14-8" stroke="#7c5bf0" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M4 24l14 8 14-8" stroke="#5b8cf0" stroke-width="2" fill="none"/>
+    </svg>
+    AgentsID
+  </a>
+  <div class="header-divider"></div>
+  <span class="header-title">Terms of Service</span>
+  <nav style="margin-left:auto;display:flex;align-items:center;gap:16px;font-size:0.875rem;">
+    <a href="/docs" style="color:var(--text-muted);font-weight:500;text-decoration:none;">Docs</a>
+    <a href="/guides" style="color:var(--text-muted);font-weight:500;text-decoration:none;">Guides</a>
+    <a href="/dashboard" style="color:var(--text-muted);font-weight:500;text-decoration:none;">Dashboard</a>
+    <a href="https://github.com/stevenkozeniesky02/agentsid" target="_blank" style="color:var(--text-muted);font-weight:500;text-decoration:none;">GitHub</a>
+    <a href="/dashboard" style="background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;padding:6px 14px;border-radius:var(--radius);font-weight:600;font-size:0.8rem;text-decoration:none;">Start Free</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Table of Contents -->
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-heading">On this page</div>
+    <ul class="toc-list">
+      <li><a href="#agreement">1. The Agreement</a></li>
+      <li><a href="#service">2. What AgentsID Does</a></li>
+      <li><a href="#accounts">3. Accounts</a></li>
+      <li><a href="#acceptable-use">4. Acceptable Use</a></li>
+      <li><a href="#plans">5. Plans &amp; Billing</a></li>
+      <li><a href="#free-tier">6. Free Tier Limits</a></li>
+      <li><a href="#api">7. API &amp; Rate Limits</a></li>
+      <li><a href="#ip">8. Intellectual Property</a></li>
+      <li><a href="#data">9. Your Data</a></li>
+      <li><a href="#security-disclaimer">10. Security Disclaimer</a></li>
+      <li><a href="#warranties">11. No Warranties</a></li>
+      <li><a href="#liability">12. Limitation of Liability</a></li>
+      <li><a href="#termination">13. Termination</a></li>
+      <li><a href="#changes">14. Changes to Terms</a></li>
+      <li><a href="#governing-law">15. Governing Law</a></li>
+      <li><a href="#disputes">16. Dispute Resolution</a></li>
+      <li><a href="#contact">17. Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <div class="content-header">
+      <h1>Terms of Service</h1>
+      <div class="meta-row">
+        <span class="meta-chip">Effective March 26, 2026</span>
+        <span>Last updated: March 26, 2026</span>
+        <span>agentsid.dev</span>
+      </div>
+    </div>
+
+    <div class="disclaimer-banner">
+      <strong>Note for developers:</strong> This document is specific to AgentsID and written to be read in under 5 minutes. We use plain language intentionally. If anything is unclear, email <a href="mailto:legal@agentsid.dev">legal@agentsid.dev</a>.
+    </div>
+
+    <!-- 1 -->
+    <section class="section" id="agreement">
+      <h2><span class="section-num">1</span> The Agreement</h2>
+      <p>These Terms of Service ("Terms") form a binding agreement between you ("you" or "User") and AgentsID ("AgentsID," "we," "us," or "our") governing your use of <strong>agentsid.dev</strong> and all related APIs, SDKs, and services (collectively, the "Service").</p>
+      <p>By creating an account or using the Service, you agree to these Terms. If you are using the Service on behalf of a company or organization, you represent that you have authority to bind that entity, and "you" refers to both you and the entity.</p>
+      <p>If you do not agree, do not use the Service.</p>
+    </section>
+
+    <!-- 2 -->
+    <section class="section" id="service">
+      <h2><span class="section-num">2</span> What AgentsID Does</h2>
+      <p>AgentsID is an authentication and identity platform for AI agents. It lets you:</p>
+      <ul>
+        <li>Create projects and register AI agents with unique identities</li>
+        <li>Define permission rules that govern what those agents are allowed to do</li>
+        <li>Validate tool calls made by agents at runtime against those permission rules</li>
+        <li>Review tamper-evident audit logs of every allow/deny decision</li>
+        <li>Manage delegation chains between agents</li>
+      </ul>
+      <p>AgentsID is a <strong>tooling platform</strong>. We provide the infrastructure for agent authentication and permission enforcement. We do not control, operate, or take responsibility for the AI agents, applications, or automated systems you build using this infrastructure.</p>
+    </section>
+
+    <!-- 3 -->
+    <section class="section" id="accounts">
+      <h2><span class="section-num">3</span> Accounts</h2>
+      <h3>Registration</h3>
+      <p>You must create an account to use AgentsID. You agree to provide accurate information and keep it up to date. Your account is personal — do not share credentials or allow others to access your account.</p>
+
+      <h3>Age requirement</h3>
+      <p>You must be at least 13 years old to use the Service. If you are under 18, you represent that a parent or legal guardian has reviewed and agreed to these Terms on your behalf.</p>
+
+      <h3>Account security</h3>
+      <p>You are responsible for everything that happens under your account. That includes:</p>
+      <ul>
+        <li>Keeping your password and API keys confidential</li>
+        <li>Rotating API keys immediately if you suspect a compromise</li>
+        <li>Notifying us promptly at <a href="mailto:legal@agentsid.dev">legal@agentsid.dev</a> if you believe your account has been accessed without authorization</li>
+      </ul>
+      <p>AgentsID stores API key <em>hashes</em>, never raw keys. If you lose an API key, you will need to rotate it — we cannot recover it for you.</p>
+    </section>
+
+    <!-- 4 -->
+    <section class="section" id="acceptable-use">
+      <h2><span class="section-num">4</span> Acceptable Use</h2>
+      <p>You may use AgentsID for any lawful purpose. You may not:</p>
+      <ul>
+        <li><strong>Abuse the platform.</strong> Deliberately send malformed requests, attempt to exhaust API resources, or disrupt the Service for others.</li>
+        <li><strong>Circumvent security controls.</strong> Attempt to bypass, reverse-engineer, or exploit AgentsID's authentication mechanisms, HMAC verification, or audit log integrity.</li>
+        <li><strong>Register agents for illegal activity.</strong> Use agent identities or permission rules to authorize actions that violate any applicable law, including unauthorized access to computer systems, fraud, or harassment.</li>
+        <li><strong>Scrape or harvest data.</strong> Bulk-extract data from AgentsID's interfaces beyond what your own projects and agents require.</li>
+        <li><strong>Resell without permission.</strong> Offer AgentsID's API as a white-label service to third parties without an explicit written agreement with us.</li>
+        <li><strong>Impersonate AgentsID.</strong> Misrepresent your agents or projects as being affiliated with or operated by AgentsID.</li>
+      </ul>
+      <p>We reserve the right to determine what constitutes a violation of these rules. Violations may result in immediate account suspension or termination (see Section 13).</p>
+    </section>
+
+    <!-- 5 -->
+    <section class="section" id="plans">
+      <h2><span class="section-num">5</span> Plans &amp; Billing</h2>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Plan</th>
+            <th>Events / month</th>
+            <th>Agents</th>
+            <th>Audit retention</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Free</strong></td>
+            <td>1,000</td>
+            <td>5</td>
+            <td>7 days</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td><strong>Pro</strong></td>
+            <td>Unlimited</td>
+            <td>Unlimited</td>
+            <td>30 days</td>
+            <td>$49 / month</td>
+          </tr>
+          <tr>
+            <td><strong>Enterprise</strong></td>
+            <td>Custom</td>
+            <td>Custom</td>
+            <td>90 days</td>
+            <td>Contact us</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Billing terms (Pro and Enterprise)</h3>
+      <ul>
+        <li>Paid plans are billed monthly in advance. Your billing cycle starts on the date you upgrade.</li>
+        <li>All fees are in USD and are non-refundable, except where required by law.</li>
+        <li>We will give you at least 30 days' notice before changing Pro plan pricing.</li>
+        <li>If your payment method fails, we will retry for 7 days. After that, your account may be downgraded to the Free tier, and your data may be subject to the Free tier retention limits.</li>
+        <li>You can cancel at any time. Your paid features remain active through the end of the billing period you have paid for.</li>
+      </ul>
+
+      <h3>Taxes</h3>
+      <p>Prices are exclusive of applicable taxes. You are responsible for any sales tax, VAT, GST, or similar taxes required by your jurisdiction.</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="section" id="free-tier">
+      <h2><span class="section-num">6</span> Free Tier Limits</h2>
+      <p>The Free tier is provided at our discretion to let developers evaluate and build with AgentsID. We reserve the right to:</p>
+      <ul>
+        <li>Enforce the 1,000 events/month and 5 agent limits technically (requests over the limit will be rejected)</li>
+        <li>Rate-limit free tier accounts more aggressively than paid accounts</li>
+        <li>Modify free tier limits with 30 days' notice</li>
+        <li>Discontinue the free tier entirely with 60 days' notice</li>
+      </ul>
+      <div class="callout warn">
+        <strong>Important</strong>
+        Do not build production systems that depend critically on the Free tier without a plan to upgrade. Free tier infrastructure is not subject to any uptime commitments.
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="section" id="api">
+      <h2><span class="section-num">7</span> API &amp; Rate Limits</h2>
+      <p>AgentsID enforces rate limits to ensure fair use and platform stability. Rate limits vary by plan and may be applied per API key, per project, or per IP address.</p>
+      <ul>
+        <li>If you exceed a rate limit, you will receive an HTTP <code style="font-family:var(--mono);font-size:0.875em;background:#f5f4f0;padding:1px 6px;border-radius:4px">429</code> response with a <code style="font-family:var(--mono);font-size:0.875em;background:#f5f4f0;padding:1px 6px;border-radius:4px">Retry-After</code> header.</li>
+        <li>Sustained traffic beyond your plan limits may require an upgrade to Pro or Enterprise.</li>
+        <li>We reserve the right to throttle or block traffic patterns that indicate abuse, even within nominal limits.</li>
+      </ul>
+      <p>Current rate limit values are documented at <a href="/docs">agentsid.dev/docs</a>. These values may change; breaking changes to the API will be communicated with at least 30 days' notice.</p>
+    </section>
+
+    <!-- 8 -->
+    <section class="section" id="ip">
+      <h2><span class="section-num">8</span> Intellectual Property</h2>
+      <h3>AgentsID owns the platform</h3>
+      <p>AgentsID and its licensors own all rights to the Service, including the software, APIs, design, trademarks, and documentation. These Terms do not grant you any ownership rights. You receive a limited, non-exclusive, non-transferable license to use the Service according to these Terms.</p>
+
+      <h3>You own your data</h3>
+      <p>You retain ownership of all data you submit to AgentsID: your project configurations, agent definitions, permission rules, and audit log data. You grant AgentsID a limited license to store and process this data solely to operate the Service on your behalf.</p>
+
+      <h3>Feedback</h3>
+      <p>If you submit suggestions or feedback about AgentsID, you grant us a perpetual, royalty-free right to use that feedback without restriction or compensation. We appreciate it — it helps us build a better product.</p>
+    </section>
+
+    <!-- 9 -->
+    <section class="section" id="data">
+      <h2><span class="section-num">9</span> Your Data</h2>
+      <p>We collect and store only what is necessary to operate the Service. This includes:</p>
+      <ul>
+        <li>Your email address (via Supabase Auth)</li>
+        <li>Project names and configuration</li>
+        <li>Agent names, permissions, and delegation chain metadata</li>
+        <li>API key hashes (never raw keys)</li>
+        <li>Audit log entries: tool call records, allow/deny decisions, and timestamps</li>
+        <li>Token metadata needed for HMAC verification</li>
+      </ul>
+      <p>For full details on how we handle your data, how long we keep it, and your rights regarding it, see our <a href="/privacy">Privacy Policy</a>.</p>
+
+      <h3>Audit log integrity</h3>
+      <p>Audit logs are protected by a tamper-evident hash chain. This means we can detect if any log entry has been altered after the fact. We do not alter your logs. If you discover any integrity anomaly, contact us immediately.</p>
+
+      <h3>Data retention on plan changes</h3>
+      <p>If you downgrade from a paid plan to Free, your audit logs will be trimmed to the Free tier retention window (7 days) within 30 days of the plan change. Export your logs before downgrading if you need to preserve them.</p>
+    </section>
+
+    <!-- 10 -->
+    <section class="section" id="security-disclaimer">
+      <h2><span class="section-num">10</span> Security Disclaimer</h2>
+
+      <div class="callout warn">
+        <strong>Read this carefully</strong>
+        AgentsID is an authentication and permission enforcement tool. Using AgentsID does not make your AI system secure. You are responsible for the security of your overall system.
+      </div>
+
+      <p>Specifically:</p>
+      <ul>
+        <li><strong>AgentsID is not liable for security breaches in systems that use our platform.</strong> We provide tools — HMAC-signed tokens, permission rules, audit logs — but we do not control how you integrate, deploy, or configure those tools.</li>
+        <li>A misconfigured permission rule in your project is your responsibility, not ours.</li>
+        <li>An agent that obtains a valid token through unauthorized means (e.g., a stolen API key in your environment) will appear legitimate to AgentsID's verification layer. Protect your secrets.</li>
+        <li>AgentsID's token verification confirms that a token was signed by your project's secret and has not expired. It does not guarantee the agent presenting that token is operating within your intended behavioral bounds.</li>
+      </ul>
+      <p>We implement industry-standard security practices (TLS in transit, encrypted storage, access controls) and will disclose material security incidents promptly. But security is a shared responsibility.</p>
+    </section>
+
+    <!-- 11 -->
+    <section class="section" id="warranties">
+      <h2><span class="section-num">11</span> No Warranties</h2>
+      <p>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED BY LAW, AGENTSID EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING:</p>
+      <ul>
+        <li>Any implied warranty of merchantability or fitness for a particular purpose</li>
+        <li>Any warranty that the Service will be uninterrupted, error-free, or secure</li>
+        <li>Any warranty regarding the accuracy or reliability of any information provided through the Service</li>
+      </ul>
+      <p>We make reasonable efforts to maintain availability and data integrity, but we do not guarantee any specific uptime. Planned and unplanned maintenance may result in temporary unavailability.</p>
+    </section>
+
+    <!-- 12 -->
+    <section class="section" id="liability">
+      <h2><span class="section-num">12</span> Limitation of Liability</h2>
+      <p>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW:</p>
+      <ul>
+        <li>AgentsID's total liability to you for any claim arising out of or related to these Terms or the Service will not exceed the greater of: (a) the amount you paid to AgentsID in the 12 months before the claim arose, or (b) $100 USD.</li>
+        <li>AgentsID will not be liable for any indirect, incidental, special, consequential, or punitive damages, including lost profits, lost data, business interruption, or reputational harm — even if we were advised of the possibility of such damages.</li>
+      </ul>
+      <p>These limitations apply regardless of the legal theory under which a claim is brought (contract, tort, strict liability, etc.). Some jurisdictions do not allow certain liability limitations, in which case the above limitations apply to the maximum extent permitted by law in your jurisdiction.</p>
+    </section>
+
+    <!-- 13 -->
+    <section class="section" id="termination">
+      <h2><span class="section-num">13</span> Termination</h2>
+      <h3>You can leave anytime</h3>
+      <p>You may close your account at any time from your account settings or by emailing <a href="mailto:legal@agentsid.dev">legal@agentsid.dev</a>. Upon account closure, we will delete your data in accordance with our Privacy Policy.</p>
+
+      <h3>We can suspend or terminate for cause</h3>
+      <p>We reserve the right to suspend or terminate your account immediately if we determine, in our reasonable judgment, that you have:</p>
+      <ul>
+        <li>Violated these Terms, including the Acceptable Use policy</li>
+        <li>Provided false information during registration</li>
+        <li>Failed to pay fees when due</li>
+        <li>Engaged in conduct that poses a security or legal risk to AgentsID or other users</li>
+      </ul>
+      <p>Where practical, we will give you notice before termination and a reasonable opportunity to remedy the issue. For serious violations (abuse, illegal activity, security threats), we may act immediately.</p>
+
+      <h3>Effect of termination</h3>
+      <p>Upon termination: your access to the Service ends, your API keys are invalidated, and your data is scheduled for deletion. Sections 8 (IP), 10 (Security Disclaimer), 11 (Warranties), 12 (Liability), 15 (Governing Law), and 16 (Disputes) survive termination.</p>
+    </section>
+
+    <!-- 14 -->
+    <section class="section" id="changes">
+      <h2><span class="section-num">14</span> Changes to Terms</h2>
+      <p>We may update these Terms from time to time. When we do:</p>
+      <ul>
+        <li>We will update the "Last updated" date at the top of this page</li>
+        <li>For material changes, we will send an email to the address on your account at least 14 days before the changes take effect</li>
+        <li>For minor changes (typo corrections, clarifications that don't affect your rights), we may not send an individual notice</li>
+      </ul>
+      <p>Your continued use of the Service after changes take effect constitutes acceptance of the updated Terms. If you disagree with a material change, you may close your account before it takes effect.</p>
+    </section>
+
+    <!-- 15 -->
+    <section class="section" id="governing-law">
+      <h2><span class="section-num">15</span> Governing Law</h2>
+      <p>These Terms are governed by the laws of the State of Delaware, United States, without regard to conflict of law principles. If any provision of these Terms is found to be unenforceable, the remaining provisions will remain in full force.</p>
+    </section>
+
+    <!-- 16 -->
+    <section class="section" id="disputes">
+      <h2><span class="section-num">16</span> Dispute Resolution</h2>
+      <h3>Informal resolution first</h3>
+      <p>If you have a dispute with AgentsID, please email <a href="mailto:legal@agentsid.dev">legal@agentsid.dev</a> first. Most issues can be resolved quickly. We will make a good-faith effort to respond within 10 business days.</p>
+
+      <h3>Binding arbitration</h3>
+      <p>If informal resolution fails, any dispute arising from these Terms or the Service will be resolved by binding individual arbitration administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules. Arbitration will be conducted in Delaware or remotely. The arbitrator's decision is final and binding.</p>
+
+      <h3>Class action waiver</h3>
+      <p>You waive any right to bring claims as a class action, consolidated action, or representative action. All disputes must be brought in your individual capacity.</p>
+
+      <h3>Exception</h3>
+      <p>Either party may seek injunctive or other equitable relief in a court of competent jurisdiction to prevent irreparable harm, without first going through arbitration.</p>
+    </section>
+
+    <!-- 17 -->
+    <section class="section" id="contact">
+      <h2><span class="section-num">17</span> Contact</h2>
+      <p>For legal inquiries, Terms questions, or account issues:</p>
+      <ul>
+        <li>Email: <a href="mailto:legal@agentsid.dev">legal@agentsid.dev</a></li>
+        <li>Website: <a href="https://agentsid.dev">agentsid.dev</a></li>
+      </ul>
+      <p>We are a small team. We read every message.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer class="footer">
+  <p>
+    <a href="/docs">Docs</a> &middot;
+    <a href="/guides">Guides</a> &middot;
+    <a href="/dashboard">Dashboard</a> &middot;
+    <a href="https://github.com/stevenkozeniesky02/agentsid" target="_blank">GitHub</a> &middot;
+    <a href="/terms">Terms</a> &middot;
+    <a href="/privacy">Privacy</a>
+  </p>
+  <p style="margin-top:8px">&copy; 2026 AgentsID</p>
+</footer>
+
+<script>
+// Highlight active TOC item on scroll
+(function() {
+  const sections = document.querySelectorAll('.section');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+  const OFFSET = 100;
+
+  function getActiveSection() {
+    let current = null;
+    sections.forEach(section => {
+      const top = section.getBoundingClientRect().top;
+      if (top <= OFFSET) current = section;
+    });
+    return current;
+  }
+
+  function updateToc() {
+    const active = getActiveSection();
+    tocLinks.forEach(link => {
+      link.classList.remove('active');
+      if (active && link.getAttribute('href') === '#' + active.id) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateToc, { passive: true });
+  updateToc();
+})();
+</script>
+
+</body>
+</html>

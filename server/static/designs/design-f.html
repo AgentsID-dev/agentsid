@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentsID — Identity for AI Agents</title>
+<style>
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── VARIABLES ─── */
+:root {
+  --bg: #111;
+  --fg: #e0e0e0;
+  --fg-dim: #777;
+  --accent: #39ff14;
+  --border: #39ff14;
+  --border-dim: #333;
+  --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', 'Menlo', 'Consolas', monospace;
+  --border-w: 2px;
+  --max-w: 1200px;
+  --gutter: 24px;
+}
+
+/* ─── BASE ─── */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--mono);
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ─── UTILITIES ─── */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+hr {
+  border: none;
+  border-top: var(--border-w) solid var(--border-dim);
+  margin: 0;
+}
+
+hr.accent {
+  border-top-color: var(--accent);
+}
+
+.section-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.section-pad {
+  padding: 80px 0;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--bg);
+  border-bottom: var(--border-w) solid var(--accent);
+  height: 56px;
+}
+
+nav .container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 32px;
+}
+
+.nav-logo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.nav-logo span {
+  color: var(--accent);
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+  margin-left: auto;
+}
+
+.nav-links a {
+  color: var(--fg-dim);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.nav-cta {
+  border: var(--border-w) solid var(--accent);
+  color: var(--accent) !important;
+  padding: 6px 16px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-cta:hover {
+  background: var(--accent);
+  color: var(--bg) !important;
+  text-decoration: none;
+}
+
+.nav-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 1.5rem;
+  cursor: pointer;
+  font-family: var(--mono);
+  margin-left: auto;
+}
+
+/* ─── HERO ─── */
+.hero {
+  padding-top: 140px;
+  padding-bottom: 80px;
+  border-bottom: var(--border-w) solid var(--border-dim);
+}
+
+.hero-eyebrow {
+  font-size: 0.8rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  margin-bottom: 24px;
+}
+
+.hero h1 .accent {
+  color: var(--accent);
+}
+
+.hero-sub {
+  font-size: 1.1rem;
+  color: var(--fg-dim);
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 14px 32px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: var(--border-w) solid var(--accent);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.btn-secondary {
+  display: inline-block;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: var(--border-w) solid var(--border-dim);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* ─── TERMINAL ─── */
+.terminal-section {
+  padding: 60px 0;
+  border-bottom: var(--border-w) solid var(--border-dim);
+}
+
+.terminal {
+  border: var(--border-w) solid var(--accent);
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.terminal-header {
+  background: #1a1a1a;
+  border-bottom: var(--border-w) solid var(--accent);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border: var(--border-w) solid var(--fg-dim);
+}
+
+.terminal-title {
+  font-size: 0.75rem;
+  color: var(--fg-dim);
+  margin-left: 8px;
+}
+
+.terminal-body {
+  padding: 24px;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.terminal-body .prompt {
+  color: var(--accent);
+}
+
+.terminal-body .cmd {
+  color: var(--fg);
+}
+
+.terminal-body .output {
+  color: var(--fg-dim);
+}
+
+.terminal-body .success {
+  color: var(--accent);
+}
+
+/* ─── PROBLEM ─── */
+.problem-section {
+  border-bottom: var(--border-w) solid var(--border-dim);
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.problem-col {
+  padding: 40px 0;
+}
+
+.problem-col:first-child {
+  padding-right: 40px;
+  border-right: var(--border-w) solid var(--border-dim);
+}
+
+.problem-col:last-child {
+  padding-left: 40px;
+}
+
+.problem-col h3 {
+  font-size: 1.2rem;
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+
+.problem-col.bad h3 {
+  color: #ff4444;
+}
+
+.problem-col.good h3 {
+  color: var(--accent);
+}
+
+.problem-item {
+  font-size: 0.85rem;
+  color: var(--fg-dim);
+  margin-bottom: 16px;
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.problem-item::before {
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+}
+
+.problem-col.bad .problem-item::before {
+  content: "x";
+  color: #ff4444;
+}
+
+.problem-col.good .problem-item::before {
+  content: ">";
+  color: var(--accent);
+}
+
+/* ─── HOW IT WORKS ─── */
+.how-section {
+  border-bottom: var(--border-w) solid var(--border-dim);
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.step {
+  padding: 32px 24px;
+  border-right: var(--border-w) solid var(--border-dim);
+}
+
+.step:last-child {
+  border-right: none;
+}
+
+.step-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.step h4 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.step p {
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  line-height: 1.7;
+}
+
+.step code {
+  display: block;
+  margin-top: 16px;
+  padding: 12px;
+  background: #0a0a0a;
+  border: 1px solid var(--border-dim);
+  font-size: 0.75rem;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+/* ─── CODE EXAMPLE ─── */
+.code-section {
+  border-bottom: var(--border-w) solid var(--border-dim);
+}
+
+.code-block {
+  border: var(--border-w) solid var(--border-dim);
+  background: #0a0a0a;
+}
+
+.code-header {
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border-dim);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-filename {
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+.code-lang {
+  font-size: 0.7rem;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.code-body {
+  padding: 24px;
+  font-size: 0.8rem;
+  line-height: 1.9;
+  overflow-x: auto;
+}
+
+.code-body .kw { color: #ff6b6b; }
+.code-body .str { color: var(--accent); }
+.code-body .fn { color: #ffd93d; }
+.code-body .cmt { color: #555; }
+.code-body .type { color: #4fc3f7; }
+.code-body .num { color: #ff9800; }
+
+/* ─── FEATURES ─── */
+.features-section {
+  border-bottom: var(--border-w) solid var(--border-dim);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.feature-card {
+  padding: 32px 24px;
+  border-right: var(--border-w) solid var(--border-dim);
+  border-bottom: var(--border-w) solid var(--border-dim);
+}
+
+.feature-card:nth-child(3n) {
+  border-right: none;
+}
+
+.feature-card:nth-child(n+4) {
+  border-bottom: none;
+}
+
+.feature-icon {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  display: block;
+  width: 48px;
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  border: var(--border-w) solid var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.feature-card h4 {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.feature-card p {
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  line-height: 1.7;
+}
+
+/* ─── PRICING ─── */
+.pricing-section {
+  border-bottom: var(--border-w) solid var(--border-dim);
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.pricing-card {
+  padding: 40px 32px;
+  border-right: var(--border-w) solid var(--border-dim);
+}
+
+.pricing-card:last-child {
+  border-right: none;
+}
+
+.pricing-card.featured {
+  border: var(--border-w) solid var(--accent);
+  margin: -2px;
+}
+
+.pricing-name {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  margin-bottom: 16px;
+}
+
+.pricing-price {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pricing-price .currency {
+  font-size: 1.2rem;
+  color: var(--fg-dim);
+}
+
+.pricing-period {
+  font-size: 0.75rem;
+  color: var(--fg-dim);
+  margin-bottom: 32px;
+}
+
+.pricing-features {
+  list-style: none;
+  margin-bottom: 32px;
+}
+
+.pricing-features li {
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  margin-bottom: 12px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.pricing-features li::before {
+  content: "+";
+  color: var(--accent);
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+}
+
+.pricing-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  border: var(--border-w) solid var(--border-dim);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  text-decoration: none;
+}
+
+.pricing-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.pricing-card.featured .pricing-btn {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.pricing-card.featured .pricing-btn:hover {
+  background: transparent;
+  color: var(--accent);
+}
+
+/* ─── CTA ─── */
+.cta-section {
+  padding: 100px 0;
+  border-bottom: var(--border-w) solid var(--accent);
+}
+
+.cta-section h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+.cta-section h2 .accent {
+  color: var(--accent);
+}
+
+.cta-sub {
+  font-size: 1rem;
+  color: var(--fg-dim);
+  margin-bottom: 40px;
+  max-width: 500px;
+}
+
+.cta-install {
+  display: inline-block;
+  padding: 16px 32px;
+  background: #0a0a0a;
+  border: var(--border-w) solid var(--accent);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--accent);
+  margin-bottom: 16px;
+  user-select: all;
+}
+
+.cta-hint {
+  font-size: 0.75rem;
+  color: var(--fg-dim);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 40px 0;
+  border-top: var(--border-w) solid var(--border-dim);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+.footer-brand {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.footer-brand span {
+  color: var(--accent);
+}
+
+.footer-desc {
+  font-size: 0.75rem;
+  color: var(--fg-dim);
+  line-height: 1.7;
+  max-width: 280px;
+}
+
+.footer-col h5 {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  margin-bottom: 16px;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  margin-bottom: 10px;
+  transition: color 0.15s;
+}
+
+.footer-col a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer-bottom {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-dim);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--fg-dim);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-bottom: var(--border-w) solid var(--accent);
+    flex-direction: column;
+    padding: 24px;
+    gap: 16px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-mobile-toggle {
+    display: block;
+  }
+
+  .problem-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .problem-col:first-child {
+    padding-right: 0;
+    border-right: none;
+    border-bottom: var(--border-w) solid var(--border-dim);
+  }
+
+  .problem-col:last-child {
+    padding-left: 0;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .step {
+    border-right: none;
+    border-bottom: var(--border-w) solid var(--border-dim);
+  }
+
+  .step:last-child {
+    border-bottom: none;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    border-right: none;
+    border-bottom: var(--border-w) solid var(--border-dim);
+  }
+
+  .feature-card:last-child {
+    border-bottom: none;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pricing-card {
+    border-right: none;
+    border-bottom: var(--border-w) solid var(--border-dim);
+  }
+
+  .pricing-card:last-child {
+    border-bottom: none;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --gutter: 16px;
+  }
+
+  .hero {
+    padding-top: 100px;
+    padding-bottom: 60px;
+  }
+
+  .section-pad {
+    padding: 60px 0;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- NAV -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo"><span>&gt;</span> AgentsID</a>
+    <button class="nav-mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle menu">[=]</button>
+    <ul class="nav-links">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="/docs">Docs</a></li>
+      <li><a href="https://github.com/agentsid/agentsid">GitHub</a></li>
+      <li><a href="/dashboard" class="nav-cta">Dashboard</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">// identity layer for ai agents</div>
+    <h1>Your agents<br>have no <span class="accent">identity.</span></h1>
+    <p class="hero-sub">AgentsID gives every AI agent a cryptographic identity, scoped permissions, and a full audit trail. Drop-in SDK for any MCP server. Five minutes to integrate.</p>
+    <div class="hero-actions">
+      <a href="#terminal" class="btn-primary">Get started</a>
+      <a href="/docs" class="btn-secondary">Read the docs</a>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- TERMINAL -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="terminal-section" id="terminal">
+  <div class="container">
+    <span class="section-label">// quick start</span>
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <span class="terminal-title">terminal</span>
+      </div>
+      <div class="terminal-body">
+<span class="prompt">$</span> <span class="cmd">npm install @agentsid/sdk</span>
+<span class="output">added 3 packages in 1.2s</span>
+
+<span class="prompt">$</span> <span class="cmd">npx agentsid init "My App"</span>
+<span class="output">creating project.................. done</span>
+<span class="output">generating api key................ done</span>
+<span class="success">
+project_id:  aid_proj_7kx9m2
+api_key:     aid_sk_****************************
+dashboard:   https://agentsid.dev/dashboard</span>
+
+<span class="prompt">$</span> <span class="cmd">npx agentsid register-agent --name "research-bot" --permissions "read,write"</span>
+<span class="success">
+agent_id:    aid_agent_r3s34rch
+token:       aid_tok_****************************
+status:      active
+expires:     2026-03-26T00:00:00Z</span>
+
+<span class="prompt">$</span> <span class="cmd">_</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- PROBLEM -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="problem-section section-pad" id="problem">
+  <div class="container">
+    <span class="section-label">// the problem</span>
+    <div class="problem-grid">
+      <div class="problem-col bad">
+        <h3>Without AgentsID</h3>
+        <p class="problem-item">Agents share a single API key with god-mode access</p>
+        <p class="problem-item">No way to know which agent performed which action</p>
+        <p class="problem-item">Permissions are hardcoded or nonexistent</p>
+        <p class="problem-item">Rogue agent? Revoke the key and break everything</p>
+        <p class="problem-item">Zero audit trail for compliance or debugging</p>
+      </div>
+      <div class="problem-col good">
+        <h3>With AgentsID</h3>
+        <p class="problem-item">Every agent gets its own cryptographic identity</p>
+        <p class="problem-item">Full audit trail: who did what, when, on whose behalf</p>
+        <p class="problem-item">Scoped permissions per agent, per tool, per user</p>
+        <p class="problem-item">Revoke one agent without touching anything else</p>
+        <p class="problem-item">SOC 2 / HIPAA-ready audit logs out of the box</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="accent">
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- HOW IT WORKS -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="how-section section-pad" id="how">
+  <div class="container">
+    <span class="section-label">// how it works</span>
+    <h2 style="font-size: 2rem; margin-bottom: 40px; font-weight: 700;">Three lines. Five minutes. Done.</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-number">01</div>
+        <h4>Install the SDK</h4>
+        <p>One package. No dependencies. TypeScript, Python, Ruby, Java.</p>
+        <code>npm install @agentsid/sdk</code>
+      </div>
+      <div class="step">
+        <div class="step-number">02</div>
+        <h4>Register your agents</h4>
+        <p>Give each agent a name, scoped permissions, and a TTL. Get back a signed token.</p>
+        <code>aid.registerAgent({ name, permissions, ttl })</code>
+      </div>
+      <div class="step">
+        <div class="step-number">03</div>
+        <h4>Add middleware</h4>
+        <p>One line wraps your MCP server. Every tool call is verified, permissioned, and logged.</p>
+        <code>server.use(agentsIdMiddleware({ ... }))</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- CODE EXAMPLE -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="code-section section-pad" id="code">
+  <div class="container">
+    <span class="section-label">// real code</span>
+    <h2 style="font-size: 1.5rem; margin-bottom: 32px; font-weight: 700;">What it looks like in your codebase</h2>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">server.ts</span>
+        <span class="code-lang">TypeScript</span>
+      </div>
+      <div class="code-body"><span class="kw">import</span> { <span class="type">AgentsID</span> } <span class="kw">from</span> <span class="str">'@agentsid/sdk'</span>;
+<span class="kw">import</span> { <span class="fn">agentsIdMiddleware</span> } <span class="kw">from</span> <span class="str">'@agentsid/sdk/mcp'</span>;
+
+<span class="cmt">// Initialize the client</span>
+<span class="kw">const</span> aid = <span class="kw">new</span> <span class="fn">AgentsID</span>({
+  projectKey: process.env.<span class="type">AGENTSID_KEY</span>
+});
+
+<span class="cmt">// Register an agent with scoped permissions</span>
+<span class="kw">const</span> { agent, token } = <span class="kw">await</span> aid.<span class="fn">registerAgent</span>({
+  name: <span class="str">'research-assistant'</span>,
+  onBehalfOf: <span class="str">'user_abc'</span>,
+  permissions: [<span class="str">'search_memories'</span>, <span class="str">'save_memory'</span>],
+  ttlHours: <span class="num">24</span>
+});
+
+<span class="cmt">// One line of middleware. That's it.</span>
+server.<span class="fn">use</span>(<span class="fn">agentsIdMiddleware</span>({
+  projectKey: process.env.<span class="type">AGENTSID_KEY</span>,
+  getToken: (req) => req.headers[<span class="str">'x-agent-token'</span>],
+}));
+
+<span class="cmt">// Every tool call is now:</span>
+<span class="cmt">//   1. Token signature verified</span>
+<span class="cmt">//   2. Permissions checked against scope</span>
+<span class="cmt">//   3. Action logged to immutable audit trail</span></div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- FEATURES -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="features-section section-pad" id="features">
+  <div class="container">
+    <span class="section-label">// features</span>
+    <h2 style="font-size: 2rem; margin-bottom: 40px; font-weight: 700;">Everything you need. Nothing you don't.</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">ID</div>
+        <h4>Agent Identity</h4>
+        <p>Cryptographic identity for every agent. Unique IDs, signed tokens, automatic key rotation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">PM</div>
+        <h4>Scoped Permissions</h4>
+        <p>Fine-grained permissions per agent, per tool, per user. Principle of least privilege enforced.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">AU</div>
+        <h4>Audit Trail</h4>
+        <p>Immutable log of every action. Who did what, when, on whose behalf. SOC 2 and HIPAA ready.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">MW</div>
+        <h4>MCP Middleware</h4>
+        <p>Drop-in middleware for any MCP server. One line of code. Automatic verification on every tool call.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">RV</div>
+        <h4>Instant Revocation</h4>
+        <p>Revoke any agent instantly without affecting others. Automatic expiry with configurable TTL.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">DB</div>
+        <h4>Real-time Dashboard</h4>
+        <p>Live view of all agents, permissions, and activity. Searchable audit logs. Alert on anomalies.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="accent">
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- PRICING -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="pricing-section section-pad" id="pricing">
+  <div class="container">
+    <span class="section-label">// pricing</span>
+    <h2 style="font-size: 2rem; margin-bottom: 40px; font-weight: 700;">Start free. Scale when you're ready.</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-price"><span class="currency">$</span>0</div>
+        <div class="pricing-period">forever</div>
+        <ul class="pricing-features">
+          <li>Up to 5 agents</li>
+          <li>1,000 verifications/month</li>
+          <li>7-day audit log retention</li>
+          <li>Community support</li>
+          <li>Single project</li>
+        </ul>
+        <a href="/dashboard" class="pricing-btn">Get started</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-name">Pro</div>
+        <div class="pricing-price"><span class="currency">$</span>29</div>
+        <div class="pricing-period">/month</div>
+        <ul class="pricing-features">
+          <li>Unlimited agents</li>
+          <li>100,000 verifications/month</li>
+          <li>90-day audit log retention</li>
+          <li>Priority support</li>
+          <li>10 projects</li>
+          <li>Custom permissions</li>
+          <li>Webhook notifications</li>
+        </ul>
+        <a href="/dashboard" class="pricing-btn">Start free trial</a>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-name">Enterprise</div>
+        <div class="pricing-price">Custom</div>
+        <div class="pricing-period">talk to us</div>
+        <ul class="pricing-features">
+          <li>Unlimited everything</li>
+          <li>Unlimited audit retention</li>
+          <li>Dedicated support</li>
+          <li>SSO / SAML</li>
+          <li>Self-hosted option</li>
+          <li>SLA guarantee</li>
+          <li>Custom integrations</li>
+        </ul>
+        <a href="mailto:hello@agentsid.dev" class="pricing-btn">Contact sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- CTA -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<section class="cta-section" id="cta">
+  <div class="container">
+    <h2>Stop shipping agents<br>without <span class="accent">identity.</span></h2>
+    <p class="cta-sub">One install. Five minutes. Every agent authenticated, permissioned, and audited.</p>
+    <div class="cta-install">$ npm install @agentsid/sdk</div>
+    <br>
+    <span class="cta-hint">or: pip install agentsid | gem install agentsid</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><span>&gt;</span> AgentsID</div>
+        <p class="footer-desc">Identity, permissions, and audit for AI agents. The authentication layer the agentic web is missing.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="/docs">Documentation</a>
+        <a href="/dashboard">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <h5>Developers</h5>
+        <a href="/docs#quickstart">Quick Start</a>
+        <a href="/docs#api-reference">API Reference</a>
+        <a href="/docs#sdk-reference">SDK Reference</a>
+        <a href="https://github.com/agentsid/agentsid">GitHub</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="mailto:hello@agentsid.dev">Contact</a>
+        <a href="#">Blog</a>
+        <a href="#">Twitter</a>
+        <a href="#">Status</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 AgentsID. All rights reserved.</span>
+      <span>Built for the agentic web.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Mobile nav toggle is inline on the button
+</script>
+
+</body>
+</html>

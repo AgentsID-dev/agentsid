@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentsID — Identity Infrastructure for AI Agents</title>
+<style>
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── Variables ─── */
+:root {
+  --bg: #0c0c1d;
+  --bg-card: #111128;
+  --bg-card-hover: #161640;
+  --border: rgba(255,255,255,0.06);
+  --text: #eeeef6;
+  --text-muted: #8888a8;
+  --text-dim: #5a5a78;
+  --aurora-green: #22c55e;
+  --aurora-cyan: #06b6d4;
+  --aurora-purple: #a855f7;
+  --aurora-pink: #ec4899;
+  --mono: 'SF Mono','Fira Code','Cascadia Code','Menlo','Consolas',monospace;
+  --sans: -apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,Helvetica,Arial,sans-serif;
+  --radius: 12px;
+  --max-w: 1140px;
+}
+
+/* ─── Base ─── */
+html { font-size: 15px; scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  overflow-x: hidden;
+  position: relative;
+}
+a { color: var(--aurora-cyan); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--aurora-green); }
+
+/* ─── Aurora Effect ─── */
+.aurora {
+  position: fixed;
+  top: -40%;
+  left: -20%;
+  width: 140%;
+  height: 70%;
+  background: linear-gradient(
+    120deg,
+    transparent 10%,
+    rgba(34,197,94,0.12) 20%,
+    rgba(6,182,212,0.15) 30%,
+    rgba(168,85,247,0.12) 45%,
+    rgba(236,72,153,0.10) 55%,
+    rgba(6,182,212,0.08) 65%,
+    rgba(34,197,94,0.10) 75%,
+    transparent 90%
+  );
+  background-size: 300% 300%;
+  animation: aurora-shift 18s ease-in-out infinite;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    240deg,
+    transparent 15%,
+    rgba(168,85,247,0.10) 25%,
+    rgba(236,72,153,0.12) 35%,
+    rgba(34,197,94,0.08) 50%,
+    rgba(6,182,212,0.10) 65%,
+    transparent 85%
+  );
+  background-size: 250% 250%;
+  animation: aurora-shift-alt 22s ease-in-out infinite;
+}
+@keyframes aurora-shift {
+  0%   { background-position: 0% 50%; opacity: 0.7; }
+  25%  { background-position: 50% 30%; opacity: 1; }
+  50%  { background-position: 100% 50%; opacity: 0.8; }
+  75%  { background-position: 50% 70%; opacity: 1; }
+  100% { background-position: 0% 50%; opacity: 0.7; }
+}
+@keyframes aurora-shift-alt {
+  0%   { background-position: 100% 0%; }
+  33%  { background-position: 0% 100%; }
+  66%  { background-position: 100% 100%; }
+  100% { background-position: 100% 0%; }
+}
+
+/* ─── Layout ─── */
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+section { padding: 100px 0; }
+
+/* ─── Gradient Border Card ─── */
+.glow-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1px;
+  position: relative;
+  overflow: hidden;
+}
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  padding: 1px;
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan), var(--aurora-purple), var(--aurora-pink));
+  background-size: 300% 300%;
+  animation: border-shift 8s ease-in-out infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.glow-card-inner {
+  background: var(--bg-card);
+  border-radius: calc(var(--radius) - 1px);
+  padding: 32px;
+  position: relative;
+  z-index: 1;
+}
+@keyframes border-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ─── Top-border Card (for features/pricing) ─── */
+.top-glow-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform 0.3s, border-color 0.3s;
+}
+.top-glow-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.1);
+}
+.top-glow-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--aurora-green), var(--aurora-cyan), var(--aurora-purple), var(--aurora-pink));
+  background-size: 300% 100%;
+  animation: border-shift 8s ease-in-out infinite;
+}
+
+/* ─── Nav ─── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 16px 0;
+  background: rgba(12,12,29,0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.nav-logo span {
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a { color: var(--text-muted); font-size: 0.9rem; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+  color: #0c0c1d;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.nav-cta:hover { opacity: 0.85; color: #0c0c1d; }
+.nav-mobile { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+/* ─── Hero ─── */
+.hero { padding: 180px 0 100px; text-align: center; }
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 100px;
+  border: 1px solid rgba(34,197,94,0.25);
+  background: rgba(34,197,94,0.06);
+  color: var(--aurora-green);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 28px;
+}
+.hero-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--aurora-green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.hero h1 {
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
+}
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan), var(--aurora-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+.hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+  color: #0c0c1d;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); color: #0c0c1d; }
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.btn-secondary:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-1px); }
+
+/* ─── Section Headers ─── */
+.section-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.section-desc {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  max-width: 560px;
+  line-height: 1.7;
+}
+.section-header { margin-bottom: 56px; }
+.section-header.center { text-align: center; }
+.section-header.center .section-desc { margin: 0 auto; }
+
+/* ─── Terminal ─── */
+.terminal-window {
+  background: #0a0a18;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-dot.r { background: #ff5f57; }
+.terminal-dot.y { background: #ffbd2e; }
+.terminal-dot.g { background: #28c840; }
+.terminal-bar span { color: var(--text-dim); font-size: 0.75rem; margin-left: 8px; font-family: var(--mono); }
+.terminal-body { padding: 24px; font-family: var(--mono); font-size: 0.85rem; line-height: 1.9; }
+.terminal-body .prompt { color: var(--aurora-green); }
+.terminal-body .cmd { color: var(--text); }
+.terminal-body .output { color: var(--text-muted); }
+.terminal-body .highlight { color: var(--aurora-cyan); }
+.terminal-body .warn { color: var(--aurora-purple); }
+
+/* ─── Problem ─── */
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+.problem-card {
+  padding: 28px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.problem-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+  background: rgba(236,72,153,0.08);
+  border: 1px solid rgba(236,72,153,0.15);
+}
+.problem-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+.problem-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+/* ─── How It Works ─── */
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; counter-reset: step; }
+.step { position: relative; counter-increment: step; }
+.step-num {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan), var(--aurora-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0.35;
+}
+.step h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
+.step p { color: var(--text-muted); font-size: 0.95rem; }
+
+/* ─── Code ─── */
+.code-tabs { display: flex; gap: 0; margin-bottom: 0; }
+.code-tab {
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.code-tab.active {
+  color: var(--aurora-cyan);
+  border-bottom-color: var(--aurora-cyan);
+}
+.code-block {
+  background: #0a0a18;
+  border-radius: 0 0 var(--radius) var(--radius);
+  border: 1px solid var(--border);
+  border-top: none;
+  padding: 24px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.8;
+}
+.code-tabs-bar {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex;
+}
+.code-block .kw { color: var(--aurora-purple); }
+.code-block .fn { color: var(--aurora-cyan); }
+.code-block .str { color: var(--aurora-green); }
+.code-block .cmt { color: var(--text-dim); }
+.code-block .type { color: var(--aurora-pink); }
+
+/* ─── Features ─── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 18px;
+  background: rgba(6,182,212,0.08);
+  border: 1px solid rgba(6,182,212,0.15);
+}
+.top-glow-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+.top-glow-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+/* ─── Pricing ─── */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+.pricing-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 36px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+.pricing-card:hover { transform: translateY(-2px); }
+.pricing-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--aurora-green), var(--aurora-cyan), var(--aurora-purple), var(--aurora-pink));
+  background-size: 300% 100%;
+  animation: border-shift 8s ease-in-out infinite;
+}
+.pricing-card.featured {
+  border-color: rgba(6,182,212,0.25);
+  box-shadow: 0 0 60px rgba(6,182,212,0.08);
+}
+.pricing-card.featured::before { height: 4px; }
+.pricing-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(6,182,212,0.1);
+  color: var(--aurora-cyan);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+.pricing-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+.pricing-amount {
+  font-size: 2.6rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+.pricing-amount span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+.pricing-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 28px; }
+.pricing-features { list-style: none; margin-bottom: 32px; }
+.pricing-features li {
+  padding: 8px 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pricing-features li::before {
+  content: '\2713';
+  color: var(--aurora-green);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.pricing-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pricing-btn:hover { border-color: rgba(255,255,255,0.25); }
+.pricing-btn.primary {
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-cyan));
+  color: #0c0c1d;
+  border: none;
+}
+.pricing-btn.primary:hover { opacity: 0.9; color: #0c0c1d; }
+
+/* ─── CTA ─── */
+.cta-section { padding: 80px 0 100px; }
+.cta-box {
+  text-align: center;
+  padding: 64px 40px;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+.cta-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--aurora-green), var(--aurora-cyan), var(--aurora-purple), var(--aurora-pink));
+  background-size: 300% 100%;
+  animation: border-shift 8s ease-in-out infinite;
+}
+.cta-box::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -20%;
+  width: 140%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(34,197,94,0.04) 40%,
+    rgba(6,182,212,0.06) 50%,
+    rgba(168,85,247,0.04) 60%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: aurora-shift 12s ease-in-out infinite;
+  pointer-events: none;
+}
+.cta-box h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 700; margin-bottom: 16px; position: relative; z-index: 1; }
+.cta-box p { color: var(--text-muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto 32px; position: relative; z-index: 1; }
+.cta-box .btn-primary { position: relative; z-index: 1; }
+
+/* ─── Footer ─── */
+footer {
+  padding: 60px 0 40px;
+  border-top: 1px solid var(--border);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 48px;
+}
+.footer-brand p { color: var(--text-muted); font-size: 0.9rem; margin-top: 12px; max-width: 280px; }
+.footer-col h4 { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text); margin-bottom: 16px; }
+.footer-col a { display: block; color: var(--text-muted); font-size: 0.9rem; padding: 4px 0; transition: color 0.2s; }
+.footer-col a:hover { color: var(--text); }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  section { padding: 64px 0; }
+  .hero { padding: 140px 0 60px; }
+  .nav-links { display: none; }
+  .nav-mobile { display: block; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .code-section .container { padding: 0 12px; }
+  .glow-card-inner { padding: 20px; }
+  .terminal-body { padding: 16px; font-size: 0.78rem; }
+  .cta-box { padding: 40px 24px; }
+  .hero-buttons { flex-direction: column; align-items: center; }
+}
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Aurora Background -->
+<div class="aurora" aria-hidden="true"></div>
+
+<!-- ─── Nav ─── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo"><span>Agents</span>ID</a>
+    <div class="nav-links">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/docs">Docs</a>
+      <a href="/dashboard" class="nav-cta">Dashboard</a>
+    </div>
+    <button class="nav-mobile" onclick="document.querySelector('.nav-links').style.display = document.querySelector('.nav-links').style.display === 'flex' ? 'none' : 'flex'" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</nav>
+
+<!-- ─── Hero ─── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">Now in Public Beta</div>
+    <h1>Identity infrastructure<br>for <span class="gradient-text">autonomous agents</span></h1>
+    <p>Every agent gets a verifiable identity, scoped permissions, and a tamper-proof audit trail. Every action is traceable to the human who authorized it.</p>
+    <div class="hero-buttons">
+      <a href="/dashboard" class="btn-primary">Get Started Free</a>
+      <a href="/docs" class="btn-secondary">Read the Docs</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Terminal ─── -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="terminal-window">
+      <div class="terminal-bar">
+        <div class="terminal-dot r"></div>
+        <div class="terminal-dot y"></div>
+        <div class="terminal-dot g"></div>
+        <span>terminal</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="prompt">$</span> <span class="cmd">npm install @agentsid/sdk</span></div>
+        <div><span class="output">added 3 packages in 1.2s</span></div>
+        <br>
+        <div><span class="prompt">$</span> <span class="cmd">agentsid init --project my-agents</span></div>
+        <div><span class="highlight">&#10003; Project created:</span> <span class="output">aid_proj_7k9x...</span></div>
+        <div><span class="highlight">&#10003; First agent registered:</span> <span class="output">aid_agent_m3q2...</span></div>
+        <div><span class="highlight">&#10003; Token issued</span></div>
+        <div><span class="highlight">&#10003; Permissions configured</span></div>
+        <br>
+        <div><span class="prompt">$</span> <span class="cmd">agentsid verify</span></div>
+        <div><span class="warn">&#9672;</span> <span class="output">Identity chain verified. 0 anomalies detected.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Problem ─── -->
+<section id="problem">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">The Problem</div>
+      <h2 class="section-title">Agents act without identity</h2>
+      <p class="section-desc">AI agents are making API calls, executing code, and accessing data with no way to verify who authorized what. This is a security gap that grows with every deployment.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">&#128274;</div>
+        <h3>Shared API Keys</h3>
+        <p>Agents share credentials meant for humans. When something goes wrong, there is no way to trace which agent or which human was responsible.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">&#128065;</div>
+        <h3>No Audit Trail</h3>
+        <p>Agents make thousands of tool calls per hour. Without tamper-proof logging, you cannot prove what happened, when, or by whose authority.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">&#9888;</div>
+        <h3>Overprivileged by Default</h3>
+        <p>Agents receive broad access because fine-grained permissions are too hard to implement. One compromised agent exposes everything.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── How It Works ─── -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">Three steps to verified agents</h2>
+      <p class="section-desc">From zero to fully auditable agent infrastructure in under five minutes.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Register your agent</h3>
+        <p>Create a project and register agent identities. Each agent gets a unique, HMAC-signed token tied to the human who authorized it.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Set permissions</h3>
+        <p>Define exactly which tools each agent can call using a deny-first permission engine. Deny rules always override allow rules.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Add the middleware</h3>
+        <p>Drop in the SDK middleware. Every tool call is now authenticated, authorized, and logged to a hash-chained audit trail.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Verify and audit</h3>
+        <p>Use the dashboard or API to verify the integrity of the audit chain at any time. Prove exactly what happened and who authorized it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Code ─── -->
+<section class="code-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Integration</div>
+      <h2 class="section-title">Five lines to verifiable identity</h2>
+      <p class="section-desc">Drop in the SDK. Token verification happens locally with zero database calls.</p>
+    </div>
+    <div class="glow-card">
+      <div class="glow-card-inner" style="padding: 0;">
+        <div class="code-tabs-bar">
+          <button class="code-tab active" onclick="switchTab(event, 'ts')">TypeScript</button>
+          <button class="code-tab" onclick="switchTab(event, 'py')">Python</button>
+          <button class="code-tab" onclick="switchTab(event, 'rb')">Ruby</button>
+        </div>
+        <div class="code-block" id="code-ts">
+<span class="kw">import</span> { <span class="type">AgentsID</span> } <span class="kw">from</span> <span class="str">'@agentsid/sdk'</span>;
+
+<span class="kw">const</span> aid = <span class="kw">new</span> <span class="fn">AgentsID</span>({ projectKey: <span class="str">'aid_proj_...'</span> });
+
+<span class="cmt">// Register agent with scoped permissions</span>
+<span class="kw">const</span> agent = <span class="kw">await</span> aid.<span class="fn">registerAgent</span>({
+  name: <span class="str">'code-reviewer'</span>,
+  permissions: [<span class="str">'tools:read'</span>, <span class="str">'tools:execute:lint'</span>],
+  delegatedBy: <span class="str">'user:steven'</span>
+});
+
+<span class="cmt">// Every tool call is now verified + logged</span>
+<span class="kw">await</span> agent.<span class="fn">callTool</span>(<span class="str">'lint'</span>, { file: <span class="str">'main.ts'</span> });
+        </div>
+        <div class="code-block" id="code-py" style="display:none;">
+<span class="kw">from</span> agentsid <span class="kw">import</span> <span class="type">AgentsID</span>
+
+aid = <span class="fn">AgentsID</span>(project_key=<span class="str">"aid_proj_..."</span>)
+
+<span class="cmt"># Register agent with scoped permissions</span>
+agent = aid.<span class="fn">register_agent</span>(
+    name=<span class="str">"code-reviewer"</span>,
+    permissions=[<span class="str">"tools:read"</span>, <span class="str">"tools:execute:lint"</span>],
+    delegated_by=<span class="str">"user:steven"</span>
+)
+
+<span class="cmt"># Every tool call is now verified + logged</span>
+agent.<span class="fn">call_tool</span>(<span class="str">"lint"</span>, {<span class="str">"file"</span>: <span class="str">"main.ts"</span>})
+        </div>
+        <div class="code-block" id="code-rb" style="display:none;">
+<span class="kw">require</span> <span class="str">'agentsid'</span>
+
+aid = <span class="type">AgentsID</span>::<span class="type">Client</span>.<span class="fn">new</span>(project_key: <span class="str">'aid_proj_...'</span>)
+
+<span class="cmt"># Register agent with scoped permissions</span>
+agent = aid.<span class="fn">register_agent</span>(
+  name: <span class="str">'code-reviewer'</span>,
+  permissions: [<span class="str">'tools:read'</span>, <span class="str">'tools:execute:lint'</span>],
+  delegated_by: <span class="str">'user:steven'</span>
+)
+
+<span class="cmt"># Every tool call is now verified + logged</span>
+agent.<span class="fn">call_tool</span>(<span class="str">'lint'</span>, { file: <span class="str">'main.ts'</span> })
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Features ─── -->
+<section id="features">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything agents need to be accountable</h2>
+      <p class="section-desc">Built from scratch for autonomous AI agents, not retrofitted from human IAM.</p>
+    </div>
+    <div class="features-grid">
+      <div class="top-glow-card">
+        <div class="feature-icon">&#128272;</div>
+        <h3>HMAC-Signed Tokens</h3>
+        <p>Every agent gets a unique, self-validating token. Signature verification requires zero database calls. Tokens are tied to a specific agent instance and the human who authorized it.</p>
+      </div>
+      <div class="top-glow-card">
+        <div class="feature-icon">&#128737;</div>
+        <h3>Deny-First Permissions</h3>
+        <p>Granular, per-tool permission rules. Deny always overrides allow. If no rule explicitly permits an action, it is blocked. No more overprivileged agents.</p>
+      </div>
+      <div class="top-glow-card">
+        <div class="feature-icon">&#128279;</div>
+        <h3>Hash-Chained Audit Log</h3>
+        <p>Every tool call is recorded in a tamper-proof, hash-chained audit trail. Verify the entire chain at any time to prove nothing was altered.</p>
+      </div>
+      <div class="top-glow-card">
+        <div class="feature-icon">&#128101;</div>
+        <h3>Human Delegation Chain</h3>
+        <p>Every agent action traces back to the human who authorized it. Full delegation chain from human to agent to sub-agent, with no gaps.</p>
+      </div>
+      <div class="top-glow-card">
+        <div class="feature-icon">&#9889;</div>
+        <h3>MCP Middleware</h3>
+        <p>Drop-in middleware for the Model Context Protocol. Add identity, permissions, and audit logging to any MCP server with a single line of code.</p>
+      </div>
+      <div class="top-glow-card">
+        <div class="feature-icon">&#128200;</div>
+        <h3>Real-Time Dashboard</h3>
+        <p>See every agent, every permission, and every tool call in real time. Search and filter the audit log. Spot anomalies before they become incidents.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Pricing ─── -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Start free, scale with confidence</h2>
+      <p class="section-desc">No credit card required. Generous free tier for builders and early-stage teams.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Starter</h3>
+        <div class="pricing-amount">Free</div>
+        <p class="pricing-desc">For individual developers and experiments.</p>
+        <ul class="pricing-features">
+          <li>5 agents</li>
+          <li>10,000 audit events / month</li>
+          <li>7-day log retention</li>
+          <li>Community support</li>
+          <li>All SDK features</li>
+        </ul>
+        <button class="pricing-btn">Get Started</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <h3>Pro</h3>
+        <div class="pricing-amount">$49<span>/mo</span></div>
+        <p class="pricing-desc">For teams running agents in production.</p>
+        <ul class="pricing-features">
+          <li>50 agents</li>
+          <li>500,000 audit events / month</li>
+          <li>90-day log retention</li>
+          <li>Priority support</li>
+          <li>Team management</li>
+          <li>Custom permission templates</li>
+        </ul>
+        <button class="pricing-btn primary">Start Free Trial</button>
+      </div>
+      <div class="pricing-card">
+        <h3>Enterprise</h3>
+        <div class="pricing-amount">Custom</div>
+        <p class="pricing-desc">For organizations with compliance requirements.</p>
+        <ul class="pricing-features">
+          <li>Unlimited agents</li>
+          <li>Unlimited audit events</li>
+          <li>Unlimited retention</li>
+          <li>Dedicated support</li>
+          <li>SSO / SAML</li>
+          <li>On-premise deployment</li>
+          <li>SLA guarantee</li>
+        </ul>
+        <button class="pricing-btn">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box">
+      <h2>Give your agents an identity</h2>
+      <p>Start verifying agent actions in under five minutes. Free tier, no credit card, full SDK access.</p>
+      <a href="/dashboard" class="btn-primary">Get Started Free</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ─── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo"><span>Agents</span>ID</div>
+        <p>Identity infrastructure for autonomous AI agents. Every action verified, every decision traceable.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="/docs">Documentation</a>
+        <a href="/dashboard">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <h4>Developers</h4>
+        <a href="/docs">Quick Start</a>
+        <a href="/docs#api-agents-register">API Reference</a>
+        <a href="/docs#sdk">SDKs</a>
+        <a href="#">GitHub</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">Blog</a>
+        <a href="#">Security</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 AgentsID. All rights reserved.</span>
+      <span>Built for the agentic era.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function switchTab(e, lang) {
+  document.querySelectorAll('.code-tab').forEach(function(t) { t.classList.remove('active'); });
+  e.target.classList.add('active');
+  document.querySelectorAll('.code-block').forEach(function(b) { b.style.display = 'none'; });
+  document.getElementById('code-' + lang).style.display = 'block';
+}
+</script>
+</body>
+</html>

@@ -97,10 +97,10 @@ const Navbar = ({
       url: "#",
       items: [
         {
-          title: "Hall of MCPs",
+          title: "MCP Registry",
           description: "Security grades for 100+ MCP servers",
           icon: <Trophy className="size-5 shrink-0" />,
-          url: "/hall-of-mcps",
+          url: "/registry",
         },
         {
           title: "Quick Start",
@@ -131,7 +131,7 @@ const Navbar = ({
     },
     { title: "Docs", url: "/docs" },
     { title: "Guides", url: "/guides" },
-    { title: "Hall of MCPs", url: "/hall-of-mcps" },
+    { title: "Registry", url: "/registry" },
     { title: "Spec", url: "/spec" },
     { title: "Blog", url: "/blog" },
   ],

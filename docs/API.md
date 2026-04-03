@@ -1,6 +1,20 @@
 # AgentsID API Reference
 
-Base URL: `https://api.agentsid.dev/api/v1` (hosted) or `http://localhost:8000/api/v1` (self-hosted)
+Base URL: `https://agentsid.dev/api/v1` (hosted) or `http://localhost:8000/api/v1` (self-hosted)
+
+## API Versioning
+
+The API is versioned via the URL path (`/api/v1/`). Our versioning commitment:
+
+- **v1 is stable.** All current endpoints will continue to work without breaking changes.
+- **Additive changes are not breaking.** We may add new fields to responses, new optional parameters to requests, or new endpoints. Your code should ignore unknown fields.
+- **Breaking changes get a new version.** If we need to rename fields, change response shapes, or remove endpoints, they will ship under `/api/v2/`. The v1 API will continue to work for at least 12 months after v2 launches, with deprecation notices in response headers.
+- **Deprecation headers.** When an endpoint is scheduled for removal, responses will include `Sunset: <date>` and `Deprecation: true` headers.
+- **Rate limit headers.** All API responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers.
+
+SDKs will add support for new API versions via major version bumps (e.g. `@agentsid/sdk@2.0.0` for API v2).
+
+---
 
 ## Authentication
 

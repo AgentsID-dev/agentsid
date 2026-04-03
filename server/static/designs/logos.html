@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentsID — Logo Exploration</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    background: #f5f5f0;
+    color: #1a1a1a;
+    padding: 40px;
+  }
+  h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  p.sub { color: #6b6b7b; margin-bottom: 48px; font-size: 16px; }
+
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .logo-card {
+    background: #fff;
+    border: 1px solid #e8e5e0;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .logo-card:hover {
+    border-color: #7c5bf0;
+    box-shadow: 0 4px 20px rgba(124, 91, 240, 0.1);
+  }
+
+  .logo-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    min-height: 60px;
+  }
+  .logo-display .wordmark {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .logo-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #7c5bf0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .logo-desc {
+    font-size: 13px;
+    color: #9b9bab;
+    line-height: 1.5;
+  }
+
+  /* Dark preview */
+  .dark-row {
+    margin-top: 48px;
+    background: #0c0c14;
+    border-radius: 16px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .dark-row .logo-card {
+    background: #141420;
+    border-color: #1e1e30;
+  }
+  .dark-row .wordmark { color: #e8e8f0; }
+
+  .section-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b6b7b;
+    margin-top: 48px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Nav preview */
+  .nav-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+  .nav-light { background: rgba(250,249,247,0.95); border: 1px solid #e8e5e0; }
+  .nav-dark { background: rgba(12,12,20,0.95); border: 1px solid #1e1e30; }
+  .nav-dark .wordmark { color: #e8e8f0; }
+
+  @media (max-width: 768px) {
+    .logo-grid, .dark-row { grid-template-columns: 1fr; }
+    body { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>AgentsID Logo Exploration</h1>
+<p class="sub">12 directions. Pick what feels right. Icons show at 32px (nav size) and 48px (hero size).</p>
+
+<div class="logo-grid">
+
+  <!-- 1. Shield + Keyhole -->
+  <div class="logo-card">
+    <div class="logo-label">A — Shield + Keyhole</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <path d="M18 3L4 9v9c0 8.28 5.97 16.01 14 18 8.03-1.99 14-9.72 14-18V9L18 3z" fill="url(#a1)" opacity="0.15"/>
+        <path d="M18 3L4 9v9c0 8.28 5.97 16.01 14 18 8.03-1.99 14-9.72 14-18V9L18 3z" stroke="url(#a1)" stroke-width="2" fill="none"/>
+        <circle cx="18" cy="15" r="4" stroke="url(#a1)" stroke-width="2" fill="none"/>
+        <path d="M18 19v5" stroke="url(#a1)" stroke-width="2" stroke-linecap="round"/>
+        <defs><linearGradient id="a1" x1="4" y1="3" x2="32" y2="33"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Security-first. Classic shield with keyhole. Immediate "auth" recognition.</p>
+  </div>
+
+  <!-- 2. Connected Nodes -->
+  <div class="logo-card">
+    <div class="logo-label">B — Connected Nodes</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="8" r="4" fill="#7c5bf0"/>
+        <circle cx="8" cy="28" r="4" fill="#5b8cf0"/>
+        <circle cx="28" cy="28" r="4" fill="#5b8cf0"/>
+        <path d="M18 12v4M14 20l-4 5M22 20l4 5" stroke="#7c5bf0" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="18" cy="18" r="3" stroke="#7c5bf0" stroke-width="2" fill="none"/>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Delegation chains visualized. Human at top, agents below. Network/graph feel.</p>
+  </div>
+
+  <!-- 3. Fingerprint -->
+  <div class="logo-card">
+    <div class="logo-label">C — Fingerprint</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <path d="M18 6c-5.52 0-10 4.48-10 10" stroke="#7c5bf0" stroke-width="2" stroke-linecap="round"/>
+        <path d="M18 6c5.52 0 10 4.48 10 10" stroke="#5b8cf0" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 20c0-3.31 2.69-6 6-6" stroke="#7c5bf0" stroke-width="2" stroke-linecap="round"/>
+        <path d="M24 20c0-3.31-2.69-6-6-6" stroke="#5b8cf0" stroke-width="2" stroke-linecap="round"/>
+        <path d="M15 24c0-1.66 1.34-3 3-3s3 1.34 3 3" stroke="url(#c1)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="18" cy="28" r="2" fill="url(#c1)"/>
+        <defs><linearGradient id="c1" x1="15" y1="21" x2="21" y2="30"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Unique identity. Biometric feel. "Every agent has its own fingerprint."</p>
+  </div>
+
+  <!-- 4. Badge / ID Card -->
+  <div class="logo-card">
+    <div class="logo-label">D — ID Badge</div>
+    <div class="logo-display">
+      <svg width="32" height="38" viewBox="0 0 32 38" fill="none">
+        <rect x="1" y="5" width="30" height="32" rx="4" stroke="url(#d1)" stroke-width="2" fill="none"/>
+        <rect x="12" y="1" width="8" height="8" rx="4" fill="url(#d1)"/>
+        <circle cx="16" cy="18" r="4" fill="#7c5bf0" opacity="0.2"/>
+        <circle cx="16" cy="18" r="4" stroke="#7c5bf0" stroke-width="1.5" fill="none"/>
+        <rect x="8" y="26" width="16" height="2" rx="1" fill="#5b8cf0" opacity="0.5"/>
+        <rect x="10" y="30" width="12" height="2" rx="1" fill="#5b8cf0" opacity="0.3"/>
+        <defs><linearGradient id="d1" x1="1" y1="1" x2="31" y2="37"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Literal ID card. Agent's photo + info. Straightforward, recognizable.</p>
+  </div>
+
+  <!-- 5. Abstract A -->
+  <div class="logo-card">
+    <div class="logo-label">E — Abstract A</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <path d="M18 4L4 32h8l2-5h8l2 5h8L18 4z" fill="url(#e1)" opacity="0.12"/>
+        <path d="M18 4L4 32h8l2-5h8l2 5h8L18 4z" stroke="url(#e1)" stroke-width="2" fill="none" stroke-linejoin="round"/>
+        <circle cx="18" cy="20" r="3" fill="url(#e1)"/>
+        <defs><linearGradient id="e1" x1="4" y1="4" x2="32" y2="32"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Stylized "A" with an identity dot at center. Minimal, geometric, scalable.</p>
+  </div>
+
+  <!-- 6. Lock + Circuit -->
+  <div class="logo-card">
+    <div class="logo-label">F — Lock Circuit</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <rect x="6" y="16" width="24" height="16" rx="3" stroke="url(#f1)" stroke-width="2" fill="none"/>
+        <path d="M12 16v-4a6 6 0 0 1 12 0v4" stroke="url(#f1)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="18" cy="24" r="2" fill="#7c5bf0"/>
+        <path d="M18 26v3" stroke="#7c5bf0" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="4" cy="24" r="1.5" fill="#5b8cf0" opacity="0.5"/>
+        <circle cx="32" cy="24" r="1.5" fill="#5b8cf0" opacity="0.5"/>
+        <path d="M6 24H4M30 24h2" stroke="#5b8cf0" stroke-width="1" opacity="0.5"/>
+        <defs><linearGradient id="f1" x1="6" y1="6" x2="30" y2="32"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Padlock with circuit nodes. Security meets technology. Infrastructure feel.</p>
+  </div>
+
+  <!-- 7. Hexagon Agent -->
+  <div class="logo-card">
+    <div class="logo-label">G — Hex Agent</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <path d="M18 3L31 10.5v15L18 33 5 25.5v-15L18 3z" stroke="url(#g1)" stroke-width="2" fill="none"/>
+        <circle cx="18" cy="14" r="3.5" fill="url(#g1)" opacity="0.2"/>
+        <circle cx="18" cy="14" r="3.5" stroke="url(#g1)" stroke-width="1.5" fill="none"/>
+        <path d="M12 24c0-3.31 2.69-6 6-6s6 3.31 6 6" stroke="url(#g1)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <defs><linearGradient id="g1" x1="5" y1="3" x2="31" y2="33"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Hexagon (tech/crypto feel) with user silhouette inside. Agent as entity.</p>
+  </div>
+
+  <!-- 8. Brackets -->
+  <div class="logo-card">
+    <div class="logo-label">H — Code Brackets</div>
+    <div class="logo-display">
+      <svg width="40" height="36" viewBox="0 0 40 36" fill="none">
+        <path d="M10 4L4 18l6 14" stroke="#7c5bf0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M30 4l6 14-6 14" stroke="#5b8cf0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="20" cy="18" r="5" fill="url(#h1)" opacity="0.15"/>
+        <circle cx="20" cy="18" r="5" stroke="url(#h1)" stroke-width="2" fill="none"/>
+        <circle cx="20" cy="18" r="2" fill="url(#h1)"/>
+        <defs><linearGradient id="h1" x1="15" y1="13" x2="25" y2="23"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Code brackets { } with identity dot. Developer-first. "Auth lives in your code."</p>
+  </div>
+
+  <!-- 9. Eye / Iris -->
+  <div class="logo-card">
+    <div class="logo-label">I — Iris</div>
+    <div class="logo-display">
+      <svg width="40" height="36" viewBox="0 0 40 36" fill="none">
+        <path d="M4 18C4 18 10 8 20 8s16 10 16 10-6 10-16 10S4 18 4 18z" stroke="url(#i1)" stroke-width="2" fill="none"/>
+        <circle cx="20" cy="18" r="6" stroke="url(#i1)" stroke-width="2" fill="none"/>
+        <circle cx="20" cy="18" r="3" fill="url(#i1)"/>
+        <defs><linearGradient id="i1" x1="4" y1="8" x2="36" y2="28"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">All-seeing eye. Monitoring + identity. "We see every agent action."</p>
+  </div>
+
+  <!-- 10. Stacked Layers -->
+  <div class="logo-card">
+    <div class="logo-label">J — Stack</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <path d="M18 6L4 14l14 8 14-8L18 6z" fill="#7c5bf0" opacity="0.3"/>
+        <path d="M4 18l14 8 14-8" stroke="#7c5bf0" stroke-width="2" fill="none" opacity="0.6"/>
+        <path d="M4 24l14 8 14-8" stroke="#5b8cf0" stroke-width="2" fill="none"/>
+        <path d="M18 6L4 14l14 8 14-8L18 6z" stroke="#7c5bf0" stroke-width="2" fill="none"/>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Layered stack. Auth as a layer in your stack. Infrastructure/platform feel.</p>
+  </div>
+
+  <!-- 11. Rounded Square + A -->
+  <div class="logo-card">
+    <div class="logo-label">K — Rounded Mark</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <rect x="2" y="2" width="32" height="32" rx="10" fill="url(#k1)"/>
+        <text x="18" y="25" text-anchor="middle" fill="white" font-size="22" font-weight="800" font-family="-apple-system, sans-serif">A</text>
+        <defs><linearGradient id="k1" x1="2" y1="2" x2="34" y2="34"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">App icon style. Bold "A" in gradient rounded square. Clean, modern, app-store ready.</p>
+  </div>
+
+  <!-- 12. Minimal Dot + Line -->
+  <div class="logo-card">
+    <div class="logo-label">L — Minimal Mark</div>
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="12" cy="18" r="6" fill="#7c5bf0"/>
+        <circle cx="24" cy="18" r="6" stroke="#5b8cf0" stroke-width="2" fill="none"/>
+        <path d="M18 18h0" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="wordmark">AgentsID</span>
+    </div>
+    <p class="logo-desc">Filled + outlined circles. Identity verified vs unverified. Abstract, ultra-minimal.</p>
+  </div>
+
+</div>
+
+<p class="section-label">How they look on dark background</p>
+
+<div class="dark-row">
+  <div class="logo-card">
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M18 3L4 9v9c0 8.28 5.97 16.01 14 18 8.03-1.99 14-9.72 14-18V9L18 3z" stroke="url(#a1d)" stroke-width="2" fill="none"/><circle cx="18" cy="15" r="4" stroke="url(#a1d)" stroke-width="2" fill="none"/><path d="M18 19v5" stroke="url(#a1d)" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="a1d" x1="4" y1="3" x2="32" y2="33"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs></svg>
+      <span class="wordmark">A — Shield</span>
+    </div>
+  </div>
+  <div class="logo-card">
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="8" r="4" fill="#7c5bf0"/><circle cx="8" cy="28" r="4" fill="#5b8cf0"/><circle cx="28" cy="28" r="4" fill="#5b8cf0"/><path d="M18 12v4M14 20l-4 5M22 20l4 5" stroke="#7c5bf0" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="18" r="3" stroke="#7c5bf0" stroke-width="2" fill="none"/></svg>
+      <span class="wordmark">B — Nodes</span>
+    </div>
+  </div>
+  <div class="logo-card">
+    <div class="logo-display">
+      <svg width="32" height="38" viewBox="0 0 32 38" fill="none"><rect x="1" y="5" width="30" height="32" rx="4" stroke="url(#d1d)" stroke-width="2" fill="none"/><rect x="12" y="1" width="8" height="8" rx="4" fill="url(#d1d)"/><circle cx="16" cy="18" r="4" stroke="#7c5bf0" stroke-width="1.5" fill="none"/><rect x="8" y="26" width="16" height="2" rx="1" fill="#5b8cf0" opacity="0.5"/><rect x="10" y="30" width="12" height="2" rx="1" fill="#5b8cf0" opacity="0.3"/><defs><linearGradient id="d1d" x1="1" y1="1" x2="31" y2="37"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs></svg>
+      <span class="wordmark">D — Badge</span>
+    </div>
+  </div>
+  <div class="logo-card">
+    <div class="logo-display">
+      <svg width="40" height="36" viewBox="0 0 40 36" fill="none"><path d="M10 4L4 18l6 14" stroke="#7c5bf0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M30 4l6 14-6 14" stroke="#5b8cf0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="20" cy="18" r="5" stroke="url(#h1d)" stroke-width="2" fill="none"/><circle cx="20" cy="18" r="2" fill="url(#h1d)"/><defs><linearGradient id="h1d" x1="15" y1="13" x2="25" y2="23"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs></svg>
+      <span class="wordmark">H — Brackets</span>
+    </div>
+  </div>
+  <div class="logo-card">
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="2" y="2" width="32" height="32" rx="10" fill="url(#k1d)"/><text x="18" y="25" text-anchor="middle" fill="white" font-size="22" font-weight="800" font-family="-apple-system, sans-serif">A</text><defs><linearGradient id="k1d" x1="2" y1="2" x2="34" y2="34"><stop stop-color="#7c5bf0"/><stop offset="1" stop-color="#5b8cf0"/></linearGradient></defs></svg>
+      <span class="wordmark">K — Rounded</span>
+    </div>
+  </div>
+  <div class="logo-card">
+    <div class="logo-display">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="12" cy="18" r="6" fill="#7c5bf0"/><circle cx="24" cy="18" r="6" stroke="#5b8cf0" stroke-width="2" fill="none"/></svg>
+      <span class="wordmark">L — Minimal</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentsID — Guides & Tutorials</title>
+<meta name="description" content="Step-by-step guides for setting up AgentsID with Claude Code, Cursor, and Codex. Learn how to add guardrails to your AI agents.">
+<style>
+/* ─── Reset & Base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #faf9f7;
+  --bg-surface: #ffffff;
+  --sidebar-bg: #ffffff;
+  --sidebar-hover: rgba(124, 91, 240, 0.05);
+  --card: #ffffff;
+  --card-border: #e8e5e0;
+  --card-glow: rgba(124, 91, 240, 0.05);
+  --code-bg: #f5f4f0;
+  --code-border: #e8e5e0;
+  --text: #1a1a1a;
+  --text-muted: #6b6b7b;
+  --text-dim: #9b9bab;
+  --green: #16a34a;
+  --green-glow: rgba(22, 163, 74, 0.3);
+  --green-bg: rgba(22, 163, 74, 0.08);
+  --red: #dc2626;
+  --red-glow: rgba(220, 38, 38, 0.3);
+  --red-bg: rgba(220, 38, 38, 0.08);
+  --amber: #d97706;
+  --amber-glow: rgba(217, 119, 6, 0.3);
+  --amber-bg: rgba(217, 119, 6, 0.08);
+  --purple: #7c5bf0;
+  --purple-glow: rgba(124, 91, 240, 0.3);
+  --purple-bg: rgba(124, 91, 240, 0.08);
+  --blue: #5b8cf0;
+  --blue-glow: rgba(91, 140, 240, 0.3);
+  --blue-bg: rgba(91, 140, 240, 0.08);
+  --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Menlo', 'Consolas', monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, Helvetica, Arial, sans-serif;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-glow: 0 0 40px rgba(124, 91, 240, 0.08);
+  --transition: 0.2s ease;
+  --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { font-size: 14px; scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--blue); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--purple); }
+button { cursor: pointer; font-family: var(--sans); }
+::selection { background: var(--purple); color: white; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c0c0d0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a0a0b0; }
+
+/* ─── Top Header ─── */
+.top-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 56px;
+  background: rgba(250, 249, 247, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e8e5e0;
+  display: flex; align-items: center; padding: 0 24px;
+  gap: 16px;
+}
+.header-logo {
+  font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; white-space: nowrap;
+  display: flex; align-items: center;
+}
+.header-logo span { font-weight: 400; opacity: 0.7; }
+.header-links {
+  display: flex; align-items: center; gap: 12px; margin-left: auto;
+}
+.header-links a {
+  color: var(--text-muted); font-size: 0.85rem; font-weight: 500;
+  padding: 6px 10px; border-radius: var(--radius-sm);
+  transition: color var(--transition), background var(--transition);
+}
+.header-links a:hover { color: var(--text); background: var(--bg-surface); }
+.header-links a.active-nav {
+  color: var(--purple); font-weight: 600;
+}
+.hamburger {
+  display: none; background: none; border: none; color: var(--text);
+  font-size: 1.3rem; padding: 6px;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  position: fixed; top: 56px; left: 0; bottom: 0; width: 260px;
+  background: var(--sidebar-bg); border-right: 1px solid #e8e5e0;
+  overflow-y: auto; padding: 16px 0; z-index: 100;
+  transition: transform var(--transition-slow);
+}
+.sidebar-section { margin-bottom: 8px; }
+.sidebar-section-title {
+  padding: 8px 20px 4px; font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim);
+  cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+  user-select: none;
+}
+.sidebar-section-title:hover { color: var(--text-muted); }
+.sidebar-section-title .chevron {
+  font-size: 0.6rem; transition: transform var(--transition);
+}
+.sidebar-section.collapsed .sidebar-section-items { display: none; }
+.sidebar-section.collapsed .chevron { transform: rotate(-90deg); }
+.sidebar-section-items { padding: 2px 0; }
+.sidebar-item {
+  display: block; padding: 5px 20px 5px 28px; font-size: 0.85rem;
+  color: var(--text-muted); transition: all var(--transition);
+  border-left: 2px solid transparent; cursor: pointer; text-decoration: none;
+}
+.sidebar-item:hover {
+  color: var(--text); background: var(--sidebar-hover); border-left-color: var(--purple);
+}
+.sidebar-item.active {
+  color: var(--purple); background: var(--purple-bg); border-left-color: var(--purple);
+  font-weight: 500;
+}
+.sidebar-badge {
+  display: inline-block; font-size: 0.6rem; font-weight: 600;
+  padding: 1px 6px; border-radius: 10px; margin-left: 6px;
+  vertical-align: middle;
+}
+.badge-time {
+  background: var(--green-bg); color: var(--green);
+}
+.badge-new {
+  background: var(--purple-bg); color: var(--purple);
+}
+
+/* ─── Main Content ─── */
+.main-content {
+  margin-left: 260px; margin-top: 56px; padding: 0;
+  min-height: calc(100vh - 56px);
+  transition: margin-left var(--transition-slow);
+}
+.content-inner {
+  max-width: 860px; margin: 0 auto; padding: 40px 48px 100px;
+}
+
+/* ─── Hero Section ─── */
+.hero {
+  text-align: center; padding: 60px 0 48px;
+  border-bottom: 1px solid #e8e5e0; margin-bottom: 48px;
+}
+.hero h1 {
+  font-size: 2.8rem; font-weight: 800; letter-spacing: -0.03em;
+  line-height: 1.15; margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--text) 0%, var(--purple) 50%, var(--blue) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero p {
+  font-size: 1.15rem; color: var(--text-muted); max-width: 560px; margin: 0 auto;
+}
+
+/* ─── Guide Sections ─── */
+.guide-section { scroll-margin-top: 72px; margin-bottom: 56px; }
+.guide-section h2 {
+  font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 8px; padding-bottom: 12px;
+  border-bottom: 1px solid #e8e5e0;
+  color: var(--text);
+}
+.guide-section h3 {
+  font-size: 1.25rem; font-weight: 600; margin: 32px 0 12px;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.guide-section h4 {
+  font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--text);
+}
+.guide-section p {
+  color: var(--text-muted); margin-bottom: 14px; line-height: 1.7;
+}
+.guide-section ul, .guide-section ol {
+  color: var(--text-muted); margin: 0 0 14px 24px; line-height: 1.7;
+}
+.guide-section li { margin-bottom: 6px; }
+.guide-section strong { color: var(--text); }
+
+/* ─── Step Cards ─── */
+.step {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 20px;
+  position: relative;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.step:hover {
+  border-color: rgba(124, 91, 240, 0.3);
+  box-shadow: var(--shadow-glow);
+}
+.step-number {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white; font-size: 0.9rem; font-weight: 700;
+  margin-bottom: 14px;
+}
+.step h4 {
+  font-size: 1.1rem; font-weight: 600; margin: 0 0 10px; color: var(--text);
+}
+.step p {
+  color: var(--text-muted); margin-bottom: 12px; line-height: 1.65; font-size: 0.95rem;
+}
+
+/* ─── "What just happened" callout ─── */
+.callout {
+  background: var(--purple-bg); border: 1px solid rgba(124, 91, 240, 0.2);
+  border-radius: var(--radius); padding: 14px 18px; margin: 14px 0;
+  font-size: 0.88rem; line-height: 1.6;
+}
+.callout-title {
+  font-weight: 600; color: var(--purple); margin-bottom: 4px;
+  font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.callout p { margin: 0; color: var(--text-muted); }
+
+.callout-info {
+  background: var(--blue-bg); border-color: rgba(91, 140, 240, 0.2);
+}
+.callout-info .callout-title { color: var(--blue); }
+
+.callout-warning {
+  background: var(--amber-bg); border-color: rgba(217, 119, 6, 0.2);
+}
+.callout-warning .callout-title { color: var(--amber); }
+
+.callout-danger {
+  background: var(--red-bg); border-color: rgba(220, 38, 38, 0.2);
+}
+.callout-danger .callout-title { color: var(--red); }
+
+/* ─── Code Blocks ─── */
+.code-block-wrapper {
+  position: relative; margin-bottom: 20px;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--code-border);
+  border-radius: var(--radius); padding: 16px 20px;
+  overflow-x: auto; font-family: var(--mono); font-size: 0.82rem;
+  line-height: 1.6; color: #1a1a1a; margin-bottom: 20px;
+  position: relative;
+}
+pre code { background: none; padding: 0; font-size: inherit; color: inherit; border: none; }
+code {
+  font-family: var(--mono); font-size: 0.85em;
+  background: rgba(124, 91, 240, 0.06); padding: 2px 6px;
+  border-radius: var(--radius-sm); color: var(--purple);
+  border: 1px solid #e8e5e0;
+}
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: #ffffff; border: 1px solid #e8e5e0;
+  border-radius: var(--radius-sm); padding: 4px 10px; font-size: 0.7rem;
+  color: #6b6b7b; cursor: pointer; transition: all var(--transition);
+  font-family: var(--sans); z-index: 5;
+}
+.copy-btn:hover { color: #1a1a1a; border-color: var(--purple); }
+.copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+/* Syntax highlighting */
+.kw { color: #7c3aed; }
+.str { color: #16a34a; }
+.fn { color: #2563eb; }
+.cmt { color: #9b9bab; font-style: italic; }
+.num { color: #b45309; }
+.op { color: #6b6b7b; }
+.prop { color: #c2410c; }
+
+/* ─── Inline command ─── */
+.cmd {
+  display: block; background: var(--code-bg); border: 1px solid var(--code-border);
+  border-radius: var(--radius); padding: 12px 16px; margin: 10px 0 14px;
+  font-family: var(--mono); font-size: 0.82rem; color: var(--text);
+  position: relative; overflow-x: auto;
+}
+.cmd .copy-btn { top: 6px; right: 6px; }
+.cmd-prompt { color: var(--purple); margin-right: 8px; user-select: none; }
+
+/* ─── Tables ─── */
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 20px;
+  font-size: 0.85rem;
+}
+th {
+  background: var(--bg-surface); text-align: left;
+  padding: 10px 14px; font-weight: 600; color: var(--text);
+  border-bottom: 2px solid var(--card-border); font-size: 0.8rem;
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+td {
+  padding: 10px 14px; border-bottom: 1px solid var(--card-border);
+  color: var(--text-muted);
+}
+tr:hover td { background: rgba(124, 91, 240, 0.02); }
+
+/* ─── Template Cards ─── */
+.template-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 32px; margin-bottom: 28px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.template-card:hover {
+  border-color: rgba(124, 91, 240, 0.3);
+  box-shadow: var(--shadow-glow);
+}
+.template-card h3 {
+  font-size: 1.3rem; font-weight: 700; margin: 0 0 8px;
+  color: var(--text); display: flex; align-items: center; gap: 10px;
+}
+.template-icon {
+  width: 36px; height: 36px; border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.template-card > p {
+  color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;
+}
+.template-section-label {
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--text-dim); margin: 18px 0 8px;
+}
+
+/* ─── Flowchart (text-based) ─── */
+.flowchart {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 28px; margin: 20px 0;
+  font-family: var(--mono); font-size: 0.82rem; line-height: 1.8;
+  color: var(--text-muted); overflow-x: auto; white-space: pre;
+}
+.flowchart .flow-yes { color: var(--green); font-weight: 600; }
+.flowchart .flow-no { color: var(--red); font-weight: 600; }
+.flowchart .flow-box { color: var(--purple); font-weight: 600; }
+
+/* ─── Screenshot placeholder ─── */
+.screenshot-placeholder {
+  background: var(--code-bg); border: 2px dashed var(--card-border);
+  border-radius: var(--radius-lg); padding: 48px 32px;
+  text-align: center; margin: 20px 0; color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.screenshot-placeholder .icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+/* ─── Status badges ─── */
+.status-allowed {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  background: var(--green-bg); color: var(--green);
+  font-size: 0.78rem; font-weight: 600; font-family: var(--mono);
+}
+.status-denied {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  background: var(--red-bg); color: var(--red);
+  font-size: 0.78rem; font-weight: 600; font-family: var(--mono);
+}
+.status-approval {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  background: var(--amber-bg); color: var(--amber);
+  font-size: 0.78rem; font-weight: 600; font-family: var(--mono);
+}
+
+/* ─── Divider ─── */
+.section-divider {
+  border: none; border-top: 1px solid var(--card-border);
+  margin: 48px 0;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .content-inner { padding: 32px 28px 80px; }
+}
+@media (max-width: 768px) {
+  .hamburger { display: block; }
+  .sidebar { transform: translateX(-100%); width: 280px; }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; }
+  .content-inner { padding: 24px 16px 80px; }
+  .hero h1 { font-size: 2rem; }
+  .hide-mobile { display: none; }
+  .step { padding: 20px; }
+  .template-card { padding: 20px; }
+}
+
+/* ─── Overlay for mobile sidebar ─── */
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+.sidebar-overlay.visible { display: block; }
+</style>
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_4zukYmgXUIpQuxJWUqMOeZ6yWaptGbtxOgW3i9anI3m',{api_host:'https://us.i.posthog.com',defaults:'2026-01-30',person_profiles:'identified_only',opt_out_capturing_by_default:true})
+</script>
+</head>
+<body>
+
+<!-- ─── Top Header ─── -->
+<header class="top-header">
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">&#9776;</button>
+  <a href="/" class="header-logo"><svg width="24" height="24" viewBox="0 0 36 36" fill="none" style="vertical-align:-5px;margin-right:8px;"><path d="M18 6L4 14l14 8 14-8L18 6z" fill="#7c5bf0" opacity="0.25"/><path d="M18 6L4 14l14 8 14-8L18 6z" stroke="#7c5bf0" stroke-width="2" fill="none"/><path d="M4 18l14 8 14-8" stroke="#7c5bf0" stroke-width="2" fill="none" opacity="0.6"/><path d="M4 24l14 8 14-8" stroke="#5b8cf0" stroke-width="2" fill="none"/></svg>AgentsID <span>guides</span></a>
+  <nav class="header-links">
+    <a href="/docs" class="hide-mobile">Docs</a>
+    <a href="/guides" class="hide-mobile active-nav">Guides</a>
+    <a href="/dashboard" class="hide-mobile">Dashboard</a>
+    <a href="https://github.com/stevenkozeniesky02/agentsid" target="_blank" class="hide-mobile">GitHub</a>
+    <a href="/dashboard" class="hide-mobile" style="background:linear-gradient(135deg,#7c5bf0,#5b8cf0);color:#fff;padding:5px 14px;border-radius:6px;font-weight:600;font-size:12px;">Start Free</a>
+  </nav>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ─── Sidebar ─── -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">Getting Started <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#quick-start">Quick Start <span class="sidebar-badge badge-time">5 min</span></a>
+      <a class="sidebar-item" href="#claude-code-setup">Claude Code Setup</a>
+      <a class="sidebar-item" href="#cursor-setup">Cursor Setup</a>
+      <a class="sidebar-item" href="#codex-setup">Codex Setup</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">Tutorials <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#build-protected-server">Build a Protected MCP Server</a>
+      <a class="sidebar-item" href="#add-guardrails">Add Guardrails to Existing Server</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">Concepts <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#why-guardrails">Why Agents Need Guardrails</a>
+      <a class="sidebar-item" href="#how-permissions-work">How Permissions Work</a>
+      <a class="sidebar-item" href="#audit-trail">Understanding the Audit Trail</a>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-title" onclick="toggleSection(this)">Templates <span class="chevron">&#9656;</span></div>
+    <div class="sidebar-section-items">
+      <a class="sidebar-item" href="#template-research">Safe Research Agent</a>
+      <a class="sidebar-item" href="#template-code">Code Assistant</a>
+      <a class="sidebar-item" href="#template-support">Customer Support Bot</a>
+      <a class="sidebar-item" href="#template-cautious">Cautious Agent</a>
+    </div>
+  </div>
+
+</aside>
+
+<!-- ─── Main Content ─── -->
+<main class="main-content">
+<div class="content-inner">
+
+<!-- ─── Hero ─── -->
+<section class="hero" id="guides-top">
+  <h1>Guides & Tutorials</h1>
+  <p>Everything you need to get AI agents running safely. Step-by-step, copy-paste ready, written for humans.</p>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- GUIDE 1: QUICK START                                                    -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="quick-start">
+  <h2>Quick Start (5 minutes)</h2>
+  <p>The absolute fastest path from zero to a protected AI agent. By the end of this, you'll have an agent that can only do what you allow it to do, and you'll see every action it takes in your dashboard.</p>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-number">1</div>
+    <h4>Sign up and get your API key</h4>
+    <p>Head to the dashboard and create a free account. You'll land on your project page, where your API key is waiting for you.</p>
+    <div class="cmd"><span class="cmd-prompt">&#8594;</span> https://agentsid.dev/dashboard<button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <div class="callout">
+      <div class="callout-title">What just happened?</div>
+      <p>You created a <strong>project</strong>. A project is a container for your agents, permissions, and audit logs. Your <strong>project key</strong> is what your server uses to talk to AgentsID. Keep it secret.</p>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-number">2</div>
+    <h4>Copy your project key</h4>
+    <p>On the dashboard, find your project key. It looks something like <code>sk_live_abc123...</code>. Copy it and save it somewhere safe (you'll need it in a moment).</p>
+    <div class="screenshot-placeholder">
+      <span class="icon">&#128247;</span>
+      Dashboard screenshot: Project key highlighted in the settings panel
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-number">3</div>
+    <h4>Install the SDK</h4>
+    <p>In your project directory, install the AgentsID SDK:</p>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> npm install @agentsid/sdk</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <div class="callout">
+      <div class="callout-title">What just happened?</div>
+      <p>You installed a lightweight library that handles all the communication with AgentsID. It validates tool calls, logs events, and enforces permissions. Your agent code stays clean.</p>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-number">4</div>
+    <h4>Register an agent</h4>
+    <p>An agent is an identity. You register it once, and AgentsID gives it a token. That token is how you prove which agent is making requests.</p>
+    <div class="code-block-wrapper">
+      <pre><code><span class="kw">import</span> { AgentsID } <span class="kw">from</span> <span class="str">'@agentsid/sdk'</span>;
+
+<span class="kw">const</span> client = <span class="kw">new</span> <span class="fn">AgentsID</span>({ projectKey: process.env.<span class="prop">AGENTSID_PROJECT_KEY</span> });
+
+<span class="kw">const</span> agent = <span class="kw">await</span> client.<span class="fn">registerAgent</span>({
+  <span class="prop">name</span>: <span class="str">'my-first-agent'</span>,
+  <span class="prop">permissions</span>: [
+    { <span class="prop">tool_pattern</span>: <span class="str">'search_*'</span>, <span class="prop">action</span>: <span class="str">'allow'</span> },
+    { <span class="prop">tool_pattern</span>: <span class="str">'delete_*'</span>, <span class="prop">action</span>: <span class="str">'deny'</span> },
+  ],
+});</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <div class="callout">
+      <div class="callout-title">What just happened?</div>
+      <p>You told AgentsID: "I have an agent called <code>my-first-agent</code>. It's allowed to use any tool starting with <code>search_</code>, but it must never use any tool starting with <code>delete_</code>." AgentsID gave you back a token for this agent.</p>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-number">5</div>
+    <h4>Validate a tool call</h4>
+    <p>Before your agent runs any tool, ask AgentsID if it's allowed. Three lines of code:</p>
+    <div class="code-block-wrapper">
+      <pre><code><span class="kw">const</span> result = <span class="kw">await</span> client.<span class="fn">validate</span>(agent.<span class="prop">token</span>, <span class="str">'search_docs'</span>, { query: <span class="str">'hello'</span> });
+
+<span class="kw">if</span> (!result.<span class="prop">allowed</span>) {
+  <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`Blocked: ${result.reason}`</span>);
+}</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <div class="callout">
+      <div class="callout-title">What just happened?</div>
+      <p>Your code asked AgentsID: "Can this agent run <code>search_docs</code> with these parameters?" AgentsID checked the permissions, said "yes," and logged the event. If the agent tried <code>delete_users</code>, it would be blocked.</p>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-number">6</div>
+    <h4>Check your dashboard</h4>
+    <p>Go back to <a href="https://agentsid.dev/dashboard">agentsid.dev/dashboard</a>. You'll see the validation event in your live audit feed: what tool was called, what parameters were sent, whether it was allowed, and exactly when it happened.</p>
+    <div class="screenshot-placeholder">
+      <span class="icon">&#128202;</span>
+      Dashboard screenshot: Audit feed showing the search_docs event as ALLOWED with a green badge
+    </div>
+    <div class="callout">
+      <div class="callout-title">What just happened?</div>
+      <p>Every tool call is logged with a hash chain (each entry links to the previous one). This means the audit log is tamper-evident -- nobody can quietly edit or delete entries. You have a complete, trustworthy record of what your agent did.</p>
+    </div>
+  </div>
+
+  <p>That's it. You went from zero to a protected agent in 5 minutes. Now let's set up your specific AI coding tool.</p>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- GUIDE 2: CLAUDE CODE SETUP                                              -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="claude-code-setup">
+  <h2>Claude Code Setup</h2>
+  <p>Claude Code connects to tools through MCP servers. You'll create a small server file that wraps your tools with AgentsID protection, then tell Claude Code to use it.</p>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-number">1</div>
+    <h4>Sign up and get your credentials</h4>
+    <p>If you haven't already, go to <a href="https://agentsid.dev/dashboard">agentsid.dev/dashboard</a> and create an account. You need two things:</p>
+    <ul>
+      <li><strong>Project Key</strong> -- identifies your project (found in your dashboard settings)</li>
+      <li><strong>Agent Token</strong> -- identifies the specific agent (you get this when you register an agent)</li>
+    </ul>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-number">2</div>
+    <h4>Create your MCP server file</h4>
+    <p>Create a file called <code>server.mjs</code> in your project. This is a complete, working MCP server with AgentsID protection. Copy and paste the whole thing:</p>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmt">/**
+ * My Protected MCP Server
+ * Tools are wrapped with AgentsID permission checks.
+ */</span>
+<span class="kw">import</span> { McpServer } <span class="kw">from</span> <span class="str">'@modelcontextprotocol/sdk/server/mcp.js'</span>;
+<span class="kw">import</span> { StdioServerTransport } <span class="kw">from</span> <span class="str">'@modelcontextprotocol/sdk/server/stdio.js'</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">'zod'</span>;
+
+<span class="cmt">// ── Config ──</span>
+<span class="kw">const</span> <span class="prop">AGENTSID_PROJECT_KEY</span> = process.env.<span class="prop">AGENTSID_PROJECT_KEY</span>;
+<span class="kw">const</span> <span class="prop">AGENTSID_AGENT_TOKEN</span> = process.env.<span class="prop">AGENTSID_AGENT_TOKEN</span>;
+<span class="kw">const</span> <span class="prop">AGENTSID_URL</span> = process.env.<span class="prop">AGENTSID_URL</span> || <span class="str">'https://agentsid.dev'</span>;
+
+<span class="cmt">// ── In-memory data store ──</span>
+<span class="kw">const</span> notes = [
+  { <span class="prop">id</span>: <span class="num">1</span>, <span class="prop">title</span>: <span class="str">'Welcome'</span>, <span class="prop">content</span>: <span class="str">'This server is protected by AgentsID!'</span> },
+  { <span class="prop">id</span>: <span class="num">2</span>, <span class="prop">title</span>: <span class="str">'Setup'</span>, <span class="prop">content</span>: <span class="str">'Permissions are enforced on every tool call.'</span> },
+];
+<span class="kw">let</span> nextId = <span class="num">3</span>;
+
+<span class="cmt">// ── AgentsID Middleware ──</span>
+<span class="kw">async function</span> <span class="fn">validateToolCall</span>(toolName, params) {
+  <span class="kw">if</span> (!<span class="prop">AGENTSID_PROJECT_KEY</span> || !<span class="prop">AGENTSID_AGENT_TOKEN</span>) {
+    console.<span class="fn">error</span>(<span class="str">'[AgentsID] No credentials — running WITHOUT protection'</span>);
+    <span class="kw">return</span> { <span class="prop">allowed</span>: <span class="kw">true</span>, <span class="prop">reason</span>: <span class="str">'No AgentsID configured'</span> };
+  }
+
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${AGENTSID_URL}/api/v1/validate`</span>, {
+      <span class="prop">method</span>: <span class="str">'POST'</span>,
+      <span class="prop">headers</span>: {
+        <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+        <span class="str">'Authorization'</span>: <span class="str">`Bearer ${AGENTSID_PROJECT_KEY}`</span>,
+      },
+      <span class="prop">body</span>: JSON.<span class="fn">stringify</span>({
+        <span class="prop">token</span>: <span class="prop">AGENTSID_AGENT_TOKEN</span>,
+        <span class="prop">tool</span>: toolName,
+        <span class="prop">params</span>: params || {},
+      }),
+    });
+
+    <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+    <span class="kw">if</span> (!data.<span class="prop">valid</span>) {
+      <span class="kw">return</span> { <span class="prop">allowed</span>: <span class="kw">false</span>, <span class="prop">reason</span>: data.<span class="prop">reason</span> };
+    }
+
+    <span class="kw">const</span> perm = data.<span class="prop">permission</span> || {};
+    <span class="kw">return</span> {
+      <span class="prop">allowed</span>: perm.<span class="prop">allowed</span> || <span class="kw">false</span>,
+      <span class="prop">reason</span>: perm.<span class="prop">reason</span> || <span class="str">'Unknown'</span>,
+    };
+  } <span class="kw">catch</span> (err) {
+    console.<span class="fn">error</span>(<span class="str">`[AgentsID] Error: ${err.message}`</span>);
+    <span class="kw">return</span> { <span class="prop">allowed</span>: <span class="kw">false</span>, <span class="prop">reason</span>: <span class="str">'AgentsID unreachable — failing closed'</span> };
+  }
+}
+
+<span class="cmt">// ── MCP Server ──</span>
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="fn">McpServer</span>({
+  <span class="prop">name</span>: <span class="str">'my-protected-server'</span>,
+  <span class="prop">version</span>: <span class="str">'1.0.0'</span>,
+});
+
+<span class="cmt">// Tool: search_notes (ALLOWED)</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'search_notes'</span>,
+  <span class="str">'Search through notes by keyword'</span>,
+  { <span class="prop">query</span>: z.<span class="fn">string</span>().<span class="fn">describe</span>(<span class="str">'Search keyword'</span>) },
+  <span class="kw">async</span> ({ query }) => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'search_notes'</span>, { query });
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) {
+      <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+    }
+    <span class="kw">const</span> results = notes.<span class="fn">filter</span>(n =>
+      n.<span class="prop">title</span>.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(query.<span class="fn">toLowerCase</span>()) ||
+      n.<span class="prop">content</span>.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(query.<span class="fn">toLowerCase</span>())
+    );
+    <span class="kw">return</span> {
+      <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: results.<span class="fn">map</span>(n => <span class="str">`[${n.id}] ${n.title}: ${n.content}`</span>).<span class="fn">join</span>(<span class="str">'\n'</span>) || <span class="str">'No notes found.'</span> }],
+    };
+  }
+);
+
+<span class="cmt">// Tool: save_note (ALLOWED)</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'save_note'</span>,
+  <span class="str">'Save a new note'</span>,
+  { <span class="prop">title</span>: z.<span class="fn">string</span>(), <span class="prop">content</span>: z.<span class="fn">string</span>() },
+  <span class="kw">async</span> ({ title, content }) => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'save_note'</span>, { title });
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) {
+      <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+    }
+    <span class="kw">const</span> note = { <span class="prop">id</span>: nextId++, title, content };
+    notes.<span class="fn">push</span>(note);
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`Saved: [${note.id}] ${note.title}`</span> }] };
+  }
+);
+
+<span class="cmt">// Tool: list_notes (ALLOWED)</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'list_notes'</span>,
+  <span class="str">'List all notes'</span>,
+  {},
+  <span class="kw">async</span> () => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'list_notes'</span>);
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) {
+      <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+    }
+    <span class="kw">return</span> {
+      <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: notes.<span class="fn">map</span>(n => <span class="str">`[${n.id}] ${n.title}: ${n.content}`</span>).<span class="fn">join</span>(<span class="str">'\n'</span>) }],
+    };
+  }
+);
+
+<span class="cmt">// Tool: delete_note (DENIED by AgentsID)</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'delete_note'</span>,
+  <span class="str">'Delete a note by ID'</span>,
+  { <span class="prop">id</span>: z.<span class="fn">number</span>().<span class="fn">describe</span>(<span class="str">'Note ID to delete'</span>) },
+  <span class="kw">async</span> ({ id }) => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'delete_note'</span>, { id });
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) {
+      <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+    }
+    <span class="cmt">// This code never runs — AgentsID blocks it</span>
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">'Deleted.'</span> }] };
+  }
+);
+
+<span class="cmt">// ── Start ──</span>
+<span class="kw">const</span> transport = <span class="kw">new</span> <span class="fn">StdioServerTransport</span>();
+<span class="kw">await</span> server.<span class="fn">connect</span>(transport);
+console.<span class="fn">error</span>(<span class="str">'[Server] Running with AgentsID protection'</span>);</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-number">3</div>
+    <h4>Install the dependencies</h4>
+    <p>Your server needs the MCP SDK and Zod for input validation. Run this in the same directory as your <code>server.mjs</code>:</p>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> npm init -y && npm install @modelcontextprotocol/sdk zod</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-number">4</div>
+    <h4>Register your agent with permissions</h4>
+    <p>Before connecting, register the agent on AgentsID so it knows what this agent is allowed to do. Use the API or the dashboard. Here's the curl command:</p>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> curl -X POST https://agentsid.dev/api/v1/agents/register \
+  -H <span class="str">"Authorization: Bearer YOUR_PROJECT_KEY"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "claude-notes-agent",
+    "permissions": [
+      {"tool_pattern": "search_notes", "action": "allow"},
+      {"tool_pattern": "save_note", "action": "allow"},
+      {"tool_pattern": "list_notes", "action": "allow"},
+      {"tool_pattern": "delete_note", "action": "deny"},
+      {"tool_pattern": "admin_*", "action": "deny"}
+    ]
+  }'</span></code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <p>The response includes an <code>agent_token</code>. Copy it -- you'll use it in the next step.</p>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-number">5</div>
+    <h4>Add the server to Claude Code</h4>
+    <p>This is the magic command. It tells Claude Code to start your MCP server and pass in your credentials as environment variables:</p>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> claude mcp add my-notes-server --scope user \
+  node server.mjs \
+  -e AGENTSID_PROJECT_KEY=sk_live_your_key_here \
+  -e AGENTSID_AGENT_TOKEN=at_your_token_here</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <div class="callout callout-info">
+      <div class="callout-title">Tip</div>
+      <p>Use <code>--scope user</code> to make this server available in all your projects, or <code>--scope project</code> for just this one. You can also use <code>--scope workspace</code> if you're in a workspace.</p>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-number">6</div>
+    <h4>Test it</h4>
+    <p>Open Claude Code and try these prompts:</p>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmt"># This should work (search_notes is allowed)</span>
+<span class="str">"Search my notes for the word welcome"</span>
+
+<span class="cmt"># This should work (list_notes is allowed)</span>
+<span class="str">"List all my notes"</span>
+
+<span class="cmt"># This should work (save_note is allowed)</span>
+<span class="str">"Save a note titled 'Meeting' with content 'Call at 3pm'"</span>
+
+<span class="cmt"># This should be BLOCKED (delete_note is denied)</span>
+<span class="str">"Delete note number 1"</span></code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <p>When Claude tries to delete, you'll see a response like: <code>BLOCKED: Tool 'delete_note' is denied by permission rules</code>. The tool exists, Claude knows about it, but AgentsID won't let it run.</p>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step">
+    <div class="step-number">7</div>
+    <h4>Check the dashboard</h4>
+    <p>Go to <a href="https://agentsid.dev/dashboard">agentsid.dev/dashboard</a>. You'll see every tool call in the audit feed:</p>
+    <div class="screenshot-placeholder">
+      <span class="icon">&#128202;</span>
+      Dashboard: Audit feed showing search_notes (ALLOWED), list_notes (ALLOWED), save_note (ALLOWED), delete_note (DENIED)
+    </div>
+    <p>Each entry shows the tool name, parameters, whether it was allowed or denied, and a timestamp. The denied calls are highlighted in red so they stand out.</p>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- GUIDE 3: CURSOR SETUP                                                   -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="cursor-setup">
+  <h2>Cursor Setup</h2>
+  <p>Cursor supports MCP servers through a JSON configuration file. Here's how to set it up.</p>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-number">1</div>
+    <h4>Sign up and get your credentials</h4>
+    <p>Same as above: go to <a href="https://agentsid.dev/dashboard">agentsid.dev/dashboard</a>, create an account, and register an agent. You need your <strong>project key</strong> and <strong>agent token</strong>.</p>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-number">2</div>
+    <h4>Create the MCP server file</h4>
+    <p>Create <code>server.mjs</code> with the exact same code from the <a href="#claude-code-setup">Claude Code Setup</a> above. Same file, same code. Nothing changes.</p>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-number">3</div>
+    <h4>Install dependencies</h4>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> npm init -y && npm install @modelcontextprotocol/sdk zod</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-number">4</div>
+    <h4>Add to Cursor's MCP config</h4>
+    <p>Create or edit <code>.cursor/mcp.json</code> in your project root. Add your server like this:</p>
+    <div class="code-block-wrapper">
+      <pre><code>{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"my-notes-server"</span>: {
+      <span class="str">"command"</span>: <span class="str">"node"</span>,
+      <span class="str">"args"</span>: [<span class="str">"server.mjs"</span>],
+      <span class="str">"env"</span>: {
+        <span class="str">"AGENTSID_PROJECT_KEY"</span>: <span class="str">"sk_live_your_key_here"</span>,
+        <span class="str">"AGENTSID_AGENT_TOKEN"</span>: <span class="str">"at_your_token_here"</span>
+      }
+    }
+  }
+}</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <div class="callout callout-warning">
+      <div class="callout-title">Important</div>
+      <p>Don't commit this file with real keys! Add <code>.cursor/mcp.json</code> to your <code>.gitignore</code>, or use environment variables that reference a <code>.env</code> file instead.</p>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-number">5</div>
+    <h4>Restart Cursor and test</h4>
+    <p>Restart Cursor (or reload the window). Your MCP tools should appear in Cursor's tool list. Try the same prompts as the Claude Code section -- search should work, delete should be blocked.</p>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-number">6</div>
+    <h4>Check the dashboard</h4>
+    <p>Same dashboard, same audit feed. Go to <a href="https://agentsid.dev/dashboard">agentsid.dev/dashboard</a> and see every tool call your Cursor agent made.</p>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- GUIDE 4: CODEX SETUP                                                    -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="codex-setup">
+  <h2>Codex Setup</h2>
+  <p>OpenAI's Codex CLI supports MCP servers with a similar command to Claude Code.</p>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-number">1</div>
+    <h4>Sign up and get your credentials</h4>
+    <p>Same deal: <a href="https://agentsid.dev/dashboard">agentsid.dev/dashboard</a>, create an account, register an agent, get your project key and agent token.</p>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-number">2</div>
+    <h4>Create the MCP server file</h4>
+    <p>Use the same <code>server.mjs</code> from the <a href="#claude-code-setup">Claude Code Setup</a>. The MCP protocol is a standard -- the same server works with every client.</p>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-number">3</div>
+    <h4>Install dependencies</h4>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> npm init -y && npm install @modelcontextprotocol/sdk zod</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-number">4</div>
+    <h4>Add the server to Codex</h4>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> codex mcp add my-notes-server \
+  node server.mjs \
+  -e AGENTSID_PROJECT_KEY=sk_live_your_key_here \
+  -e AGENTSID_AGENT_TOKEN=at_your_token_here</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-number">5</div>
+    <h4>Test and verify</h4>
+    <p>Open Codex and try searching for notes (allowed) and deleting notes (blocked). Then check the dashboard at <a href="https://agentsid.dev/dashboard">agentsid.dev/dashboard</a> to see the audit trail.</p>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- GUIDE 5: BUILD A PROTECTED MCP SERVER (TUTORIAL)                        -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="build-protected-server">
+  <h2>Build a Protected MCP Server</h2>
+  <p>This is the full walkthrough. We'll build an MCP server from scratch, add AgentsID protection, connect it to an AI coding tool, and test it. By the end, your agent will be able to search and save notes, but it won't be able to delete anything -- and you'll have proof of every action in your dashboard.</p>
+
+  <h3>What we're building</h3>
+  <p>A notes server with five tools:</p>
+  <table>
+    <thead>
+      <tr><th>Tool</th><th>What it does</th><th>Permission</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>search_notes</code></td><td>Search notes by keyword</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+      <tr><td><code>save_note</code></td><td>Create a new note</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+      <tr><td><code>list_notes</code></td><td>List all notes</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+      <tr><td><code>delete_note</code></td><td>Delete a note by ID</td><td><span class="status-denied">DENIED</span></td></tr>
+      <tr><td><code>admin_reset</code></td><td>Wipe all data</td><td><span class="status-denied">DENIED</span></td></tr>
+    </tbody>
+  </table>
+  <p>The agent has access to all five tools, but AgentsID will block any attempt to use <code>delete_note</code> or <code>admin_reset</code>. The agent doesn't even know it's being restricted -- it just gets a "blocked" response and moves on.</p>
+
+  <h3>Step 1: Create the project directory</h3>
+  <div class="code-block-wrapper">
+    <pre><code><span class="cmd-prompt">$</span> mkdir my-protected-server && cd my-protected-server</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <h3>Step 2: Initialize and install dependencies</h3>
+  <div class="code-block-wrapper">
+    <pre><code><span class="cmd-prompt">$</span> npm init -y
+<span class="cmd-prompt">$</span> npm install @modelcontextprotocol/sdk zod</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <p>You also need to add <code>"type": "module"</code> to your <code>package.json</code> so Node understands ES module imports:</p>
+  <div class="code-block-wrapper">
+    <pre><code><span class="cmd-prompt">$</span> node -e "const p=JSON.parse(require('fs').readFileSync('package.json'));p.type='module';require('fs').writeFileSync('package.json',JSON.stringify(p,null,2))"</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <p>Or just open <code>package.json</code> and add <code>"type": "module"</code> manually. Either works.</p>
+
+  <h3>Step 3: Write the validation middleware</h3>
+  <p>This is the core of AgentsID integration. Every tool call goes through this function first. If AgentsID says no, the tool doesn't run.</p>
+  <div class="code-block-wrapper">
+    <pre><code><span class="cmt">// validateToolCall.mjs</span>
+
+<span class="kw">const</span> <span class="prop">AGENTSID_PROJECT_KEY</span> = process.env.<span class="prop">AGENTSID_PROJECT_KEY</span>;
+<span class="kw">const</span> <span class="prop">AGENTSID_AGENT_TOKEN</span> = process.env.<span class="prop">AGENTSID_AGENT_TOKEN</span>;
+<span class="kw">const</span> <span class="prop">AGENTSID_URL</span> = process.env.<span class="prop">AGENTSID_URL</span> || <span class="str">'https://agentsid.dev'</span>;
+
+<span class="kw">export async function</span> <span class="fn">validateToolCall</span>(toolName, params) {
+  <span class="kw">if</span> (!<span class="prop">AGENTSID_PROJECT_KEY</span> || !<span class="prop">AGENTSID_AGENT_TOKEN</span>) {
+    console.<span class="fn">error</span>(<span class="str">'[AgentsID] No credentials — running unprotected'</span>);
+    <span class="kw">return</span> { <span class="prop">allowed</span>: <span class="kw">true</span>, <span class="prop">reason</span>: <span class="str">'No AgentsID configured'</span> };
+  }
+
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${AGENTSID_URL}/api/v1/validate`</span>, {
+      <span class="prop">method</span>: <span class="str">'POST'</span>,
+      <span class="prop">headers</span>: {
+        <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+        <span class="str">'Authorization'</span>: <span class="str">`Bearer ${AGENTSID_PROJECT_KEY}`</span>,
+      },
+      <span class="prop">body</span>: JSON.<span class="fn">stringify</span>({
+        <span class="prop">token</span>: <span class="prop">AGENTSID_AGENT_TOKEN</span>,
+        <span class="prop">tool</span>: toolName,
+        <span class="prop">params</span>: params || {},
+      }),
+    });
+
+    <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+    <span class="kw">if</span> (!data.<span class="prop">valid</span>) {
+      <span class="kw">return</span> { <span class="prop">allowed</span>: <span class="kw">false</span>, <span class="prop">reason</span>: data.<span class="prop">reason</span> };
+    }
+
+    <span class="kw">const</span> perm = data.<span class="prop">permission</span> || {};
+    console.<span class="fn">error</span>(<span class="str">`[AgentsID] ${toolName}: ${perm.allowed ? 'ALLOWED' : 'DENIED'}`</span>);
+    <span class="kw">return</span> {
+      <span class="prop">allowed</span>: perm.<span class="prop">allowed</span> || <span class="kw">false</span>,
+      <span class="prop">reason</span>: perm.<span class="prop">reason</span> || <span class="str">'Unknown'</span>,
+    };
+  } <span class="kw">catch</span> (err) {
+    console.<span class="fn">error</span>(<span class="str">`[AgentsID] Error: ${err.message}`</span>);
+    <span class="kw">return</span> { <span class="prop">allowed</span>: <span class="kw">false</span>, <span class="prop">reason</span>: <span class="str">'AgentsID unreachable — failing closed'</span> };
+  }
+}</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <div class="callout">
+    <div class="callout-title">Key design choice: fail closed</div>
+    <p>If AgentsID can't be reached (network error, server down), the function returns <code>allowed: false</code>. This means if something goes wrong, your agent stops doing things rather than running wild. This is the safe default.</p>
+  </div>
+
+  <h3>Step 4: Add tools one at a time</h3>
+  <p>Create your <code>server.mjs</code>. We'll add each tool with its permission check:</p>
+  <div class="code-block-wrapper">
+    <pre><code><span class="kw">import</span> { McpServer } <span class="kw">from</span> <span class="str">'@modelcontextprotocol/sdk/server/mcp.js'</span>;
+<span class="kw">import</span> { StdioServerTransport } <span class="kw">from</span> <span class="str">'@modelcontextprotocol/sdk/server/stdio.js'</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">'zod'</span>;
+<span class="kw">import</span> { validateToolCall } <span class="kw">from</span> <span class="str">'./validateToolCall.mjs'</span>;
+
+<span class="cmt">// In-memory data</span>
+<span class="kw">const</span> notes = [
+  { <span class="prop">id</span>: <span class="num">1</span>, <span class="prop">title</span>: <span class="str">'Welcome'</span>, <span class="prop">content</span>: <span class="str">'Protected by AgentsID!'</span> },
+];
+<span class="kw">let</span> nextId = <span class="num">2</span>;
+
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="fn">McpServer</span>({ <span class="prop">name</span>: <span class="str">'protected-notes'</span>, <span class="prop">version</span>: <span class="str">'1.0.0'</span> });
+
+<span class="cmt">// ── Tool 1: search_notes ──</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'search_notes'</span>, <span class="str">'Search notes by keyword'</span>,
+  { <span class="prop">query</span>: z.<span class="fn">string</span>() },
+  <span class="kw">async</span> ({ query }) => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'search_notes'</span>, { query });
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+
+    <span class="kw">const</span> found = notes.<span class="fn">filter</span>(n =>
+      n.title.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(query.<span class="fn">toLowerCase</span>()) ||
+      n.content.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(query.<span class="fn">toLowerCase</span>())
+    );
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: found.<span class="fn">map</span>(n => <span class="str">`[${n.id}] ${n.title}`</span>).<span class="fn">join</span>(<span class="str">'\n'</span>) || <span class="str">'No results'</span> }] };
+  }
+);
+
+<span class="cmt">// ── Tool 2: save_note ──</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'save_note'</span>, <span class="str">'Save a new note'</span>,
+  { <span class="prop">title</span>: z.<span class="fn">string</span>(), <span class="prop">content</span>: z.<span class="fn">string</span>() },
+  <span class="kw">async</span> ({ title, content }) => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'save_note'</span>, { title });
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+
+    <span class="kw">const</span> note = { <span class="prop">id</span>: nextId++, title, content };
+    notes.<span class="fn">push</span>(note);
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`Saved: [${note.id}] ${note.title}`</span> }] };
+  }
+);
+
+<span class="cmt">// ── Tool 3: list_notes ──</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'list_notes'</span>, <span class="str">'List all notes'</span>, {},
+  <span class="kw">async</span> () => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'list_notes'</span>);
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: notes.<span class="fn">map</span>(n => <span class="str">`[${n.id}] ${n.title}: ${n.content}`</span>).<span class="fn">join</span>(<span class="str">'\n'</span>) }] };
+  }
+);
+
+<span class="cmt">// ── Tool 4: delete_note (will be DENIED) ──</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'delete_note'</span>, <span class="str">'Delete a note'</span>,
+  { <span class="prop">id</span>: z.<span class="fn">number</span>() },
+  <span class="kw">async</span> ({ id }) => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'delete_note'</span>, { id });
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+
+    <span class="cmt">// This code never runs</span>
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">'Deleted'</span> }] };
+  }
+);
+
+<span class="cmt">// ── Tool 5: admin_reset (will be DENIED) ──</span>
+server.<span class="fn">tool</span>(
+  <span class="str">'admin_reset'</span>, <span class="str">'Reset all data — DANGEROUS'</span>, {},
+  <span class="kw">async</span> () => {
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'admin_reset'</span>);
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>) <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+
+    <span class="cmt">// This code never runs</span>
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">'Reset complete'</span> }] };
+  }
+);
+
+<span class="cmt">// ── Start the server ──</span>
+<span class="kw">const</span> transport = <span class="kw">new</span> <span class="fn">StdioServerTransport</span>();
+<span class="kw">await</span> server.<span class="fn">connect</span>(transport);
+console.<span class="fn">error</span>(<span class="str">'[Server] Running with AgentsID protection'</span>);</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <h3>Step 5: Register the agent with permissions</h3>
+  <div class="code-block-wrapper">
+    <pre><code><span class="cmd-prompt">$</span> curl -X POST https://agentsid.dev/api/v1/agents/register \
+  -H <span class="str">"Authorization: Bearer YOUR_PROJECT_KEY"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "notes-agent",
+    "permissions": [
+      {"tool_pattern": "search_notes", "action": "allow"},
+      {"tool_pattern": "save_note", "action": "allow"},
+      {"tool_pattern": "list_notes", "action": "allow"},
+      {"tool_pattern": "delete_note", "action": "deny"},
+      {"tool_pattern": "admin_*", "action": "deny"}
+    ]
+  }'</span></code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <p>Save the <code>agent_token</code> from the response.</p>
+
+  <h3>Step 6: Connect to Claude Code</h3>
+  <div class="code-block-wrapper">
+    <pre><code><span class="cmd-prompt">$</span> claude mcp add protected-notes --scope user \
+  node server.mjs \
+  -e AGENTSID_PROJECT_KEY=sk_live_your_key \
+  -e AGENTSID_AGENT_TOKEN=at_your_token</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <h3>Step 7: Test allowed calls</h3>
+  <p>Ask Claude to search for notes, list notes, or save a new one. These should all work perfectly.</p>
+  <div class="screenshot-placeholder">
+    <span class="icon">&#9989;</span>
+    Terminal showing Claude successfully searching notes and returning results
+  </div>
+
+  <h3>Step 8: Test denied calls</h3>
+  <p>Ask Claude to delete a note or reset the database. AgentsID will block both:</p>
+  <div class="screenshot-placeholder">
+    <span class="icon">&#128683;</span>
+    Terminal showing Claude receiving "BLOCKED by AgentsID" when trying to delete
+  </div>
+
+  <h3>Step 9: Check the dashboard</h3>
+  <p>Your audit feed now shows a mix of allowed and denied events. Each one has:</p>
+  <ul>
+    <li><strong>Agent name</strong> -- which agent made the call</li>
+    <li><strong>Tool name</strong> -- what tool was requested</li>
+    <li><strong>Parameters</strong> -- what data was sent</li>
+    <li><strong>Result</strong> -- allowed or denied</li>
+    <li><strong>Timestamp</strong> -- exactly when it happened</li>
+    <li><strong>Hash</strong> -- cryptographic link to the previous entry</li>
+  </ul>
+  <div class="screenshot-placeholder">
+    <span class="icon">&#128202;</span>
+    Dashboard showing the full audit trail with green ALLOWED and red DENIED badges
+  </div>
+
+  <h3>Step 10: What to try next</h3>
+  <ul>
+    <li>Change the permissions on the dashboard and re-test without restarting your server</li>
+    <li>Add <code>requires_approval: true</code> to a permission and see the approval flow</li>
+    <li>Add rate limits to prevent an agent from spamming a tool</li>
+    <li>Add more tools to your server and set up wildcard permissions</li>
+  </ul>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- GUIDE 6: ADD GUARDRAILS TO EXISTING SERVER                              -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="add-guardrails">
+  <h2>Add Guardrails to an Existing Server</h2>
+  <p>Already have an MCP server? You can add AgentsID protection in about 5 minutes. You don't need to rewrite anything -- just add one function and three lines per tool.</p>
+
+  <h3>Before: Your existing tool</h3>
+  <div class="code-block-wrapper">
+    <pre><code>server.<span class="fn">tool</span>(<span class="str">'deploy_service'</span>, <span class="str">'Deploy a service'</span>, { <span class="prop">name</span>: z.<span class="fn">string</span>() },
+  <span class="kw">async</span> ({ name }) => {
+    <span class="cmt">// Deploys immediately — no checks, no logging</span>
+    <span class="kw">await</span> <span class="fn">deploy</span>(name);
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`Deployed ${name}`</span> }] };
+  }
+);</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <h3>After: With AgentsID protection</h3>
+  <div class="code-block-wrapper">
+    <pre><code>server.<span class="fn">tool</span>(<span class="str">'deploy_service'</span>, <span class="str">'Deploy a service'</span>, { <span class="prop">name</span>: z.<span class="fn">string</span>() },
+  <span class="kw">async</span> ({ name }) => {
+    <span class="cmt">// Three new lines — that's it</span>
+    <span class="kw">const</span> check = <span class="kw">await</span> <span class="fn">validateToolCall</span>(<span class="str">'deploy_service'</span>, { name });
+    <span class="kw">if</span> (!check.<span class="prop">allowed</span>)
+      <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`BLOCKED: ${check.reason}`</span> }] };
+
+    <span class="cmt">// Your existing code — unchanged</span>
+    <span class="kw">await</span> <span class="fn">deploy</span>(name);
+    <span class="kw">return</span> { <span class="prop">content</span>: [{ <span class="prop">type</span>: <span class="str">'text'</span>, <span class="prop">text</span>: <span class="str">`Deployed ${name}`</span> }] };
+  }
+);</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <h3>The steps</h3>
+  <ol>
+    <li>Copy the <code>validateToolCall</code> function from the <a href="#build-protected-server">Build a Protected MCP Server</a> tutorial into your project</li>
+    <li>Import it at the top of your server file</li>
+    <li>Add the three-line check at the start of each tool handler</li>
+    <li>Set the <code>AGENTSID_PROJECT_KEY</code> and <code>AGENTSID_AGENT_TOKEN</code> environment variables</li>
+    <li>Register your agent with the appropriate permissions</li>
+  </ol>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Gradual rollout</div>
+    <p>You don't have to add AgentsID to every tool at once. Start with the dangerous ones (deploy, delete, admin) and add more as you go. Tools without the check will continue to work as before.</p>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- CONCEPT 1: WHY AGENTS NEED GUARDRAILS                                   -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="why-guardrails">
+  <h2>Why Agents Need Guardrails</h2>
+  <p>This isn't a technical walkthrough. This is the "why" behind everything on this page.</p>
+
+  <h3>The problem</h3>
+  <p>Your AI agent can call any tool you give it access to. If it has a "delete database" tool, it can use it. If it has a "send email" tool, it can blast your entire customer list. If it has a "deploy to production" tool, it can ship untested code at 3am.</p>
+  <p>Most of the time, the agent does the right thing. But "most of the time" isn't good enough when the downside is deleting production data or emailing your CEO something embarrassing.</p>
+
+  <h3>What can go wrong</h3>
+  <ul>
+    <li><strong>Accidental deletion</strong> -- "Clean up the old files" gets interpreted as "delete everything"</li>
+    <li><strong>Prompt injection</strong> -- A malicious document tricks the agent into calling dangerous tools</li>
+    <li><strong>Scope creep</strong> -- The agent decides to "help" by doing something you didn't ask for</li>
+    <li><strong>Hallucinated actions</strong> -- The agent thinks it should deploy code because the conversation mentioned deployment</li>
+    <li><strong>No audit trail</strong> -- Something went wrong, but you have no idea what the agent actually did</li>
+  </ul>
+
+  <h3>What guardrails do</h3>
+  <p>Guardrails are rules about what an agent is allowed to do. They sit between the agent and the tools, checking every action before it happens:</p>
+
+  <div class="flowchart">  <span class="flow-box">Agent wants to call a tool</span>
+          |
+          v
+  <span class="flow-box">AgentsID checks permissions</span>
+        /    \
+       v      v
+  <span class="flow-yes">ALLOWED</span>    <span class="flow-no">DENIED</span>
+  Tool runs   Agent gets
+  normally    "blocked" message
+       \      /
+        v    v
+  <span class="flow-box">Event logged to audit trail</span></div>
+
+  <h3>The analogy</h3>
+  <p>Think of it like giving a new employee a badge. The badge doesn't stop them from walking around the building -- but it only opens the doors they need. They can get to their desk, the kitchen, and the meeting rooms. They can't get into the server room, the executive suite, or the safe.</p>
+  <p>AgentsID is the badge system for your AI agents. You decide which doors (tools) each agent can open, and every door-open gets logged.</p>
+
+  <h3>What AgentsID provides</h3>
+  <ul>
+    <li><strong>Permission rules</strong> -- Define exactly which tools each agent can use</li>
+    <li><strong>Wildcard matching</strong> -- Allow <code>read_*</code> but deny <code>delete_*</code></li>
+    <li><strong>Approval workflows</strong> -- Some actions need a human to say "yes" first</li>
+    <li><strong>Rate limits</strong> -- Prevent agents from spamming tools</li>
+    <li><strong>Audit trail</strong> -- Cryptographically-linked log of every action</li>
+    <li><strong>Real-time dashboard</strong> -- See what your agents are doing right now</li>
+  </ul>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- CONCEPT 2: HOW PERMISSIONS WORK                                         -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="how-permissions-work">
+  <h2>How Permissions Work</h2>
+  <p>Permissions in AgentsID are deny-first. If you don't explicitly allow something, it's blocked. Here's the full picture.</p>
+
+  <h3>The evaluation flow</h3>
+  <div class="flowchart">  <span class="flow-box">Tool call: "delete_user" with params {id: 42}</span>
+              |
+              v
+  <span class="flow-box">1. Check DENY rules first</span>
+     Does any deny rule match?
+        /          \
+       v            v
+    <span class="flow-no">YES → DENIED</span>     No deny match
+    Stop here.          |
+                        v
+           <span class="flow-box">2. Check ALLOW rules</span>
+           Does any allow rule match?
+              /          \
+             v            v
+        <span class="flow-yes">YES → check</span>     <span class="flow-no">No match</span>
+        conditions    <span class="flow-no">→ DEFAULT DENY</span>
+             |
+             v
+    <span class="flow-box">3. Check conditions</span>
+    Rate limit OK? Time OK?
+    Approval required?
+        /       \
+       v         v
+  <span class="flow-yes">ALLOWED</span>    <span class="flow-no">DENIED</span></div>
+
+  <h3>Wildcards</h3>
+  <p>Use <code>*</code> to match multiple tools at once:</p>
+  <table>
+    <thead>
+      <tr><th>Pattern</th><th>Matches</th><th>Doesn't match</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>search_*</code></td><td>search_docs, search_code, search_users</td><td>find_docs, delete_search</td></tr>
+      <tr><td><code>*_file</code></td><td>read_file, write_file, delete_file</td><td>read_files, file_read</td></tr>
+      <tr><td><code>*</code></td><td>Everything</td><td>Nothing</td></tr>
+      <tr><td><code>read_*</code></td><td>read_file, read_config, read_log</td><td>write_file, read</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conditions</h3>
+  <p>Permissions can have conditions that must be true for the rule to apply:</p>
+
+  <h4>Parameter conditions</h4>
+  <p>Only allow a tool when specific parameters match:</p>
+  <div class="code-block-wrapper">
+    <pre><code>{
+  <span class="str">"tool_pattern"</span>: <span class="str">"read_customer"</span>,
+  <span class="str">"action"</span>: <span class="str">"allow"</span>,
+  <span class="str">"conditions"</span>: {
+    <span class="str">"params"</span>: { <span class="str">"customer_id"</span>: <span class="str">"cust_123"</span> }
+  }
+}</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <p>This means: "Allow <code>read_customer</code>, but only for customer <code>cust_123</code>."</p>
+
+  <h4>Time-based conditions</h4>
+  <p>Restrict tools to business hours:</p>
+  <div class="code-block-wrapper">
+    <pre><code>{
+  <span class="str">"tool_pattern"</span>: <span class="str">"deploy_*"</span>,
+  <span class="str">"action"</span>: <span class="str">"allow"</span>,
+  <span class="str">"conditions"</span>: {
+    <span class="str">"time_window"</span>: { <span class="str">"start"</span>: <span class="str">"09:00"</span>, <span class="str">"end"</span>: <span class="str">"17:00"</span>, <span class="str">"timezone"</span>: <span class="str">"America/New_York"</span> }
+  }
+}</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <h4>Rate limits</h4>
+  <p>Prevent agents from calling a tool too often:</p>
+  <div class="code-block-wrapper">
+    <pre><code>{
+  <span class="str">"tool_pattern"</span>: <span class="str">"send_email"</span>,
+  <span class="str">"action"</span>: <span class="str">"allow"</span>,
+  <span class="str">"conditions"</span>: {
+    <span class="str">"rate_limit"</span>: { <span class="str">"max_calls"</span>: <span class="num">100</span>, <span class="str">"window"</span>: <span class="str">"1h"</span> }
+  }
+}</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+
+  <h4>Approval required</h4>
+  <p>Force a human to approve the action before it runs:</p>
+  <div class="code-block-wrapper">
+    <pre><code>{
+  <span class="str">"tool_pattern"</span>: <span class="str">"deploy_production"</span>,
+  <span class="str">"action"</span>: <span class="str">"allow"</span>,
+  <span class="str">"requires_approval"</span>: <span class="kw">true</span>
+}</code></pre>
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  </div>
+  <p>When an agent tries to call this tool, AgentsID pauses the request and sends a notification. A human reviews the action, parameters, and context, then approves or denies it. The agent waits for the decision.</p>
+
+  <h3>Default deny</h3>
+  <p>If a tool doesn't match any permission rule, it's automatically denied. This is the safest default. If you want to allow everything (not recommended), you'd need to explicitly add a wildcard allow rule.</p>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- CONCEPT 3: UNDERSTANDING THE AUDIT TRAIL                                -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="audit-trail">
+  <h2>Understanding the Audit Trail</h2>
+  <p>Every tool call that goes through AgentsID gets logged. This isn't just a log file that you'll never look at -- it's a cryptographically-linked chain of events that proves exactly what happened.</p>
+
+  <h3>What gets recorded</h3>
+  <p>Every entry in the audit trail includes:</p>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>What it is</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Agent</strong></td><td>Which agent made the call</td><td>notes-agent</td></tr>
+      <tr><td><strong>Tool</strong></td><td>Which tool was requested</td><td>delete_note</td></tr>
+      <tr><td><strong>Parameters</strong></td><td>What data was sent</td><td>{id: 42}</td></tr>
+      <tr><td><strong>Result</strong></td><td>Was it allowed or denied</td><td>DENIED</td></tr>
+      <tr><td><strong>Reason</strong></td><td>Why it was allowed/denied</td><td>No matching allow rule</td></tr>
+      <tr><td><strong>Timestamp</strong></td><td>When it happened</td><td>2026-03-26T14:32:01Z</td></tr>
+      <tr><td><strong>Hash</strong></td><td>Cryptographic link to previous entry</td><td>a1b2c3d4...</td></tr>
+    </tbody>
+  </table>
+
+  <h3>The hash chain</h3>
+  <p>Each audit entry contains a hash of the previous entry. This creates a chain where tampering with any single entry would break the chain from that point forward. If someone tries to quietly delete or modify an audit entry, the hash chain breaks and you'll know.</p>
+  <p>Think of it like a receipt roll at a cash register. Each receipt has a sequential number. If someone tears one out, you can tell because the numbers skip. Except our version uses cryptographic hashes instead of sequential numbers, so it's mathematically impossible to forge.</p>
+
+  <h3>How to use it</h3>
+  <ul>
+    <li><strong>Debugging</strong> -- "The agent did something weird at 3pm." Go to the audit trail, find the 3pm entries, see exactly what tools were called and with what parameters.</li>
+    <li><strong>Compliance</strong> -- Need to prove that your AI agent never accessed customer data it shouldn't have? The audit trail is your evidence.</li>
+    <li><strong>Security review</strong> -- After an incident, review all denied calls. Multiple denied calls for the same dangerous tool might indicate a prompt injection attack.</li>
+    <li><strong>Performance monitoring</strong> -- See which tools are called most often and how they're being used.</li>
+  </ul>
+
+  <h3>The dashboard shows it in real-time</h3>
+  <p>The AgentsID dashboard has a live audit feed. Events appear as they happen. You can filter by agent, tool, result (allowed/denied), and time range.</p>
+  <div class="screenshot-placeholder">
+    <span class="icon">&#128202;</span>
+    Dashboard screenshot: Live audit feed with filters for agent, tool, and result. Shows a mix of ALLOWED (green) and DENIED (red) events with timestamps and parameters.
+  </div>
+</section>
+
+<hr class="section-divider">
+
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- TEMPLATES                                                               -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="guide-section" id="templates">
+  <h2>Templates</h2>
+  <p>Ready-to-use permission sets for common agent types. Copy the JSON, paste it into your agent registration, and you're done.</p>
+</section>
+
+
+<!-- Template 1: Safe Research Agent -->
+<section class="guide-section" id="template-research">
+  <div class="template-card">
+    <h3>
+      <span class="template-icon" style="background: var(--green-bg); color: var(--green);">&#128270;</span>
+      Safe Research Agent
+    </h3>
+    <p>An agent that can read and search, but can never write, delete, or deploy anything. Perfect for research assistants, documentation crawlers, and data analysis agents.</p>
+
+    <div class="template-section-label">Permission Rules</div>
+    <div class="code-block-wrapper">
+      <pre><code>[
+  { <span class="str">"tool_pattern"</span>: <span class="str">"search_*"</span>,  <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"read_*"</span>,    <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"list_*"</span>,    <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"write_*"</span>,   <span class="str">"action"</span>: <span class="str">"deny"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"delete_*"</span>,  <span class="str">"action"</span>: <span class="str">"deny"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"deploy_*"</span>,  <span class="str">"action"</span>: <span class="str">"deny"</span> }
+]</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+
+    <div class="template-section-label">What's allowed and denied</div>
+    <table>
+      <thead><tr><th>Action</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>search_docs, search_code, search_users</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>read_file, read_config, read_log</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>list_files, list_users, list_repos</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>write_file, write_config</td><td><span class="status-denied">DENIED</span></td></tr>
+        <tr><td>delete_file, delete_user</td><td><span class="status-denied">DENIED</span></td></tr>
+        <tr><td>deploy_staging, deploy_production</td><td><span class="status-denied">DENIED</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="template-section-label">Apply with curl</div>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> curl -X POST https://agentsid.dev/api/v1/agents/register \
+  -H <span class="str">"Authorization: Bearer YOUR_PROJECT_KEY"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "research-agent",
+    "permissions": [
+      {"tool_pattern": "search_*", "action": "allow"},
+      {"tool_pattern": "read_*", "action": "allow"},
+      {"tool_pattern": "list_*", "action": "allow"},
+      {"tool_pattern": "write_*", "action": "deny"},
+      {"tool_pattern": "delete_*", "action": "deny"},
+      {"tool_pattern": "deploy_*", "action": "deny"}
+    ]
+  }'</span></code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- Template 2: Code Assistant -->
+<section class="guide-section" id="template-code">
+  <div class="template-card">
+    <h3>
+      <span class="template-icon" style="background: var(--blue-bg); color: var(--blue);">&#128187;</span>
+      Code Assistant
+    </h3>
+    <p>An agent that can read and search code freely, but writing files requires human approval. Execution and deployment are completely blocked. Great for pair programming agents.</p>
+
+    <div class="template-section-label">Permission Rules</div>
+    <div class="code-block-wrapper">
+      <pre><code>[
+  { <span class="str">"tool_pattern"</span>: <span class="str">"read_file"</span>,    <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"search_code"</span>,  <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"list_files"</span>,   <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"write_file"</span>,   <span class="str">"action"</span>: <span class="str">"allow"</span>, <span class="str">"requires_approval"</span>: <span class="kw">true</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"execute_*"</span>,   <span class="str">"action"</span>: <span class="str">"deny"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"deploy_*"</span>,    <span class="str">"action"</span>: <span class="str">"deny"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"delete_*"</span>,    <span class="str">"action"</span>: <span class="str">"deny"</span> }
+]</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+
+    <div class="template-section-label">What's allowed and denied</div>
+    <table>
+      <thead><tr><th>Action</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>read_file</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>search_code</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>list_files</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>write_file</td><td><span class="status-approval">NEEDS APPROVAL</span></td></tr>
+        <tr><td>execute_command, execute_script</td><td><span class="status-denied">DENIED</span></td></tr>
+        <tr><td>deploy_staging, deploy_production</td><td><span class="status-denied">DENIED</span></td></tr>
+        <tr><td>delete_file, delete_branch</td><td><span class="status-denied">DENIED</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="template-section-label">Apply with curl</div>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> curl -X POST https://agentsid.dev/api/v1/agents/register \
+  -H <span class="str">"Authorization: Bearer YOUR_PROJECT_KEY"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "code-assistant",
+    "permissions": [
+      {"tool_pattern": "read_file", "action": "allow"},
+      {"tool_pattern": "search_code", "action": "allow"},
+      {"tool_pattern": "list_files", "action": "allow"},
+      {"tool_pattern": "write_file", "action": "allow", "requires_approval": true},
+      {"tool_pattern": "execute_*", "action": "deny"},
+      {"tool_pattern": "deploy_*", "action": "deny"},
+      {"tool_pattern": "delete_*", "action": "deny"}
+    ]
+  }'</span></code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- Template 3: Customer Support Bot -->
+<section class="guide-section" id="template-support">
+  <div class="template-card">
+    <h3>
+      <span class="template-icon" style="background: var(--amber-bg); color: var(--amber);">&#128172;</span>
+      Customer Support Bot
+    </h3>
+    <p>An agent that can read tickets, search the knowledge base, and respond to customers, but can never touch billing, access admin panels, or delete anything.</p>
+
+    <div class="template-section-label">Permission Rules</div>
+    <div class="code-block-wrapper">
+      <pre><code>[
+  { <span class="str">"tool_pattern"</span>: <span class="str">"read_ticket"</span>,      <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"search_kb"</span>,        <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"respond_ticket"</span>,   <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"escalate_ticket"</span>,  <span class="str">"action"</span>: <span class="str">"allow"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"delete_*"</span>,         <span class="str">"action"</span>: <span class="str">"deny"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"modify_billing"</span>,   <span class="str">"action"</span>: <span class="str">"deny"</span> },
+  { <span class="str">"tool_pattern"</span>: <span class="str">"access_admin"</span>,     <span class="str">"action"</span>: <span class="str">"deny"</span> }
+]</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+
+    <div class="template-section-label">What's allowed and denied</div>
+    <table>
+      <thead><tr><th>Action</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>read_ticket</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>search_kb (knowledge base)</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>respond_ticket</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>escalate_ticket</td><td><span class="status-allowed">ALLOWED</span></td></tr>
+        <tr><td>delete_ticket, delete_customer</td><td><span class="status-denied">DENIED</span></td></tr>
+        <tr><td>modify_billing</td><td><span class="status-denied">DENIED</span></td></tr>
+        <tr><td>access_admin</td><td><span class="status-denied">DENIED</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="template-section-label">Apply with curl</div>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> curl -X POST https://agentsid.dev/api/v1/agents/register \
+  -H <span class="str">"Authorization: Bearer YOUR_PROJECT_KEY"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "support-bot",
+    "permissions": [
+      {"tool_pattern": "read_ticket", "action": "allow"},
+      {"tool_pattern": "search_kb", "action": "allow"},
+      {"tool_pattern": "respond_ticket", "action": "allow"},
+      {"tool_pattern": "escalate_ticket", "action": "allow"},
+      {"tool_pattern": "delete_*", "action": "deny"},
+      {"tool_pattern": "modify_billing", "action": "deny"},
+      {"tool_pattern": "access_admin", "action": "deny"}
+    ]
+  }'</span></code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- Template 4: Cautious Agent -->
+<section class="guide-section" id="template-cautious">
+  <div class="template-card">
+    <h3>
+      <span class="template-icon" style="background: var(--purple-bg); color: var(--purple);">&#128274;</span>
+      Cautious Agent (Approval Required)
+    </h3>
+    <p>The most restrictive template. Every single tool call requires human approval before it runs. Nothing happens automatically. Use this for high-stakes environments where you want full control over every action.</p>
+
+    <div class="template-section-label">Permission Rules</div>
+    <div class="code-block-wrapper">
+      <pre><code>[
+  { <span class="str">"tool_pattern"</span>: <span class="str">"*"</span>, <span class="str">"action"</span>: <span class="str">"allow"</span>, <span class="str">"requires_approval"</span>: <span class="kw">true</span> }
+]</code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+
+    <div class="template-section-label">What's allowed and denied</div>
+    <table>
+      <thead><tr><th>Action</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Any tool call</td><td><span class="status-approval">NEEDS APPROVAL</span></td></tr>
+      </tbody>
+    </table>
+    <p>Every tool call pauses and waits for a human to approve or deny it through the dashboard or webhook notification. This is the "training wheels" template -- great for when you're first getting started and want to see exactly what your agent tries to do before letting it do anything.</p>
+
+    <div class="template-section-label">Apply with curl</div>
+    <div class="code-block-wrapper">
+      <pre><code><span class="cmd-prompt">$</span> curl -X POST https://agentsid.dev/api/v1/agents/register \
+  -H <span class="str">"Authorization: Bearer YOUR_PROJECT_KEY"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "name": "cautious-agent",
+    "permissions": [
+      {"tool_pattern": "*", "action": "allow", "requires_approval": true}
+    ]
+  }'</span></code></pre>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+</section>
+
+
+</div><!-- .content-inner -->
+</main>
+
+<footer style="text-align:center;padding:32px;border-top:1px solid #e8e5e0;font-size:0.825rem;color:#9b9bab;">
+  <a href="/docs" style="color:#6b6b7b;margin:0 8px;">Docs</a> &middot;
+  <a href="/guides" style="color:#6b6b7b;margin:0 8px;">Guides</a> &middot;
+  <a href="/dashboard" style="color:#6b6b7b;margin:0 8px;">Dashboard</a> &middot;
+  <a href="https://github.com/stevenkozeniesky02/agentsid" target="_blank" style="color:#6b6b7b;margin:0 8px;">GitHub</a> &middot;
+  <a href="/terms" style="color:#6b6b7b;margin:0 8px;">Terms</a> &middot;
+  <a href="/privacy" style="color:#6b6b7b;margin:0 8px;">Privacy</a>
+  <div style="margin-top:8px;">&copy; 2026 AgentsID</div>
+</footer>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e5e0;padding:14px 24px;z-index:9999;box-shadow:0 -2px 10px rgba(0,0,0,0.06);">
+  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <p style="margin:0;font-size:13px;color:#6b6b7b;line-height:1.5;flex:1;min-width:200px;">We use cookies to understand how you use our site and improve your experience. <a href="/docs#privacy" style="color:#7c5bf0;text-decoration:underline;">Learn more</a></p>
+    <div style="display:flex;gap:8px;flex-shrink:0;">
+      <button onclick="declineCookies()" style="padding:8px 16px;border:1px solid #e8e5e0;border-radius:8px;background:#fff;color:#6b6b7b;font-size:13px;cursor:pointer;">Decline</button>
+      <button onclick="acceptCookies()" style="padding:8px 16px;border:none;border-radius:8px;background:linear-gradient(135deg,#7c5bf0,#5b8cf0);color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Accept</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Copy Code ───
+function copyCode(btn) {
+  const wrapper = btn.closest('.code-block-wrapper') || btn.closest('.cmd') || btn.parentElement;
+  const codeEl = wrapper.querySelector('code') || wrapper.querySelector('pre');
+  if (!codeEl) return;
+
+  const text = codeEl.textContent.replace(/^\$\s*/gm, '').replace(/^>\s*/gm, '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ─── Sidebar Section Toggle ───
+function toggleSection(titleEl) {
+  titleEl.parentElement.classList.toggle('collapsed');
+}
+
+// ─── Mobile Sidebar ───
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('visible');
+}
+
+// ─── Scroll Spy (active sidebar item) ───
+function updateActiveSection() {
+  const allSections = document.querySelectorAll('[id]');
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
+  let current = '';
+
+  allSections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= 100 && rect.top > -rect.height) {
+      current = section.id;
+    }
+  });
+
+  sidebarItems.forEach(item => {
+    const href = item.getAttribute('href');
+    if (href === '#' + current) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+}
+
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  if (scrollTimeout) cancelAnimationFrame(scrollTimeout);
+  scrollTimeout = requestAnimationFrame(updateActiveSection);
+});
+
+// ─── Smooth scroll for sidebar links ───
+document.querySelectorAll('.sidebar-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(item.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('visible');
+    }
+  });
+});
+
+// ─── Cookie Consent ───
+(function(){
+  var consent = localStorage.getItem('cookie_consent');
+  if (consent === 'accepted') {
+    if (window.posthog) posthog.opt_in_capturing();
+  } else if (consent === 'declined') {
+    // stay opted out
+  } else {
+    document.getElementById('cookieBanner').style.display = 'block';
+  }
+})();
+function acceptCookies() {
+  localStorage.setItem('cookie_consent', 'accepted');
+  document.getElementById('cookieBanner').style.display = 'none';
+  if (window.posthog) posthog.opt_in_capturing();
+}
+function declineCookies() {
+  localStorage.setItem('cookie_consent', 'declined');
+  document.getElementById('cookieBanner').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
