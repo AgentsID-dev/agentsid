@@ -1,0 +1,27 @@
+name: Scan an MCP Server
+description: Request a free security scan of any MCP server
+title: "scan: "
+labels: ["scan-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Scan an MCP Server
+
+        Just type the npm package name or HTTP URL in the issue title after `scan:` and submit.
+
+        **Examples:**
+        - `scan: @modelcontextprotocol/server-github`
+        - `scan: @playwright/mcp-server`
+        - `scan: https://my-mcp-server.example.com/mcp`
+
+        The scan will run automatically and post results as a comment in ~30 seconds.
+
+  - type: input
+    id: notes
+    attributes:
+      label: Notes (optional)
+      description: Any additional context about the server
+      placeholder: e.g. "This server requires no auth"
+    validations:
+      required: false

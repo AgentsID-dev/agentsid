@@ -1,0 +1,160 @@
+name: Scan Request
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  scan:
+    if: startsWith(github.event.issue.title, 'scan:')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Parse target from issue title
+        id: parse
+        run: |
+          TITLE="${{ github.event.issue.title }}"
+          # Strip "scan:" prefix and trim whitespace
+          TARGET=$(echo "$TITLE" | sed 's/^scan:[[:space:]]*//')
+          if [ -z "$TARGET" ]; then
+            echo "No target found in issue title"
+            exit 1
+          fi
+          echo "target=$TARGET" >> "$GITHUB_OUTPUT"
+          echo "Scan target: $TARGET"
+
+      - name: Add scanning label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels" \
+            -X POST -f "labels[]=scanning" 2>/dev/null || true
+
+      - name: Post acknowledgement
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="🔍 **Scanning** \`${{ steps.parse.outputs.target }}\` — results will be posted here in ~30 seconds."
+
+      - name: Install scanner
+        run: npm install -g @agentsid/scanner@latest
+
+      - name: Run scan
+        id: scan
+        run: |
+          TARGET="${{ steps.parse.outputs.target }}"
+
+          if [[ "$TARGET" == http://* ]] || [[ "$TARGET" == https://* ]]; then
+            REPORT=$(agentsid-scan --json --url "$TARGET" 2>/dev/null) || REPORT=""
+          else
+            REPORT=$(agentsid-scan --json -- npx $TARGET 2>/dev/null) || REPORT=""
+          fi
+
+          if [ -z "$REPORT" ]; then
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "$REPORT" > "$RUNNER_TEMP/report.json"
+          echo "failed=false" >> "$GITHUB_OUTPUT"
+
+      - name: Post failure
+        if: steps.scan.outputs.failed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY="❌ **Scan failed** for \`${{ steps.parse.outputs.target }}\`
+
+          Possible reasons:
+          - Package not found on npm
+          - Server didn't start within the timeout
+          - Server doesn't support MCP protocol
+
+          Make sure the target is a valid npm package name (e.g. \`@modelcontextprotocol/server-github\`) or HTTP URL."
+
+          gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="$BODY"
+
+      - name: Post results
+        if: steps.scan.outputs.failed == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMENT=$(node -e "
+            const fs = require('fs');
+            const r = JSON.parse(fs.readFileSync('$RUNNER_TEMP/report.json', 'utf-8'));
+            const grade = r.grade?.overall || 'F';
+            const score = r.grade?.score || 0;
+            const cats = r.grade?.categories || {};
+            const summary = r.summary || {};
+            const findings = r.findings || [];
+            const server = r.server?.name || 'Unknown';
+            const tools = r.toolCount || 0;
+
+            const gradeEmoji = { A: '🟢', B: '🟢', C: '🟡', D: '🔴', F: '🔴' };
+            const sevEmoji = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🔵' };
+
+            let md = '## ' + (gradeEmoji[grade] || '') + ' Security Report: Grade ' + grade + ' (' + score + '/100)\n\n';
+            md += '**Server:** ' + server + ' | **Tools scanned:** ' + tools + '\n\n';
+
+            md += '| Category | Grade |\n|----------|-------|\n';
+            for (const [cat, g] of Object.entries(cats)) {
+              md += '| ' + cat + ' | ' + g + ' |\n';
+            }
+            md += '\n';
+
+            md += '**Findings:** ';
+            const parts = [];
+            for (const sev of ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']) {
+              if (summary[sev]) parts.push(summary[sev] + ' ' + sev.toLowerCase());
+            }
+            md += parts.join(', ') || 'None';
+            md += '\n\n';
+
+            const top = findings.filter(f => f.severity === 'CRITICAL' || f.severity === 'HIGH').slice(0, 15);
+            if (top.length > 0) {
+              md += '<details><summary>Critical & high findings (' + top.length + ')</summary>\n\n';
+              md += '| Severity | Category | Tool | Detail |\n|----------|----------|------|--------|\n';
+              for (const f of top) {
+                const detail = (f.detail || '').replace(/\|/g, '\\\\|').replace(/\n/g, ' ').slice(0, 120);
+                md += '| ' + (sevEmoji[f.severity]||'') + ' ' + f.severity + ' | ' + (f.category||'') + ' | ' + (f.tool||'') + ' | ' + detail + ' |\n';
+              }
+              md += '\n</details>\n\n';
+            }
+
+            md += '🔗 [View full report on AgentsID Registry](https://agentsid.dev/registry/' + encodeURIComponent(server) + ')\n\n';
+            md += '---\n';
+            md += '**Want to scan your own MCP servers?**\n';
+            md += '- 📦 \`npx @agentsid/scanner -- npx <your-server>\`\n';
+            md += '- 🔁 [Add to your CI/CD](https://github.com/${{ github.repository }}#ci-usage)\n';
+            md += '- 🌐 [Browse the registry](https://agentsid.dev/registry)\n';
+            console.log(md);
+          ")
+
+          gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="$COMMENT"
+
+      - name: Update labels
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Remove scanning label
+          gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels/scanning" \
+            -X DELETE 2>/dev/null || true
+
+          # Add result label
+          if [ "${{ steps.scan.outputs.failed }}" == "true" ]; then
+            gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels" \
+              -X POST -f "labels[]=scan-failed" 2>/dev/null || true
+          else
+            gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels" \
+              -X POST -f "labels[]=scanned" 2>/dev/null || true
+          fi
+
+          # Close the issue
+          gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}" \
+            -X PATCH -f state=closed

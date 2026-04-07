@@ -1,0 +1,194 @@
+name: 'AgentsID MCP Scan'
+description: 'Scan MCP servers for security issues and post results as a PR comment'
+author: 'AgentsID'
+
+branding:
+  icon: 'shield'
+  color: 'purple'
+
+inputs:
+  target:
+    description: 'MCP server to scan (npx command or HTTP URL)'
+    required: true
+  env:
+    description: 'Environment variables for the server (KEY=VALUE, one per line)'
+    required: false
+    default: ''
+  fail-on-grade:
+    description: 'Fail the check if grade is at or below this letter (A, B, C, D, F)'
+    required: false
+    default: ''
+  comment:
+    description: 'Post results as a PR comment (true/false)'
+    required: false
+    default: 'true'
+  token:
+    description: 'GitHub token for posting PR comments'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  grade:
+    description: 'Overall letter grade (A-F)'
+    value: ${{ steps.scan.outputs.grade }}
+  score:
+    description: 'Numeric score (0-100)'
+    value: ${{ steps.scan.outputs.score }}
+  findings-critical:
+    description: 'Number of critical findings'
+    value: ${{ steps.scan.outputs.findings-critical }}
+  findings-high:
+    description: 'Number of high findings'
+    value: ${{ steps.scan.outputs.findings-high }}
+  report-json:
+    description: 'Full JSON report'
+    value: ${{ steps.scan.outputs.report-json }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install scanner
+      shell: bash
+      run: npm install -g @agentsid/scanner@latest
+
+    - name: Run scan
+      id: scan
+      shell: bash
+      env:
+        INPUT_TARGET: ${{ inputs.target }}
+        INPUT_ENV: ${{ inputs.env }}
+      run: |
+        # Parse env vars
+        if [ -n "$INPUT_ENV" ]; then
+          while IFS= read -r line; do
+            if [ -n "$line" ]; then
+              export "$line"
+            fi
+          done <<< "$INPUT_ENV"
+        fi
+
+        # Determine scan mode
+        if [[ "$INPUT_TARGET" == http://* ]] || [[ "$INPUT_TARGET" == https://* ]]; then
+          REPORT=$(agentsid-scan --json --url "$INPUT_TARGET" 2>/dev/null)
+        else
+          REPORT=$(agentsid-scan --json -- $INPUT_TARGET 2>/dev/null)
+        fi
+
+        # Parse results
+        GRADE=$(echo "$REPORT" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const r=JSON.parse(d);console.log(r.grade?.overall||'F')})")
+        SCORE=$(echo "$REPORT" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const r=JSON.parse(d);console.log(r.grade?.score||0)})")
+        CRITICAL=$(echo "$REPORT" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const r=JSON.parse(d);console.log(r.summary?.CRITICAL||0)})")
+        HIGH=$(echo "$REPORT" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const r=JSON.parse(d);console.log(r.summary?.HIGH||0)})")
+
+        echo "grade=$GRADE" >> "$GITHUB_OUTPUT"
+        echo "score=$SCORE" >> "$GITHUB_OUTPUT"
+        echo "findings-critical=$CRITICAL" >> "$GITHUB_OUTPUT"
+        echo "findings-high=$HIGH" >> "$GITHUB_OUTPUT"
+
+        # Store full report for comment step
+        echo "$REPORT" > "$RUNNER_TEMP/agentsid-report.json"
+        echo "report-json=$REPORT" >> "$GITHUB_OUTPUT"
+
+        echo "Scan complete: Grade $GRADE ($SCORE/100) — $CRITICAL critical, $HIGH high"
+
+    - name: Build comment
+      id: comment-body
+      if: inputs.comment == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      run: |
+        REPORT="$RUNNER_TEMP/agentsid-report.json"
+        if [ ! -f "$REPORT" ]; then
+          echo "No report found, skipping comment"
+          exit 0
+        fi
+
+        node -e "
+          const fs = require('fs');
+          const r = JSON.parse(fs.readFileSync(process.env.REPORT, 'utf-8'));
+          const grade = r.grade?.overall || 'F';
+          const score = r.grade?.score || 0;
+          const cats = r.grade?.categories || {};
+          const summary = r.summary || {};
+          const findings = r.findings || [];
+          const server = r.server?.name || 'Unknown';
+          const tools = r.toolCount || 0;
+
+          const gradeEmoji = { A: '🟢', B: '🟢', C: '🟡', D: '🔴', F: '🔴' };
+          const sevEmoji = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🔵' };
+
+          let md = '## ' + (gradeEmoji[grade] || '') + ' AgentsID Security Scan: Grade ' + grade + ' (' + score + '/100)\n\n';
+          md += '**Server:** ' + server + ' | **Tools scanned:** ' + tools + '\n\n';
+
+          md += '| Category | Grade |\n|----------|-------|\n';
+          for (const [cat, g] of Object.entries(cats)) {
+            md += '| ' + cat + ' | ' + g + ' |\n';
+          }
+          md += '\n';
+
+          md += '**Findings:** ';
+          const parts = [];
+          for (const sev of ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']) {
+            if (summary[sev]) parts.push(summary[sev] + ' ' + sev.toLowerCase());
+          }
+          md += parts.join(', ') || 'None';
+          md += '\n\n';
+
+          const top = findings.filter(f => f.severity === 'CRITICAL' || f.severity === 'HIGH').slice(0, 10);
+          if (top.length > 0) {
+            md += '<details><summary>Top findings (' + top.length + ')</summary>\n\n';
+            md += '| Severity | Category | Tool | Detail |\n|----------|----------|------|--------|\n';
+            for (const f of top) {
+              const detail = (f.detail || '').replace(/\|/g, '\\\\|').replace(/\n/g, ' ').slice(0, 120);
+              md += '| ' + (sevEmoji[f.severity]||'') + ' ' + f.severity + ' | ' + (f.category||'') + ' | ' + (f.tool||'') + ' | ' + detail + ' |\n';
+            }
+            md += '\n</details>\n\n';
+          }
+
+          md += '---\n*Scanned by [AgentsID](https://agentsid.dev) — security scanner for MCP servers*';
+          fs.writeFileSync(process.env.RUNNER_TEMP + '/agentsid-comment.md', md);
+        " REPORT="$REPORT"
+
+    - name: Post PR comment
+      if: inputs.comment == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+      run: |
+        COMMENT_FILE="$RUNNER_TEMP/agentsid-comment.md"
+        if [ ! -f "$COMMENT_FILE" ]; then
+          exit 0
+        fi
+
+        COMMENT=$(cat "$COMMENT_FILE")
+
+        # Update existing comment or post new one
+        EXISTING=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" --jq '.[] | select(.body | contains("AgentsID Security Scan")) | .id' 2>/dev/null | head -1)
+
+        if [ -n "$EXISTING" ]; then
+          gh api "repos/${REPO}/issues/comments/${EXISTING}" -X PATCH -f body="$COMMENT"
+        else
+          gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" -f body="$COMMENT"
+        fi
+
+    - name: Check grade threshold
+      if: inputs.fail-on-grade != ''
+      shell: bash
+      run: |
+        GRADE="${{ steps.scan.outputs.grade }}"
+        THRESHOLD="${{ inputs.fail-on-grade }}"
+
+        grade_to_num() {
+          case "$1" in
+            A) echo 5 ;; B) echo 4 ;; C) echo 3 ;; D) echo 2 ;; F) echo 1 ;; *) echo 0 ;;
+          esac
+        }
+
+        GRADE_NUM=$(grade_to_num "$GRADE")
+        THRESHOLD_NUM=$(grade_to_num "$THRESHOLD")
+
+        if [ "$GRADE_NUM" -le "$THRESHOLD_NUM" ]; then
+          echo "::error::MCP security scan failed: Grade $GRADE is at or below threshold $THRESHOLD"
+          exit 1
+        fi
