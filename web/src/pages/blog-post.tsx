@@ -1,5 +1,6 @@
 import { useParams, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { trackBlogRead } from "@/lib/posthog";
 import { ArrowLeft, Link as LinkIcon, ExternalLink } from "lucide-react";
 import {
   findPostBySlug,
@@ -131,6 +132,10 @@ const RelatedPostCard = ({ post }: { readonly post: BlogPostType }) => (
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = slug ? findPostBySlug(slug) : undefined;
+
+  useEffect(() => {
+    if (post) trackBlogRead(post.slug, post.title);
+  }, [post]);
 
   if (!post) {
     return <Navigate to="/blog" replace />;

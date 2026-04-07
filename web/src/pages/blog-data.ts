@@ -763,6 +763,158 @@ else:
       },
     ],
   },
+  {
+    slug: "invisible-ink-unicode-smuggling-mcp",
+    title: "Invisible Ink: GPT-5.4 Follows Hidden Unicode Instructions 100% of the Time",
+    description:
+      "We embedded invisible tag-block instructions in MCP tool descriptions and tested three frontier models. Three models, same bytes, three completely different behaviors.",
+    date: "2026-04-06",
+    readTime: "8 min",
+    category: "Security",
+    content: [
+      {
+        type: "paragraph",
+        text: "We sent the same invisible bytes to GPT-5.4, Claude Sonnet 4.6, and Gemini 2.5 Flash. Three models. Same hidden Unicode. Three completely different behaviors.",
+      },
+      {
+        type: "list",
+        items: [
+          "GPT-5.4: Followed the hidden instructions 100% of the time (20/20 trials)",
+          "Claude Sonnet 4.6: Detected the smuggling 100% of the time (40/40 trials)",
+          "Gemini 2.5 Flash: Decoded the bytes but refused to execute the payload",
+        ],
+      },
+      { type: "heading", text: "The Vector" },
+      {
+        type: "paragraph",
+        text: "Unicode Tag Blocks (U+E0001 through U+E007F) map 1:1 to ASCII at an offset of 0xE0000. They were originally designed for an abandoned IETF language-identification mechanism. They have no visual representation — they render as nothing in every standard text environment. But language model tokenizers treat them as normal tokens. The model sees them. You don't.",
+      },
+      {
+        type: "paragraph",
+        text: "We embedded tag-block encoded instructions in MCP tool descriptions — the natural-language text that tells an AI agent what a tool does. These descriptions are present in every interaction, arrive with the implicit authority of the server operator, and are invisible to code review.",
+      },
+      { type: "heading", text: "The Pipeline Is Blind" },
+      {
+        type: "paragraph",
+        text: "We traced invisible bytes through every layer of the MCP pipeline: npm publish, registry indexing, MCP client tools/list, SDK transport, and LLM context window. Zero layers strip invisible characters. Zero layers warn. Zero layers log. The entire pipeline from package publication to model context is transparent to invisible Unicode.",
+      },
+      { type: "heading", text: "The Signal Is Inverted" },
+      {
+        type: "paragraph",
+        text: "We scanned 3,471 accessible MCP servers and found 298 hidden codepoints across 63 servers (1.8%). Most are benign — 263 are orphaned U+FE0F emoji presentation selectors, residue from developer tooling. But here's the problem: we took a real server (@mseep/railway-mcp), replaced its benign emoji residue with a weaponized tag-block exfiltration payload, and scanned both versions. The weaponized fork scored better than the original. Current scanning tools count findings without decoding content, which means the signal is inverted — weaponized payloads look cleaner than benign noise.",
+      },
+      { type: "heading", text: "The Defense Stack" },
+      {
+        type: "paragraph",
+        text: "No single layer fixes this. The paper proposes five layers of defense: registry-level stripping at npm/PyPI, client-side NFC normalization before model context, SDK transport guards that reject invisible codepoint ranges, model-layer detection as a baseline capability, and scanner differentiation that decodes content rather than counting findings.",
+      },
+      {
+        type: "callout",
+        variant: "info",
+        text: "Read the full paper with methodology, compliance data, and reproducibility details on GitHub. Run the scanner yourself: npx @agentsid/scanner",
+      },
+    ],
+  },
+  {
+    slug: "weaponized-by-design-mcp-census",
+    title: "Weaponized by Design: 15,982 MCP Servers, 137,070 Security Findings",
+    description:
+      "The first census-scale security audit of the MCP ecosystem reveals that most vulnerabilities aren't attacks from outside — they're generated from within by developers who don't realize tool descriptions are executable policy.",
+    date: "2026-04-03",
+    readTime: "10 min",
+    category: "Security",
+    content: [
+      {
+        type: "paragraph",
+        text: "We scanned every publicly available MCP package on npm and PyPI — 15,982 servers, 40,081 tools — and found 137,070 security findings. This is the first census-scale security audit of the MCP ecosystem.",
+      },
+      { type: "heading", text: "The Complexity Tax" },
+      {
+        type: "paragraph",
+        text: "There's a near-perfect negative correlation between a server's tool count and its security score. Servers with 1-5 tools average 62/100. Servers with 11-20 tools average 1.1/100. Servers with 21 or more tools average exactly 0. In the current MCP ecosystem, capability and security are mutually exclusive.",
+      },
+      { type: "heading", text: "Toxic Flow" },
+      {
+        type: "paragraph",
+        text: "We introduce a formal taxonomy of Toxic Flow vulnerabilities — tool descriptions that manipulate LLM reasoning about authorization, confirmation, and scope. Five distinct types across 954 servers:",
+      },
+      {
+        type: "list",
+        items: [
+          "Behavioral mandates: descriptions that tell the agent to 'always' or 'never' do something, overriding user intent",
+          "Confirmation bypass: descriptions that instruct the agent to skip confirmation prompts",
+          "Scope escalation: descriptions that encourage the agent to call additional tools beyond what the user requested",
+          "Data exfiltration: descriptions that route sensitive data to external endpoints",
+          "Hidden Unicode: invisible characters in tool descriptions that carry instructions visible to the model but not to human reviewers",
+        ],
+      },
+      { type: "heading", text: "Not Malicious — Structural" },
+      {
+        type: "paragraph",
+        text: "The critical finding is that most Toxic Flow vulnerabilities are not malicious. They're written by developers who don't realize that tool descriptions function as executable security policy. A developer writes 'Always confirm before deleting' in a tool description, intending it as documentation. The LLM reads it as an instruction. The ecosystem isn't being attacked from outside — it's generating vulnerabilities from within.",
+      },
+      { type: "heading", text: "Natural Language Is a Failed Authorization Layer" },
+      {
+        type: "paragraph",
+        text: "If your security boundary depends on an LLM correctly interpreting natural language instructions under adversarial conditions, you don't have a security boundary. Permission enforcement needs to move to the protocol level — out of the LLM's reasoning engine entirely. That's what AgentsID's permission spec does: deny-first rules evaluated before the model ever sees the tool call.",
+      },
+      {
+        type: "callout",
+        variant: "info",
+        text: "Read the full paper on GitHub. Browse the findings at agentsid.dev/registry. Scan your own servers: npx @agentsid/scanner",
+      },
+    ],
+  },
+  {
+    slug: "a2a-security-gaps-agent-communication",
+    title: "Six Structural Vulnerabilities in Google's A2A Protocol",
+    description:
+      "Google's Agent2Agent protocol is the most credible attempt at standardizing agent communication. It's also structurally insecure in six specific ways. None are implementation bugs — they're in the spec itself.",
+    date: "2026-04-05",
+    readTime: "7 min",
+    category: "Security",
+    content: [
+      {
+        type: "paragraph",
+        text: "Google's Agent2Agent (A2A) protocol, released as v1.0 in 2025, is the most credible attempt yet to standardize communication between AI agents. It references RFC 2119 correctly, cites real cryptographic standards, and includes a dedicated security considerations section. It is well-designed. It is also structurally insecure in six specific ways.",
+      },
+      { type: "heading", text: "Gap 1: JWS Signing Is Self-Attestation" },
+      {
+        type: "paragraph",
+        text: "A2A's signing mechanism lets agents self-attest their identity. There's no external CA, no mutual authentication, no trust anchor beyond the agent's own key material. An agent says 'I am X' and signs it with its own key. That's not identity verification — it's self-referential trust.",
+      },
+      { type: "heading", text: "Gap 2: Push Notification MUST Is Void by Default" },
+      {
+        type: "paragraph",
+        text: "The spec says push notification endpoints MUST be validated. But the field that triggers this requirement is optional. If the field isn't set — which is the default — the MUST requirement never fires. The security guarantee exists on paper but not in practice.",
+      },
+      { type: "heading", text: "Gap 3: Credential Chain Exposure" },
+      {
+        type: "paragraph",
+        text: "When Agent A delegates to Agent B, the credential chain is architecturally exposed across the delegation path. There's no scope narrowing, no credential isolation, no mechanism to prevent Agent B from using Agent A's credentials for purposes Agent A didn't intend.",
+      },
+      { type: "heading", text: "Gap 4: SSRF via Part.url" },
+      {
+        type: "paragraph",
+        text: "The Part.url field allows agents to reference external resources. There's no allowlist, no URL validation requirement, no SSRF mitigation. Any agent can point another agent at an internal URL — cloud metadata endpoints, internal services, localhost.",
+      },
+      { type: "heading", text: "Gap 5: Cross-Session Context Injection" },
+      {
+        type: "paragraph",
+        text: "The reference_task_ids field lets a task reference previous tasks. There's no validation that the referencing agent was a participant in the referenced task. This enables cross-session context injection — an agent can claim context from conversations it was never part of.",
+      },
+      { type: "heading", text: "Gap 6: No Authorization Model" },
+      {
+        type: "paragraph",
+        text: "The most fundamental gap: A2A has no authorization model. Each agent is an authorization island. There's no standard way to express 'Agent X can do Y but not Z.' Every implementor builds their own permission system from scratch, which means every implementation has its own security bugs.",
+      },
+      {
+        type: "callout",
+        variant: "info",
+        text: "None of these are bugs in any implementor's code. They are in the spec itself. Read the full analysis with exact spec citations on GitHub.",
+      },
+    ],
+  },
 ];
 
 export const findPostBySlug = (slug: string): BlogPost | undefined =>

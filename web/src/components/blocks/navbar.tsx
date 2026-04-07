@@ -109,6 +109,12 @@ const Navbar = ({
           url: "/guides#quick-start",
         },
         {
+          title: "Research",
+          description: "5 published security papers with full methodology",
+          icon: <FileText className="size-5 shrink-0" />,
+          url: "/research",
+        },
+        {
           title: "GitHub",
           description: "SDKs, CLI tools, and example integrations",
           icon: <ExternalLink className="size-5 shrink-0" />,
@@ -133,6 +139,7 @@ const Navbar = ({
     { title: "Guides", url: "/guides" },
     { title: "Registry", url: "/registry" },
     { title: "Spec", url: "/spec" },
+    { title: "Research", url: "/research" },
     { title: "Blog", url: "/blog" },
   ],
   mobileExtraLinks = [

@@ -126,12 +126,11 @@ const stats = [
   { value: "100%", label: "Audit coverage" },
 ] as const;
 
-const trustedLogos = [
-  "Claude",
-  "Cursor",
-  "Codex",
-  "LangChain",
-  "CrewAI",
+const proofPoints = [
+  { value: "15,982", label: "MCP Servers Scanned" },
+  { value: "5", label: "Published Papers" },
+  { value: "4", label: "SDKs Shipped" },
+  { value: "72%", label: "Fail Rate Found" },
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -693,20 +692,15 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ── Logos / social proof ── */}
+      {/* ── Proof points ── */}
       <section className="py-10 border-t border-border/30">
         <div className="container mx-auto px-4 lg:px-8">
-          <p className="text-center text-xs uppercase tracking-widest text-muted-foreground/60 mb-6">
-            Works with your AI stack
-          </p>
-          <div className="flex flex-wrap justify-center gap-8 lg:gap-14">
-            {trustedLogos.map((name) => (
-              <span
-                key={name}
-                className="text-muted-foreground/40 font-semibold text-lg hover:text-muted-foreground/70 transition-colors"
-              >
-                {name}
-              </span>
+          <div className="flex flex-wrap justify-center gap-10 lg:gap-16">
+            {proofPoints.map((point) => (
+              <div key={point.label} className="text-center">
+                <p className="text-2xl font-bold text-foreground">{point.value}</p>
+                <p className="text-xs uppercase tracking-widest text-muted-foreground/60">{point.label}</p>
+              </div>
             ))}
           </div>
         </div>
