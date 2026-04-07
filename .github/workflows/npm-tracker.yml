@@ -1,0 +1,123 @@
+name: Daily npm Download Tracker
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # 6am UTC daily (2am ET)
+  workflow_dispatch:       # manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure metrics dir
+        run: mkdir -p metrics
+
+      - name: Fetch and record
+        run: |
+          DATE=$(date -u '+%Y-%m-%d')
+          PACKAGES=("@agentsid/scanner" "@agentsid/mcp-scanner" "@agentsid/sdk" "@agentsid/proxy")
+
+          # CSV header if new
+          if [ ! -f metrics/npm-downloads.csv ]; then
+            echo "date,package,daily,weekly,monthly" > metrics/npm-downloads.csv
+          fi
+
+          # Collect data
+          declare -A DAILY WEEKLY MONTHLY
+          TOTAL_DAILY=0
+          TOTAL_WEEKLY=0
+          TOTAL_MONTHLY=0
+
+          for PKG in "${PACKAGES[@]}"; do
+            D=$(curl -s "https://api.npmjs.org/downloads/point/last-day/$PKG" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).downloads||0))")
+            W=$(curl -s "https://api.npmjs.org/downloads/point/last-week/$PKG" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).downloads||0))")
+            M=$(curl -s "https://api.npmjs.org/downloads/point/last-month/$PKG" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).downloads||0))")
+
+            DAILY[$PKG]=$D
+            WEEKLY[$PKG]=$W
+            MONTHLY[$PKG]=$M
+            TOTAL_DAILY=$((TOTAL_DAILY + D))
+            TOTAL_WEEKLY=$((TOTAL_WEEKLY + W))
+            TOTAL_MONTHLY=$((TOTAL_MONTHLY + M))
+
+            echo "$DATE,$PKG,$D,$W,$M" >> metrics/npm-downloads.csv
+          done
+
+          # Build the dashboard README
+          cat > metrics/README.md << DASHBOARD
+          # AgentsID — Download Metrics
+
+          > Auto-updated daily by GitHub Actions. Last run: **${DATE}**
+
+          ## Totals
+
+          | Period | Downloads |
+          |--------|-----------|
+          | Last 24h | **${TOTAL_DAILY}** |
+          | Last 7 days | **${TOTAL_WEEKLY}** |
+          | Last 30 days | **${TOTAL_MONTHLY}** |
+
+          ## By Package
+
+          | Package | Daily | Weekly | Monthly |
+          |---------|------:|-------:|--------:|
+          DASHBOARD
+
+          for PKG in "${PACKAGES[@]}"; do
+            echo "| \`${PKG}\` | ${DAILY[$PKG]} | ${WEEKLY[$PKG]} | ${MONTHLY[$PKG]} |" >> metrics/README.md
+          done
+
+          # Trend from CSV (last 7 days totals)
+          cat >> metrics/README.md << 'TREND_HEADER'
+
+          ## 7-Day Trend
+
+          | Date | Total Daily Downloads |
+          |------|---------------------:|
+          TREND_HEADER
+
+          # Pull last 7 days of totals from CSV
+          tail -n +2 metrics/npm-downloads.csv | awk -F',' '{
+            daily[$1] += $3
+          } END {
+            n = asorti(daily, sorted)
+            start = (n > 7) ? n - 6 : 1
+            for (i = start; i <= n; i++) {
+              d = sorted[i]
+              total = daily[d]
+              bar = ""
+              blocks = int(total / 5)
+              if (blocks < 1 && total > 0) blocks = 1
+              if (blocks > 40) blocks = 40
+              for (j = 0; j < blocks; j++) bar = bar "█"
+              if (total == 0) bar = "▏"
+              printf "| %s | %d %s |\n", d, total, bar
+            }
+          }' >> metrics/README.md
+
+          cat >> metrics/README.md << 'FOOTER'
+
+          ---
+
+          *Data sourced from the [npm API](https://api.npmjs.org). Updated daily at 6:00 UTC.*
+          *View raw data: [npm-downloads.csv](npm-downloads.csv)*
+          FOOTER
+
+          echo "TOTAL_DAILY=$TOTAL_DAILY" >> "$GITHUB_ENV"
+
+      - name: Commit and push
+        run: |
+          git config user.name "AgentsID Bot"
+          git config user.email "bot@agentsid.dev"
+          git add metrics/
+          if git diff --staged --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "metrics: npm downloads ${TOTAL_DAILY}/day — $(date -u '+%Y-%m-%d')"
+          git push
