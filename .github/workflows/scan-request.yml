@@ -14,14 +14,22 @@ jobs:
     steps:
       - name: Parse target from issue title
         id: parse
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
-          TITLE="${{ github.event.issue.title }}"
           # Strip "scan:" prefix and trim whitespace
-          TARGET=$(echo "$TITLE" | sed 's/^scan:[[:space:]]*//')
+          TARGET=$(echo "$ISSUE_TITLE" | sed 's/^scan:[[:space:]]*//')
           if [ -z "$TARGET" ]; then
             echo "No target found in issue title"
             exit 1
           fi
+
+          # Sanitize: only allow npm package names (@scope/name) and URLs
+          if ! echo "$TARGET" | grep -qE '^(@[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+|[a-zA-Z0-9._-]+|https?://[a-zA-Z0-9._/-]+)$'; then
+            echo "Invalid target format: $TARGET"
+            exit 1
+          fi
+
           echo "target=$TARGET" >> "$GITHUB_OUTPUT"
           echo "Scan target: $TARGET"
 
