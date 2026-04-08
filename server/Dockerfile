@@ -12,9 +12,6 @@ COPY static/ static/
 COPY alembic/ alembic/
 COPY alembic.ini .
 
-# Landing page lives one level up
-COPY ../site/ ../site/ 2>/dev/null || true
-
 RUN adduser --disabled-password --no-create-home appuser
 USER appuser
 
