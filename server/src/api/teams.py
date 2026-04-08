@@ -1,12 +1,12 @@
 """Team management routes.
 
-Team operations require Supabase Auth — users must be signed in.
+Team operations authenticate via project API key (same as all other endpoints).
+The user's identity is derived from project.owner_email.
 """
 
 import secrets
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -14,12 +14,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.api.projects import _verify_supabase_user
+from src.api.auth_dep import get_project
 from src.core.database import get_db
 from src.models.models import Project, Team, TeamMember
 
 limiter = Limiter(key_func=get_remote_address)
-security = HTTPBearer()
 
 router = APIRouter(prefix="/teams", tags=["teams"])
 
@@ -72,11 +71,6 @@ class TeamListResponse(BaseModel):
 # --- Helpers ---
 
 
-async def _get_user_email(credentials: HTTPAuthorizationCredentials) -> str:
-    user = await _verify_supabase_user(credentials.credentials)
-    return user.get("email", "")
-
-
 async def _require_team_role(
     team_id: str, email: str, required_roles: set[str], db: AsyncSession
 ) -> Team:
@@ -103,11 +97,11 @@ async def _require_team_role(
 async def create_team(
     request: Request,
     data: TeamCreate,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    project: Project = Depends(get_project),
     db: AsyncSession = Depends(get_db),
 ):
-    """Create a new team. The creator becomes the owner."""
-    email = await _get_user_email(credentials)
+    """Create a new team. The project owner becomes the team owner."""
+    email = project.owner_email or ""
 
     team = Team(
         id=_gen_team_id(),
@@ -144,11 +138,11 @@ async def create_team(
 @limiter.limit("30/minute")
 async def list_teams(
     request: Request,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    project: Project = Depends(get_project),
     db: AsyncSession = Depends(get_db),
 ):
     """List all teams the user belongs to."""
-    email = await _get_user_email(credentials)
+    email = project.owner_email or ""
 
     result = await db.execute(
         select(Team)
@@ -175,11 +169,11 @@ async def list_teams(
 async def get_team(
     request: Request,
     team_id: str,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    project: Project = Depends(get_project),
     db: AsyncSession = Depends(get_db),
 ):
     """Get team details including members. Requires team membership."""
-    email = await _get_user_email(credentials)
+    email = project.owner_email or ""
     team = await _require_team_role(team_id, email, VALID_ROLES, db)
 
     return TeamResponse(
@@ -205,11 +199,11 @@ async def invite_member(
     request: Request,
     team_id: str,
     data: MemberInvite,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    project: Project = Depends(get_project),
     db: AsyncSession = Depends(get_db),
 ):
     """Invite a member to the team. Requires owner or admin role."""
-    email = await _get_user_email(credentials)
+    email = project.owner_email or ""
 
     if data.role not in VALID_ROLES:
         raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}")
@@ -248,11 +242,11 @@ async def update_member_role(
     team_id: str,
     member_email: str,
     data: MemberRoleUpdate,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    project: Project = Depends(get_project),
     db: AsyncSession = Depends(get_db),
 ):
     """Change a member's role. Requires owner or admin role."""
-    email = await _get_user_email(credentials)
+    email = project.owner_email or ""
 
     if data.role not in VALID_ROLES:
         raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}")
@@ -260,11 +254,11 @@ async def update_member_role(
     if data.role == "owner":
         raise HTTPException(status_code=400, detail="Cannot assign owner role directly. Transfer ownership instead.")
 
+    team = await _require_team_role(team_id, email, {"owner", "admin"}, db)
+
     # Only the owner can assign admin role
     if data.role == "admin" and email != team.owner_email:
         raise HTTPException(status_code=403, detail="Only the owner can assign admin role")
-
-    team = await _require_team_role(team_id, email, {"owner", "admin"}, db)
 
     member = next((m for m in team.members if m.email == member_email), None)
     if member is None:
@@ -295,11 +289,11 @@ async def remove_member(
     request: Request,
     team_id: str,
     member_email: str,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    project: Project = Depends(get_project),
     db: AsyncSession = Depends(get_db),
 ):
     """Remove a member from the team. Requires owner or admin role."""
-    email = await _get_user_email(credentials)
+    email = project.owner_email or ""
     team = await _require_team_role(team_id, email, {"owner", "admin"}, db)
 
     member = next((m for m in team.members if m.email == member_email), None)
@@ -323,22 +317,22 @@ async def link_project_to_team(
     request: Request,
     team_id: str,
     project_id: str,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    project: Project = Depends(get_project),
     db: AsyncSession = Depends(get_db),
 ):
     """Link an existing project to a team. Requires owner or admin on team and project ownership."""
-    email = await _get_user_email(credentials)
+    email = project.owner_email or ""
     await _require_team_role(team_id, email, {"owner", "admin"}, db)
 
-    result = await db.execute(select(Project).where(Project.id == project_id))
-    project = result.scalar_one_or_none()
-    if project is None:
+    target = await db.execute(select(Project).where(Project.id == project_id))
+    target_project = target.scalar_one_or_none()
+    if target_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    if project.owner_email != email:
+    if target_project.owner_email != email:
         raise HTTPException(status_code=403, detail="Only the project owner can link it to a team")
 
-    project.team_id = team_id
+    target_project.team_id = team_id
     await db.commit()
 
     return {"status": "linked", "project_id": project_id, "team_id": team_id}

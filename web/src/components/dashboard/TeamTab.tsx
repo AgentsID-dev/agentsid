@@ -34,31 +34,14 @@ function TeamTab({ apiKey }: TeamTabProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Use Supabase auth token from localStorage for team endpoints
-  const getAuthToken = useCallback((): string => {
-    // Team endpoints use Supabase JWT, not project API key
-    const stored = localStorage.getItem("sb-auth-token");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        return parsed.access_token ?? apiKey;
-      } catch {
-        return apiKey;
-      }
-    }
-    return apiKey;
-  }, [apiKey]);
-
   const loadTeams = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const token = getAuthToken();
-      const data = await apiFetch<readonly TeamInfo[]>("/teams/", token);
+      const data = await apiFetch<readonly TeamInfo[]>("/teams/", apiKey);
       setTeams(data);
       if (data.length > 0 && !selectedTeam) {
-        // Load full team details
-        const full = await apiFetch<TeamInfo>(`/teams/${data[0].id}`, token);
+        const full = await apiFetch<TeamInfo>(`/teams/${data[0].id}`, apiKey);
         setSelectedTeam(full);
       }
     } catch (err) {
@@ -67,7 +50,7 @@ function TeamTab({ apiKey }: TeamTabProps) {
     } finally {
       setLoading(false);
     }
-  }, [getAuthToken, selectedTeam]);
+  }, [apiKey, selectedTeam]);
 
   useEffect(() => {
     loadTeams();
@@ -78,8 +61,7 @@ function TeamTab({ apiKey }: TeamTabProps) {
     setSaving(true);
     setError("");
     try {
-      const token = getAuthToken();
-      const team = await apiFetch<TeamInfo>("/teams/", token, {
+      const team = await apiFetch<TeamInfo>("/teams/", apiKey, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newTeamName.trim() }),
@@ -93,48 +75,46 @@ function TeamTab({ apiKey }: TeamTabProps) {
     } finally {
       setSaving(false);
     }
-  }, [newTeamName, getAuthToken, loadTeams]);
+  }, [newTeamName, apiKey, loadTeams]);
 
   const handleInvite = useCallback(async () => {
     if (!inviteEmail.trim() || !selectedTeam) return;
     setSaving(true);
     setError("");
     try {
-      const token = getAuthToken();
-      await apiFetch(`/teams/${selectedTeam.id}/members`, token, {
+      await apiFetch(`/teams/${selectedTeam.id}/members`, apiKey, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: inviteEmail.trim(), role: inviteRole }),
       });
       setInviteEmail("");
       // Reload team
-      const full = await apiFetch<TeamInfo>(`/teams/${selectedTeam.id}`, token);
+      const full = await apiFetch<TeamInfo>(`/teams/${selectedTeam.id}`, apiKey);
       setSelectedTeam(full);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to invite member");
     } finally {
       setSaving(false);
     }
-  }, [inviteEmail, inviteRole, selectedTeam, getAuthToken]);
+  }, [inviteEmail, inviteRole, selectedTeam, apiKey]);
 
   const handleRemoveMember = useCallback(
     async (email: string) => {
       if (!selectedTeam) return;
       setError("");
       try {
-        const token = getAuthToken();
         await apiFetch(
           `/teams/${selectedTeam.id}/members/${encodeURIComponent(email)}`,
-          token,
+          apiKey,
           { method: "DELETE" },
         );
-        const full = await apiFetch<TeamInfo>(`/teams/${selectedTeam.id}`, token);
+        const full = await apiFetch<TeamInfo>(`/teams/${selectedTeam.id}`, apiKey);
         setSelectedTeam(full);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to remove member");
       }
     },
-    [selectedTeam, getAuthToken],
+    [selectedTeam, apiKey],
   );
 
   const handleChangeRole = useCallback(
@@ -142,23 +122,22 @@ function TeamTab({ apiKey }: TeamTabProps) {
       if (!selectedTeam) return;
       setError("");
       try {
-        const token = getAuthToken();
         await apiFetch(
           `/teams/${selectedTeam.id}/members/${encodeURIComponent(email)}/role`,
-          token,
+          apiKey,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ role: newRole }),
           },
         );
-        const full = await apiFetch<TeamInfo>(`/teams/${selectedTeam.id}`, token);
+        const full = await apiFetch<TeamInfo>(`/teams/${selectedTeam.id}`, apiKey);
         setSelectedTeam(full);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to change role");
       }
     },
-    [selectedTeam, getAuthToken],
+    [selectedTeam, apiKey],
   );
 
   return (
