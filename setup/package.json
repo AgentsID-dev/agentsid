@@ -1,0 +1,32 @@
+{
+  "name": "@agentsid/setup",
+  "version": "0.1.0",
+  "description": "Guided setup wizard for AgentsID — protect your AI agent in 2 minutes",
+  "type": "module",
+  "bin": {
+    "agentsid-setup": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.tsx",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "ink": "^5.1.0",
+    "ink-select-input": "^6.0.0",
+    "ink-spinner": "^5.0.0",
+    "ink-text-input": "^6.0.0",
+    "react": "^18.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "keywords": ["agentsid", "ai", "security", "mcp", "setup", "cli"]
+}
