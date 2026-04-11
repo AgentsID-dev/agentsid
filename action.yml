@@ -103,22 +103,41 @@ runs:
         REPO: ${{ github.repository }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
-        # Pull the existing AgentsID comment (if any) and extract the hidden history JSON.
-        EXISTING=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" \
-          --jq '.[] | select(.body | contains("AgentsID Security Scan")) | .body' 2>/dev/null | head -1)
+        # Default to empty history. Any failure below (missing comment,
+        # missing marker, API error) must leave this default in place.
+        echo "[]" > "$RUNNER_TEMP/agentsid-history.json"
 
-        if [ -n "$EXISTING" ]; then
-          # Extract JSON between the marker tags
-          HISTORY=$(echo "$EXISTING" | grep -oE '<!-- agentsid-history: .+ -->' | \
-            sed -e 's/^<!-- agentsid-history: //' -e 's/ -->$//')
-          if [ -n "$HISTORY" ]; then
-            echo "$HISTORY" > "$RUNNER_TEMP/agentsid-history.json"
-          else
-            echo "[]" > "$RUNNER_TEMP/agentsid-history.json"
-          fi
-        else
-          echo "[]" > "$RUNNER_TEMP/agentsid-history.json"
+        # Fetch existing AgentsID comment body (if any).
+        EXISTING=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+          --jq '.[] | select(.body | contains("AgentsID Security Scan")) | .body' 2>/dev/null | head -1) || true
+
+        if [ -z "$EXISTING" ]; then
+          echo "No existing AgentsID comment found"
+          exit 0
         fi
+
+        # Extract the hidden history marker. Use a Node one-liner to avoid
+        # grep/sed exit-code traps under set -e -o pipefail, and to handle
+        # the JSON cleanly regardless of whitespace.
+        printf '%s' "$EXISTING" | node -e "
+          let buf = '';
+          process.stdin.on('data', c => buf += c);
+          process.stdin.on('end', () => {
+            const m = buf.match(/<!-- agentsid-history: (.+?) -->/);
+            if (m) {
+              try {
+                const parsed = JSON.parse(m[1]);
+                process.stdout.write(JSON.stringify(parsed));
+              } catch (e) {
+                process.stdout.write('[]');
+              }
+            } else {
+              process.stdout.write('[]');
+            }
+          });
+        " > "$RUNNER_TEMP/agentsid-history.json" || echo "[]" > "$RUNNER_TEMP/agentsid-history.json"
+
+        echo "History: $(cat $RUNNER_TEMP/agentsid-history.json)"
 
     - name: Build report
       shell: bash
