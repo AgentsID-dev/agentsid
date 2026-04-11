@@ -1,5 +1,5 @@
 name: 'AgentsID MCP Scan'
-description: 'Scan MCP servers for security issues. Posts a PR comment, renders a workflow summary, and uploads findings to the GitHub Security tab.'
+description: 'Scan MCP servers for security issues. Posts a PR comment, renders a workflow summary, and uploads findings to the GitHub Security tab. Part of the AgentsID security platform.'
 author: 'AgentsID'
 
 branding:
