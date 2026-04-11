@@ -320,8 +320,20 @@ runs:
       shell: bash
       run: cat "$RUNNER_TEMP/agentsid-comment.md" >> "$GITHUB_STEP_SUMMARY"
 
+    - name: Check SARIF exists
+      id: sarif-check
+      if: inputs.upload-sarif == 'true'
+      shell: bash
+      run: |
+        if [ -f "$RUNNER_TEMP/agentsid.sarif" ]; then
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+          echo "No SARIF file — skipping upload"
+        fi
+
     - name: Upload SARIF to GitHub Security
-      if: inputs.upload-sarif == 'true' && always()
+      if: inputs.upload-sarif == 'true' && steps.sarif-check.outputs.exists == 'true'
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: ${{ runner.temp }}/agentsid.sarif

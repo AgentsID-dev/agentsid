@@ -23,4 +23,4 @@ jobs:
       - name: Run scan against Playwright MCP
         uses: ./
         with:
-          target: '@playwright/mcp-server'
+          target: 'npx @playwright/mcp-server'
