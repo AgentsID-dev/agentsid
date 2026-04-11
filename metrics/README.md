@@ -1,23 +1,23 @@
 # AgentsID — Download Metrics
 
-> Auto-updated daily by GitHub Actions. Last run: **2026-04-10**
+> Auto-updated daily by GitHub Actions. Last run: **2026-04-11**
 
 ## Totals
 
 | Period | Downloads |
 |--------|-----------|
-| Last 24h | **62** |
-| Last 7 days | **1096** |
-| Last 30 days | **1409** |
+| Last 24h | **35** |
+| Last 7 days | **681** |
+| Last 30 days | **1444** |
 
 ## By Package
 
 | Package | Daily | Weekly | Monthly |
 |---------|------:|-------:|--------:|
-| `@agentsid/scanner` | 26 | 410 | 611 |
-| `@agentsid/mcp-scanner` | 36 | 662 | 662 |
-| `@agentsid/sdk` | 0 | 8 | 71 |
-| `@agentsid/proxy` | 0 | 16 | 65 |
+| `@agentsid/scanner` | 16 | 398 | 627 |
+| `@agentsid/mcp-scanner` | 17 | 263 | 679 |
+| `@agentsid/sdk` | 1 | 6 | 72 |
+| `@agentsid/proxy` | 1 | 14 | 66 |
 
 ## 7-Day Trend
 
@@ -27,6 +27,7 @@
 | 2026-04-08 | 52 ██████████ |
 | 2026-04-09 | 137 ███████████████████████████ |
 | 2026-04-10 | 62 ████████████ |
+| 2026-04-11 | 35 ███████ |
 
 ---
 
