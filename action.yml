@@ -103,39 +103,41 @@ runs:
         REPO: ${{ github.repository }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
-        # Default to empty history. Any failure below (missing comment,
-        # missing marker, API error) must leave this default in place.
+        # Default to empty history. Any failure below must leave this in place.
         echo "[]" > "$RUNNER_TEMP/agentsid-history.json"
 
-        # Fetch existing AgentsID comment body (if any).
-        EXISTING=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" \
-          --jq '.[] | select(.body | contains("AgentsID Security Scan")) | .body' 2>/dev/null | head -1) || true
+        # Write the existing AgentsID comment body (if any) straight to a file —
+        # avoids bash variable quoting issues with multi-line JSON/markdown.
+        gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+          --jq '.[] | select(.body | contains("AgentsID Security Scan")) | .body' \
+          > "$RUNNER_TEMP/existing-comment.txt" 2>/dev/null || true
 
-        if [ -z "$EXISTING" ]; then
+        BYTES=$(wc -c < "$RUNNER_TEMP/existing-comment.txt" 2>/dev/null || echo 0)
+        echo "Existing comment size: $BYTES bytes"
+
+        if [ "$BYTES" -lt 10 ]; then
           echo "No existing AgentsID comment found"
           exit 0
         fi
 
-        # Extract the hidden history marker. Use a Node one-liner to avoid
-        # grep/sed exit-code traps under set -e -o pipefail, and to handle
-        # the JSON cleanly regardless of whitespace.
-        printf '%s' "$EXISTING" | node -e "
-          let buf = '';
-          process.stdin.on('data', c => buf += c);
-          process.stdin.on('end', () => {
-            const m = buf.match(/<!-- agentsid-history: (.+?) -->/);
-            if (m) {
-              try {
-                const parsed = JSON.parse(m[1]);
-                process.stdout.write(JSON.stringify(parsed));
-              } catch (e) {
-                process.stdout.write('[]');
-              }
-            } else {
-              process.stdout.write('[]');
+        # Extract the hidden history marker using Node for robust regex + JSON handling.
+        node -e "
+          const fs = require('fs');
+          const tmp = process.env.RUNNER_TEMP;
+          const body = fs.readFileSync(tmp + '/existing-comment.txt', 'utf-8');
+          const m = body.match(/<!-- agentsid-history: (.+?) -->/);
+          if (m) {
+            try {
+              const parsed = JSON.parse(m[1]);
+              fs.writeFileSync(tmp + '/agentsid-history.json', JSON.stringify(parsed));
+              console.log('Parsed history with ' + parsed.length + ' entries');
+            } catch (e) {
+              console.log('Marker found but JSON parse failed: ' + e.message);
             }
-          });
-        " > "$RUNNER_TEMP/agentsid-history.json" || echo "[]" > "$RUNNER_TEMP/agentsid-history.json"
+          } else {
+            console.log('No history marker in existing comment');
+          }
+        "
 
         echo "History: $(cat $RUNNER_TEMP/agentsid-history.json)"
 
