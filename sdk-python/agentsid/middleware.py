@@ -42,7 +42,10 @@ async def validate_tool_call(
         response = await client.post(
             url,
             json={"token": token, "tool": tool, "params": params},
-            headers={"Content-Type": "application/json"},
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {project_key}",
+            },
         )
 
     if not response.is_success:

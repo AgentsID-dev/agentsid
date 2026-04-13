@@ -27,6 +27,7 @@ module AgentsID
 
     req = Net::HTTP::Post.new(uri)
     req["Content-Type"] = "application/json"
+    req["Authorization"] = "Bearer #{project_key}"
     req.body = JSON.generate({ token: token, tool: tool, params: params })
 
     response = http.request(req)

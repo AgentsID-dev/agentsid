@@ -141,6 +141,7 @@ public final class MCPMiddleware {
                 .uri(URI.create(url))
                 .timeout(DEFAULT_TIMEOUT)
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + projectKey)
                 .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
                 .build();
 

@@ -322,6 +322,7 @@ async function cmdRevoke() {
 async function cmdValidate() {
   const config = loadConfig();
   const baseUrl = getBaseUrl(config);
+  const key = getProjectKey(config);
 
   const token = args[1];
   if (!token) {
@@ -332,7 +333,7 @@ async function cmdValidate() {
   const tool = args.find((a) => a.startsWith("--tool="))?.split("=")[1]
     || args[args.indexOf("--tool") + 1];
 
-  const data = await request(baseUrl, "POST", "/validate", { token, tool });
+  const data = await request(baseUrl, "POST", "/validate", { token, tool }, key);
 
   if (data.valid) {
     console.log(`\n  Valid:        ${data.valid}`);
