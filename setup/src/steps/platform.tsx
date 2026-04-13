@@ -20,10 +20,10 @@ interface SelectItem {
 
 const ITEMS: SelectItem[] = [
   { label: "Claude Code", value: "claude-code" },
-  { label: "Cursor", value: "cursor" },
-  { label: "Codex (OpenAI)", value: "codex" },
-  { label: "Gemini CLI", value: "gemini" },
-  { label: "Local Model", value: "local-model" },
+  { label: "Cursor (in testing)", value: "cursor" },
+  { label: "Codex (in testing)", value: "codex" },
+  { label: "Gemini CLI (in testing)", value: "gemini" },
+  { label: "Local Model (in testing)", value: "local-model" },
 ];
 
 export function PlatformStep({ onSelect }: Props): React.ReactElement {
