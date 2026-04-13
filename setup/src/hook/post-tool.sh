@@ -24,11 +24,16 @@ if [[ -z "$TOOL_NAME" ]]; then
 fi
 
 # ── Resolve API base URL ──────────────────────────────────────────────────────
-API_BASE="${AGENTSID_API_URL:-https://api.agentsid.com}"
+API_BASE="${AGENTSID_API_URL:-https://api.agentsid.dev}"
+PROJECT_KEY="${AGENTSID_PROJECT_KEY:-}"
 ENDPOINT="${API_BASE}/api/v1/audit/?limit=1&tool=${TOOL_NAME}"
 
 # ── Query audit endpoint ──────────────────────────────────────────────────────
-RESPONSE=$(curl -s --max-time 0.5 "$ENDPOINT" 2>/dev/null || true)
+HEADERS=(-H "Content-Type: application/json")
+if [[ -n "$PROJECT_KEY" ]]; then
+  HEADERS+=(-H "Authorization: Bearer ${PROJECT_KEY}")
+fi
+RESPONSE=$(curl -s --max-time 0.5 "${HEADERS[@]}" "$ENDPOINT" 2>/dev/null || true)
 
 if [[ -z "$RESPONSE" ]]; then
   exit 0
@@ -39,9 +44,9 @@ ACTION=$(printf '%s' "$RESPONSE" | python3 -c "
 import sys, json
 try:
     data = json.load(sys.stdin)
-    results = data.get('results', [])
-    if results:
-        print(results[0].get('action', ''))
+    entries = data.get('entries', [])
+    if entries:
+        print(entries[0].get('action', ''))
     else:
         print('')
 except Exception:

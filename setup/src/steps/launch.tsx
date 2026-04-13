@@ -42,7 +42,7 @@ interface Props {
 }
 
 interface AgentCreateResponse {
-  readonly id: string;
+  readonly agent: { readonly id: string };
   readonly token?: string;
 }
 
@@ -59,7 +59,7 @@ async function createAgent(
     },
     body: JSON.stringify({
       name: PLATFORM_NAMES[platform],
-      created_by: "setup-cli",
+      on_behalf_of: "setup-cli",
       ttl_hours: 720,
     }),
   });
@@ -85,7 +85,7 @@ async function applyPermissions(
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ rules: apiRules }),
+    body: JSON.stringify(apiRules),
   });
 
   if (!resp.ok) {
@@ -129,7 +129,7 @@ export function LaunchStep({
       try {
         agent = await createAgent(apiUrl, apiKey, platform);
         if (cancelled) return;
-        setAgentId(agent.id);
+        setAgentId(agent.agent.id);
         updateStep(0, { state: "done" });
       } catch (err) {
         if (cancelled) return;
@@ -142,7 +142,7 @@ export function LaunchStep({
       // Step 1: Apply permissions
       updateStep(1, { state: "running" });
       try {
-        await applyPermissions(apiUrl, apiKey, agent.id, rules);
+        await applyPermissions(apiUrl, apiKey, agent.agent.id, rules);
         if (cancelled) return;
         updateStep(1, { state: "done" });
       } catch (err) {
@@ -157,7 +157,7 @@ export function LaunchStep({
       updateStep(2, { state: "running" });
       try {
         const integration = INTEGRATIONS[platform];
-        const agentToken = agent.token ?? agent.id;
+        const agentToken = agent.token ?? agent.agent.id;
         const config = integration.generateConfig({ apiKey, agentToken, scope: "global" });
         const configPath = integration.configPath("global");
         if (configPath) {
