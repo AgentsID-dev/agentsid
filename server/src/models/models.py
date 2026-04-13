@@ -78,6 +78,10 @@ class Agent(Base):
     name: Mapped[str] = mapped_column(String(255))
     created_by: Mapped[str] = mapped_column(String(255))  # user ID or identifier
     status: Mapped[str] = mapped_column(String(50), server_default="active")  # active, revoked, expired
+    agent_type: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    parent_agent_id: Mapped[str | None] = mapped_column(
+        ForeignKey("agents.id"), nullable=True, index=True
+    )
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     metadata_: Mapped[dict | None] = mapped_column("metadata", JSONB)
     created_at: Mapped[datetime] = mapped_column(

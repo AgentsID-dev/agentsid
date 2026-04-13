@@ -25,6 +25,7 @@ import {
 } from "./utils";
 import { PermissionEditor } from "./PermissionEditor";
 import { ActivityTimeline } from "./ActivityTimeline";
+import { SubagentTree } from "./SubagentTree";
 
 // ─── Types ───
 
@@ -285,6 +286,12 @@ function AgentDetail({ agent, apiKey, onBack, onAgentsChanged }: AgentDetailProp
             </div>
           )}
         </div>
+      </div>
+
+      {/* Subagent Tree */}
+      <div className="mb-6">
+        <div className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3">Subagent Tree</div>
+        <SubagentTree apiKey={apiKey} rootAgentId={agent.id} />
       </div>
 
       {/* Activity Timeline */}

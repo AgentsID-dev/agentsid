@@ -44,6 +44,8 @@ class IdentityService:
         permissions: list[str] | None = None,
         ttl_hours: int | None = None,
         metadata: dict | None = None,
+        agent_type: str | None = None,
+        parent_agent_id: str | None = None,
     ) -> dict:
         """Register a new agent and issue its first token."""
         agent_id = _gen_agent_id()
@@ -62,6 +64,8 @@ class IdentityService:
             created_by=created_by,
             expires_at=expires_at,
             metadata_=metadata,
+            agent_type=agent_type,
+            parent_agent_id=parent_agent_id,
         )
         self._db.add(agent)
 
@@ -118,6 +122,8 @@ class IdentityService:
                 "created_at": str(agent.created_at),
                 "metadata": metadata,
                 "revoked_at": None,
+                "agent_type": agent_type,
+                "parent_agent_id": parent_agent_id,
             },
             "token": raw_token,
             "token_id": token_id,
@@ -385,6 +391,137 @@ class IdentityService:
 
         return result
 
+    async def derive_subagent(
+        self,
+        project_id: str,
+        parent_agent_id: str,
+        parent_token: str,
+        agent_type: str,
+        child_name: str | None = None,
+        ttl_hours: int | None = None,
+        task_hash: str | None = None,
+        override: dict | None = None,
+    ) -> dict | None:
+        """Derive a scoped child identity for a spawned Claude Code subagent.
+
+        Resolves the profile for `agent_type` from the built-in profile book
+        (optionally merged with caller-supplied overrides), narrows the tool set
+        against the parent's actual permissions, and creates a child agent via
+        the normal delegation path.
+
+        Raises ValueError with human-readable reason for deny paths.
+        """
+        from src.services.permission import PermissionService
+        from src.services.subagent_profiles import (
+            load_profile_book,
+            merge_overrides,
+            narrow_to_parent,
+        )
+
+        # Validate parent token — mirrors delegate_to_agent.
+        try:
+            claims = validate_agent_token(parent_token)
+        except ValueError:
+            raise ValueError("Invalid parent token")
+        if claims.sub != parent_agent_id:
+            raise ValueError("Token does not belong to the specified parent agent")
+        if claims.prj != project_id:
+            raise ValueError("Token does not belong to this project")
+        if await self.is_token_revoked(claims.jti):
+            raise ValueError("Parent token has been revoked")
+
+        parent = await self.get_agent(project_id, parent_agent_id)
+        if parent is None or parent["status"] != "active":
+            return None
+
+        # Depth check — prevent runaway spawning chains.
+        depth = await self._compute_depth(parent_agent_id)
+
+        # Resolve profile.
+        book = load_profile_book()
+        book = merge_overrides(book, override)
+        profile = book.resolve(agent_type)
+
+        if depth >= profile.max_depth:
+            raise ValueError(
+                f"Max subagent depth ({profile.max_depth}) exceeded for type '{agent_type}'"
+            )
+
+        # Narrow against parent's allow rules.
+        perm_svc = PermissionService(self._db)
+        parent_rules = await perm_svc.get_rules(parent_agent_id)
+        parent_patterns = frozenset(
+            r["tool_pattern"] for r in parent_rules if r["action"] == "allow"
+        )
+        narrowed = narrow_to_parent(profile, parent_patterns)
+
+        if not narrowed.tools and not narrowed.inherit_from_parent:
+            raise ValueError(
+                f"Subagent '{agent_type}' would have zero tools after narrowing against parent"
+            )
+
+        name = child_name or f"{agent_type}@{parent_agent_id}"
+        child_permissions = list(narrowed.tools)
+
+        # Delegate via existing path. register_agent enforces perm narrowing via
+        # delegate_to_agent-style chain; here we already narrowed ourselves.
+        result = await self.register_agent(
+            project_id=project_id,
+            name=name,
+            created_by=parent_agent_id,
+            permissions=child_permissions,
+            ttl_hours=ttl_hours,
+            metadata={
+                "subagent": True,
+                "task_hash": task_hash,
+                "profile": narrowed.to_dict(),
+            },
+            agent_type=agent_type,
+            parent_agent_id=parent_agent_id,
+        )
+
+        # Patch delegation chain to reflect parent lineage (mirrors delegate_to_agent).
+        parent_del = await self._db.execute(
+            select(Delegation).where(Delegation.agent_id == parent_agent_id)
+        )
+        parent_delegation = parent_del.scalar_one_or_none()
+        parent_chain = parent_delegation.chain if parent_delegation else []
+
+        child_del = await self._db.execute(
+            select(Delegation).where(Delegation.agent_id == result["agent"]["id"])
+        )
+        child_delegation = child_del.scalar_one_or_none()
+        if child_delegation:
+            child_delegation.chain = parent_chain + [
+                {"type": "agent", "id": parent_agent_id, "granted": child_permissions},
+                {
+                    "type": "subagent",
+                    "id": result["agent"]["id"],
+                    "agent_type": agent_type,
+                    "received": child_permissions,
+                },
+            ]
+            await self._db.commit()
+
+        return result
+
+    async def _compute_depth(self, agent_id: str) -> int:
+        """Count ancestors of this agent by walking parent_agent_id chain."""
+        depth = 0
+        current: str | None = agent_id
+        visited: set[str] = set()
+        while current and current not in visited:
+            visited.add(current)
+            row = await self._db.execute(
+                select(Agent.parent_agent_id).where(Agent.id == current)
+            )
+            parent_id = row.scalar_one_or_none()
+            if parent_id is None:
+                break
+            depth += 1
+            current = parent_id
+        return depth
+
     @staticmethod
     def _to_dict(agent: Agent) -> dict:
         return {
@@ -397,4 +534,6 @@ class IdentityService:
             "metadata": agent.metadata_,
             "created_at": str(agent.created_at),
             "revoked_at": str(agent.revoked_at) if agent.revoked_at else None,
+            "agent_type": agent.agent_type,
+            "parent_agent_id": agent.parent_agent_id,
         }

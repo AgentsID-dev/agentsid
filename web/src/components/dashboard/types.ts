@@ -9,6 +9,18 @@ export interface Agent {
   readonly expires_at: string | null;
   readonly project_id: string;
   readonly permissions?: readonly string[];
+  readonly agent_type?: string | null;
+  readonly parent_agent_id?: string | null;
+}
+
+export interface LineageNode {
+  readonly id: string;
+  readonly name: string;
+  readonly agent_type: string | null;
+  readonly parent_agent_id: string | null;
+  readonly status: string;
+  readonly created_at: string;
+  readonly children: readonly LineageNode[];
 }
 
 export interface AuditEntry {

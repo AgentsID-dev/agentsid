@@ -28,6 +28,8 @@ class AgentResponse(BaseModel):
     metadata: dict | None
     created_at: str
     revoked_at: str | None
+    agent_type: str | None = None
+    parent_agent_id: str | None = None
 
 
 class RegisterResponse(BaseModel):
@@ -197,6 +199,56 @@ async def delegate_agent(
     return result
 
 
+class DeriveSubagentRequest(BaseModel):
+    parent_agent_id: str
+    parent_token: str
+    agent_type: str = Field(..., min_length=1, max_length=64)
+    child_name: str | None = Field(None, max_length=255)
+    ttl_hours: int | None = Field(None, ge=1, le=720)
+    task_hash: str | None = Field(None, max_length=128)
+    override: dict | None = None
+
+    @field_validator("override")
+    @classmethod
+    def override_size_limit(cls, v):
+        if v is not None and len(json.dumps(v)) > 20_000:
+            raise ValueError("Override must be under 20KB")
+        return v
+
+
+@router.post("/derive", status_code=201, response_model=RegisterResponse)
+@limiter.limit("60/minute")
+async def derive_subagent(
+    request: Request,
+    data: DeriveSubagentRequest,
+    project: Project = Depends(get_project),
+    db: AsyncSession = Depends(get_db),
+):
+    """Derive a scoped child identity for a spawned Claude Code subagent.
+
+    Resolves the subagent profile for `agent_type`, narrows tools against the
+    parent's permissions, and issues a child token. Use this from a PreToolUse
+    hook when intercepting the `Agent` tool call.
+    """
+    svc = IdentityService(db)
+    try:
+        result = await svc.derive_subagent(
+            project_id=project.id,
+            parent_agent_id=data.parent_agent_id,
+            parent_token=data.parent_token,
+            agent_type=data.agent_type,
+            child_name=data.child_name,
+            ttl_hours=data.ttl_hours,
+            task_hash=data.task_hash,
+            override=data.override,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    if result is None:
+        raise HTTPException(status_code=404, detail="Parent agent not found or not active")
+    return result
+
+
 @router.delete("/{agent_id}", status_code=204)
 @limiter.limit("20/minute")
 async def revoke_agent(
@@ -209,3 +261,61 @@ async def revoke_agent(
     svc = IdentityService(db)
     if not await svc.revoke_agent(project.id, agent_id):
         raise HTTPException(status_code=404, detail="Agent not found")
+
+
+class LineageNode(BaseModel):
+    id: str
+    name: str
+    agent_type: str | None
+    parent_agent_id: str | None
+    status: str
+    created_at: str
+    children: list["LineageNode"] = []
+
+
+LineageNode.model_rebuild()
+
+
+@router.get("/{agent_id}/lineage", response_model=LineageNode)
+@limiter.limit("60/minute")
+async def get_agent_lineage(
+    request: Request,
+    agent_id: str,
+    project: Project = Depends(get_project),
+    db: AsyncSession = Depends(get_db),
+):
+    """Return this agent and its full descendant tree via parent_agent_id chain.
+
+    Used by the dashboard to render the parent→child subagent tree for a session.
+    """
+    from sqlalchemy import select
+
+    from src.models.models import Agent
+
+    root = await db.execute(
+        select(Agent).where(Agent.id == agent_id, Agent.project_id == project.id)
+    )
+    root_agent = root.scalar_one_or_none()
+    if root_agent is None:
+        raise HTTPException(status_code=404, detail="Agent not found")
+
+    # Pull all project agents once, build parent→children index in memory.
+    result = await db.execute(select(Agent).where(Agent.project_id == project.id))
+    all_agents = list(result.scalars().all())
+    children_of: dict[str, list[Agent]] = {}
+    for a in all_agents:
+        if a.parent_agent_id:
+            children_of.setdefault(a.parent_agent_id, []).append(a)
+
+    def build(node: "Agent") -> dict:
+        return {
+            "id": node.id,
+            "name": node.name,
+            "agent_type": node.agent_type,
+            "parent_agent_id": node.parent_agent_id,
+            "status": node.status,
+            "created_at": str(node.created_at),
+            "children": [build(c) for c in children_of.get(node.id, [])],
+        }
+
+    return build(root_agent)

@@ -1,0 +1,66 @@
+# Built-in subagent profiles for Claude Code.
+#
+# Precedence (highest wins): server DB override → project .agentsid/profiles.yaml
+# → global ~/.agentsid/profiles.yaml → this file (defaults).
+#
+# Fields:
+#   tools: list of allowed tool names (or patterns)
+#   inherit_from_parent: if true, child gets parent's full permissions
+#   bash_allowlist: optional list of shell command patterns (fnmatch)
+#   max_depth: how many levels this subagent may spawn further subagents
+#   max_duration_sec: kill-switch for runaway subagents
+
+defaults:
+  inherit_from_parent: false
+  tools:
+    - Read
+    - Grep
+    - Glob
+  max_depth: 2
+  max_duration_sec: 600
+
+profiles:
+  code-reviewer:
+    tools: [Read, Grep, Glob, Bash]
+    bash_allowlist:
+      - "git *"
+      - "npm test*"
+      - "pytest*"
+      - "cargo test*"
+    max_depth: 1
+
+  Explore:
+    tools: [Read, Grep, Glob, WebFetch]
+    max_depth: 1
+
+  explorer:
+    tools: [Read, Grep, Glob, WebFetch]
+    max_depth: 1
+
+  Plan:
+    tools: [Read, Grep, Glob, WebFetch]
+    max_depth: 1
+
+  build-error-resolver:
+    tools: [Read, Edit, Bash, Grep, Glob]
+    bash_allowlist:
+      - "npm *"
+      - "yarn *"
+      - "pnpm *"
+      - "tsc*"
+      - "cargo *"
+      - "go *"
+    max_depth: 1
+
+  tdd-guide:
+    tools: [Read, Edit, Bash, Grep, Glob]
+    bash_allowlist:
+      - "npm test*"
+      - "pytest*"
+      - "go test*"
+      - "cargo test*"
+    max_depth: 1
+
+  general-purpose:
+    inherit_from_parent: true
+    max_depth: 1
