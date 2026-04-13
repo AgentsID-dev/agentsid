@@ -1,5 +1,5 @@
 name: 'AgentsID MCP Scan'
-description: 'Scan MCP servers for security issues and post results as a PR comment'
+description: 'Scan MCP servers for security issues. Posts a PR comment, renders a workflow summary, and uploads findings to the GitHub Security tab.'
 author: 'AgentsID'
 
 branding:
@@ -22,6 +22,10 @@ inputs:
     description: 'Post results as a PR comment (true/false)'
     required: false
     default: 'true'
+  upload-sarif:
+    description: 'Upload findings to the GitHub Security tab as SARIF (true/false). Requires security-events: write permission on the consuming workflow.'
+    required: false
+    default: 'true'
   token:
     description: 'GitHub token for posting PR comments'
     required: false
@@ -40,9 +44,9 @@ outputs:
   findings-high:
     description: 'Number of high findings'
     value: ${{ steps.scan.outputs.findings-high }}
-  report-json:
-    description: 'Full JSON report'
-    value: ${{ steps.scan.outputs.report-json }}
+  report-path:
+    description: 'Absolute path to the full JSON report file'
+    value: ${{ runner.temp }}/agentsid-report.json
 
 runs:
   using: 'composite'
@@ -85,68 +89,277 @@ runs:
         echo "findings-critical=$CRITICAL" >> "$GITHUB_OUTPUT"
         echo "findings-high=$HIGH" >> "$GITHUB_OUTPUT"
 
-        # Store full report for comment step
+        # Store full report for downstream steps
         echo "$REPORT" > "$RUNNER_TEMP/agentsid-report.json"
-        echo "report-json=$REPORT" >> "$GITHUB_OUTPUT"
 
         echo "Scan complete: Grade $GRADE ($SCORE/100) — $CRITICAL critical, $HIGH high"
 
-    - name: Build comment
-      id: comment-body
+    - name: Fetch previous scan history
+      id: history
       if: inputs.comment == 'true' && github.event_name == 'pull_request'
       shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REPO: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
-        REPORT="$RUNNER_TEMP/agentsid-report.json"
-        if [ ! -f "$REPORT" ]; then
-          echo "No report found, skipping comment"
+        # Default to empty history. Any failure below must leave this in place.
+        echo "[]" > "$RUNNER_TEMP/agentsid-history.json"
+
+        # Write the existing AgentsID comment body (if any) straight to a file —
+        # avoids bash variable quoting issues with multi-line JSON/markdown.
+        gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" \
+          --jq '.[] | select(.body | contains("AgentsID Security Scan")) | .body' \
+          > "$RUNNER_TEMP/existing-comment.txt" 2>/dev/null || true
+
+        BYTES=$(wc -c < "$RUNNER_TEMP/existing-comment.txt" 2>/dev/null || echo 0)
+        echo "Existing comment size: $BYTES bytes"
+
+        if [ "$BYTES" -lt 10 ]; then
+          echo "No existing AgentsID comment found"
           exit 0
         fi
 
+        # Extract the hidden history marker using Node for robust regex + JSON handling.
         node -e "
           const fs = require('fs');
-          const r = JSON.parse(fs.readFileSync(process.env.REPORT, 'utf-8'));
-          const grade = r.grade?.overall || 'F';
+          const tmp = process.env.RUNNER_TEMP;
+          const body = fs.readFileSync(tmp + '/existing-comment.txt', 'utf-8');
+          const m = body.match(/<!-- agentsid-history: (.+?) -->/);
+          if (m) {
+            try {
+              const parsed = JSON.parse(m[1]);
+              fs.writeFileSync(tmp + '/agentsid-history.json', JSON.stringify(parsed));
+              console.log('Parsed history with ' + parsed.length + ' entries');
+            } catch (e) {
+              console.log('Marker found but JSON parse failed: ' + e.message);
+            }
+          } else {
+            console.log('No history marker in existing comment');
+          }
+        "
+
+        echo "History: $(cat $RUNNER_TEMP/agentsid-history.json)"
+
+    - name: Build report
+      shell: bash
+      env:
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        IS_PR: ${{ github.event_name == 'pull_request' }}
+      run: |
+        node -e '
+          const fs = require("fs");
+          const crypto = require("crypto");
+          const tmp = process.env.RUNNER_TEMP;
+          const r = JSON.parse(fs.readFileSync(tmp + "/agentsid-report.json", "utf-8"));
+
+          const grade = r.grade?.overall || "F";
           const score = r.grade?.score || 0;
           const cats = r.grade?.categories || {};
           const summary = r.summary || {};
           const findings = r.findings || [];
-          const server = r.server?.name || 'Unknown';
+          const server = r.server?.name || "Unknown";
           const tools = r.toolCount || 0;
 
-          const gradeEmoji = { A: '🟢', B: '🟢', C: '🟡', D: '🔴', F: '🔴' };
-          const sevEmoji = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🔵' };
-
-          let md = '## ' + (gradeEmoji[grade] || '') + ' AgentsID Security Scan: Grade ' + grade + ' (' + score + '/100)\n\n';
-          md += '**Server:** ' + server + ' | **Tools scanned:** ' + tools + '\n\n';
-
-          md += '| Category | Grade |\n|----------|-------|\n';
-          for (const [cat, g] of Object.entries(cats)) {
-            md += '| ' + cat + ' | ' + g + ' |\n';
-          }
-          md += '\n';
-
-          md += '**Findings:** ';
-          const parts = [];
-          for (const sev of ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']) {
-            if (summary[sev]) parts.push(summary[sev] + ' ' + sev.toLowerCase());
-          }
-          md += parts.join(', ') || 'None';
-          md += '\n\n';
-
-          const top = findings.filter(f => f.severity === 'CRITICAL' || f.severity === 'HIGH').slice(0, 10);
-          if (top.length > 0) {
-            md += '<details><summary>Top findings (' + top.length + ')</summary>\n\n';
-            md += '| Severity | Category | Tool | Detail |\n|----------|----------|------|--------|\n';
-            for (const f of top) {
-              const detail = (f.detail || '').replace(/\|/g, '\\\\|').replace(/\n/g, ' ').slice(0, 120);
-              md += '| ' + (sevEmoji[f.severity]||'') + ' ' + f.severity + ' | ' + (f.category||'') + ' | ' + (f.tool||'') + ' | ' + detail + ' |\n';
+          // ───── Load history (if any) ─────
+          let history = [];
+          try {
+            if (fs.existsSync(tmp + "/agentsid-history.json")) {
+              history = JSON.parse(fs.readFileSync(tmp + "/agentsid-history.json", "utf-8"));
+              if (!Array.isArray(history)) history = [];
             }
-            md += '\n</details>\n\n';
+          } catch (e) { history = []; }
+
+          const prev = history.length > 0 ? history[history.length - 1] : null;
+          const delta = prev ? score - prev.score : null;
+
+          // Append current run (only on PRs where we have a SHA)
+          const headSha = process.env.HEAD_SHA || "";
+          const isPR = process.env.IS_PR === "true";
+          if (isPR && headSha) {
+            history.push({
+              sha: headSha.slice(0, 7),
+              grade,
+              score,
+              timestamp: new Date().toISOString()
+            });
+            if (history.length > 5) history = history.slice(-5);
           }
 
-          md += '---\n*Scanned by [AgentsID](https://agentsid.dev) — security scanner for MCP servers*';
-          fs.writeFileSync(process.env.RUNNER_TEMP + '/agentsid-comment.md', md);
-        " REPORT="$REPORT"
+          // ───── Build the comment ─────
+          // Only show delta when there is a meaningful change from the previous run.
+          let deltaSuffix = "";
+          if (delta !== null && delta !== 0) {
+            const sign = delta > 0 ? "+" : "";
+            deltaSuffix = " (" + sign + delta + " from last run)";
+          }
+
+          let md = "## AgentsID Security Scan: Grade " + grade + " (" + score + "/100)" + deltaSuffix + "\n\n";
+          md += "**Server:** " + server + " &nbsp;|&nbsp; **Tools scanned:** " + tools + "\n\n";
+
+          // Category grades
+          md += "| Category | Grade |\n|----------|-------|\n";
+          for (const [cat, g] of Object.entries(cats)) {
+            md += "| " + cat + " | " + g + " |\n";
+          }
+          md += "\n";
+
+          // Finding counts
+          md += "**Findings:** ";
+          const parts = [];
+          for (const sev of ["CRITICAL", "HIGH", "MEDIUM", "LOW"]) {
+            if (summary[sev]) parts.push(summary[sev] + " " + sev.toLowerCase());
+          }
+          md += parts.join(", ") || "None";
+          md += "\n\n";
+
+          // Top critical + high
+          const top = findings.filter(f => f.severity === "CRITICAL" || f.severity === "HIGH").slice(0, 10);
+          if (top.length > 0) {
+            md += "<details><summary>Top findings (" + top.length + ")</summary>\n\n";
+            md += "| Severity | Category | Tool | Detail |\n|----------|----------|------|--------|\n";
+            for (const f of top) {
+              const detail = (f.detail || "").replace(/\|/g, "\\|").replace(/\n/g, " ").slice(0, 120);
+              md += "| " + f.severity + " | " + (f.category || "") + " | " + (f.tool || "") + " | " + detail + " |\n";
+            }
+            md += "\n</details>\n\n";
+          }
+
+          // Scan history table (PRs only)
+          if (isPR && history.length > 1) {
+            md += "<details><summary>Scan history (" + history.length + " runs)</summary>\n\n";
+            md += "| # | Commit | Grade | Score | Delta |\n|---|--------|-------|-------|-------|\n";
+            for (let i = 0; i < history.length; i++) {
+              const h = history[i];
+              let d = "—";
+              if (i > 0) {
+                const diff = h.score - history[i - 1].score;
+                d = diff > 0 ? "+" + diff : String(diff);
+              }
+              md += "| " + (i + 1) + " | `" + h.sha + "` | " + h.grade + " | " + h.score + " | " + d + " |\n";
+            }
+            md += "\n</details>\n\n";
+          }
+
+          md += "---\n";
+          md += "Scanned by [AgentsID](https://agentsid.dev) — security for MCP servers. [Browse the registry](https://agentsid.dev/registry)\n";
+
+          // Hidden history payload (only on PRs)
+          if (isPR && headSha) {
+            md += "\n<!-- agentsid-history: " + JSON.stringify(history) + " -->\n";
+          }
+
+          fs.writeFileSync(tmp + "/agentsid-comment.md", md);
+
+          // ───── Generate SARIF ─────
+          const SEVERITY_MAP = {
+            CRITICAL: { level: "error", rank: 95 },
+            HIGH:     { level: "error", rank: 75 },
+            MEDIUM:   { level: "warning", rank: 50 },
+            LOW:      { level: "note", rank: 25 },
+            INFO:     { level: "note", rank: 10 },
+          };
+
+          // Collect unique rules from findings
+          const ruleMap = new Map();
+          for (const f of findings) {
+            const ruleId = (f.category || "misc") + "/" + (f.rule || f.detail?.slice(0, 40) || "unknown")
+              .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+            if (!ruleMap.has(ruleId)) {
+              ruleMap.set(ruleId, {
+                id: ruleId,
+                name: ruleId,
+                shortDescription: { text: (f.rule || f.category || "Finding").slice(0, 120) },
+                fullDescription: { text: (f.detail || f.rule || "AgentsID finding").slice(0, 500) },
+                defaultConfiguration: { level: (SEVERITY_MAP[f.severity] || SEVERITY_MAP.LOW).level },
+                helpUri: "https://agentsid.dev/docs/rules/" + encodeURIComponent(ruleId),
+                properties: { category: f.category || "misc" }
+              });
+            }
+          }
+
+          const sanitizedTarget = (process.env.INPUT_TARGET || server || "mcp-server")
+            .replace(/[^a-zA-Z0-9._/-]+/g, "-");
+
+          const results = findings.map(f => {
+            const ruleId = (f.category || "misc") + "/" + (f.rule || f.detail?.slice(0, 40) || "unknown")
+              .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+            const sev = SEVERITY_MAP[f.severity] || SEVERITY_MAP.LOW;
+            const fingerprint = crypto.createHash("sha256")
+              .update((f.category || "") + "|" + (f.tool || "") + "|" + (f.rule || f.detail || ""))
+              .digest("hex")
+              .slice(0, 16);
+            return {
+              ruleId,
+              level: sev.level,
+              rank: sev.rank,
+              message: {
+                text: (f.detail || f.rule || "AgentsID finding") +
+                  (f.tool ? " [tool: " + f.tool + "]" : "")
+              },
+              locations: [{
+                physicalLocation: {
+                  artifactLocation: { uri: "mcp-server/" + sanitizedTarget },
+                  region: { startLine: 1, startColumn: 1 }
+                }
+              }],
+              partialFingerprints: { "agentsid/v1": fingerprint },
+              properties: {
+                severity: f.severity,
+                category: f.category,
+                tool: f.tool
+              }
+            };
+          });
+
+          const sarif = {
+            $schema: "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+            version: "2.1.0",
+            runs: [{
+              tool: {
+                driver: {
+                  name: "AgentsID",
+                  informationUri: "https://agentsid.dev",
+                  rules: Array.from(ruleMap.values())
+                }
+              },
+              results,
+              properties: {
+                grade,
+                score,
+                server,
+                toolCount: tools
+              }
+            }]
+          };
+
+          fs.writeFileSync(tmp + "/agentsid.sarif", JSON.stringify(sarif, null, 2));
+          console.log("Generated SARIF with " + results.length + " results across " + ruleMap.size + " rules");
+        '
+
+    - name: Write step summary
+      shell: bash
+      run: cat "$RUNNER_TEMP/agentsid-comment.md" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Check SARIF exists
+      id: sarif-check
+      if: inputs.upload-sarif == 'true'
+      shell: bash
+      run: |
+        if [ -f "$RUNNER_TEMP/agentsid.sarif" ]; then
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+          echo "No SARIF file — skipping upload"
+        fi
+
+    - name: Upload SARIF to GitHub Security
+      if: inputs.upload-sarif == 'true' && steps.sarif-check.outputs.exists == 'true'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ runner.temp }}/agentsid.sarif
+        category: agentsid-mcp-scan
+      continue-on-error: true
 
     - name: Post PR comment
       if: inputs.comment == 'true' && github.event_name == 'pull_request'

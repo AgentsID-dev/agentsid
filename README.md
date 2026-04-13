@@ -171,6 +171,128 @@ npx agentsid audit --agent <id>             # View audit log
 npx agentsid revoke <id>                    # Revoke an agent
 ```
 
+## GitHub Action
+
+Scan any MCP server for security issues directly from GitHub. The action posts a grade on every PR, writes a full dashboard to the workflow run summary, and uploads findings to the native **Security → Code scanning** tab as SARIF.
+
+### Try it without installing
+
+Open an issue titled `scan: <package-or-url>` on this repo and the scanner runs automatically. Results are posted as a comment within about 30 seconds.
+
+Example: [`scan: @playwright/mcp-server`](../../issues/new?title=scan%3A+%40playwright%2Fmcp-server)
+
+### CI Usage
+
+Add this to any workflow to scan your MCP server on every pull request:
+
+```yaml
+name: MCP Security Scan
+on: [pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write    # post PR comment
+      security-events: write  # upload findings to Security tab
+    steps:
+      - uses: stevenkozeniesky02/agentsid@master
+        with:
+          target: 'npx @your-org/your-mcp-server'
+```
+
+The `security-events: write` permission is required for SARIF upload. Without it, findings still appear in the PR comment and workflow summary but will not show up in the Security tab.
+
+### Inputs
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `target` | Yes | — | MCP server to scan. An npx command (e.g. `npx @your-org/server`) or an HTTP URL (e.g. `https://mcp.example.com/mcp`). |
+| `env` | No | `''` | Environment variables for the server, one `KEY=VALUE` per line. |
+| `fail-on-grade` | No | `''` | Fail the workflow if the grade is at or below this letter (`A`, `B`, `C`, `D`, `F`). Leave empty to never fail on grade alone. |
+| `comment` | No | `'true'` | Post results as a sticky PR comment with scan history. |
+| `upload-sarif` | No | `'true'` | Upload findings to the GitHub Security tab as SARIF. |
+| `token` | No | `github.token` | Token used to post PR comments. |
+
+### Outputs
+
+| Output | Description |
+|--------|-------------|
+| `grade` | Overall letter grade (`A`–`F`) |
+| `score` | Numeric score (`0`–`100`) |
+| `findings-critical` | Count of CRITICAL findings |
+| `findings-high` | Count of HIGH findings |
+| `report-path` | Absolute path to the full JSON report file |
+
+### Examples
+
+**Block PRs that score D or below:**
+
+```yaml
+- uses: stevenkozeniesky02/agentsid@master
+  with:
+    target: 'npx @your-org/your-mcp-server'
+    fail-on-grade: 'D'
+```
+
+**Scan a remote server with credentials:**
+
+```yaml
+- uses: stevenkozeniesky02/agentsid@master
+  with:
+    target: 'https://mcp.example.com/mcp'
+    env: |
+      API_KEY=${{ secrets.MCP_API_KEY }}
+      REGION=us-east-1
+```
+
+**Scan multiple servers in parallel (matrix):**
+
+```yaml
+jobs:
+  scan:
+    strategy:
+      matrix:
+        server:
+          - 'npx @your-org/server-a'
+          - 'npx @your-org/server-b'
+          - 'npx @your-org/server-c'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      security-events: write
+    steps:
+      - uses: stevenkozeniesky02/agentsid@master
+        with:
+          target: ${{ matrix.server }}
+```
+
+**Use the grade in downstream steps:**
+
+```yaml
+- uses: stevenkozeniesky02/agentsid@master
+  id: scan
+  with:
+    target: 'npx @your-org/your-mcp-server'
+
+- run: |
+    echo "Grade: ${{ steps.scan.outputs.grade }}"
+    echo "Score: ${{ steps.scan.outputs.score }}"
+    echo "Critical findings: ${{ steps.scan.outputs.findings-critical }}"
+```
+
+### What the scanner checks
+
+Based on 5 published research papers and analysis of more than 15,000 MCP servers across five category grades:
+
+- **auth** — token handling, credential exposure, unauthenticated tool access
+- **injection** — prompt injection, unicode smuggling, invisible instructions
+- **input validation** — schema gaps, unbounded parameters, type confusion
+- **output safety** — data leakage, unsafe returns, sensitive field exposure
+- **privilege** — overly broad tool scopes, privilege escalation paths
+
+Findings are grouped into a trust score (0–100) and letter grade (A–F), with per-category grades broken out in the PR comment and workflow summary.
+
 ## Documentation
 
 | Resource | Link |

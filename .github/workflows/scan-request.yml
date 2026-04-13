@@ -45,7 +45,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
-            -f body="🔍 **Scanning** \`${{ steps.parse.outputs.target }}\` — results will be posted here in ~30 seconds."
+            -f body="**Scanning** \`${{ steps.parse.outputs.target }}\` — results will be posted here in ~30 seconds."
 
       - name: Install scanner
         run: npm install -g @agentsid/scanner@latest
@@ -74,7 +74,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BODY="❌ **Scan failed** for \`${{ steps.parse.outputs.target }}\`
+          BODY="**Scan failed** for \`${{ steps.parse.outputs.target }}\`
 
           Possible reasons:
           - Package not found on npm
@@ -86,14 +86,12 @@ jobs:
           gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
             -f body="$BODY"
 
-      - name: Post results
+      - name: Build report
         if: steps.scan.outputs.failed == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          COMMENT=$(node -e "
+          node -e "
             const fs = require('fs');
-            const r = JSON.parse(fs.readFileSync('$RUNNER_TEMP/report.json', 'utf-8'));
+            const r = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + '/report.json', 'utf-8'));
             const grade = r.grade?.overall || 'F';
             const score = r.grade?.score || 0;
             const cats = r.grade?.categories || {};
@@ -102,11 +100,8 @@ jobs:
             const server = r.server?.name || 'Unknown';
             const tools = r.toolCount || 0;
 
-            const gradeEmoji = { A: '🟢', B: '🟢', C: '🟡', D: '🔴', F: '🔴' };
-            const sevEmoji = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🔵' };
-
-            let md = '## ' + (gradeEmoji[grade] || '') + ' Security Report: Grade ' + grade + ' (' + score + '/100)\n\n';
-            md += '**Server:** ' + server + ' | **Tools scanned:** ' + tools + '\n\n';
+            let md = '## Security Report: Grade ' + grade + ' (' + score + '/100)\n\n';
+            md += '**Server:** ' + server + ' &nbsp;|&nbsp; **Tools scanned:** ' + tools + '\n\n';
 
             md += '| Category | Grade |\n|----------|-------|\n';
             for (const [cat, g] of Object.entries(cats)) {
@@ -128,20 +123,30 @@ jobs:
               md += '| Severity | Category | Tool | Detail |\n|----------|----------|------|--------|\n';
               for (const f of top) {
                 const detail = (f.detail || '').replace(/\|/g, '\\\\|').replace(/\n/g, ' ').slice(0, 120);
-                md += '| ' + (sevEmoji[f.severity]||'') + ' ' + f.severity + ' | ' + (f.category||'') + ' | ' + (f.tool||'') + ' | ' + detail + ' |\n';
+                md += '| ' + f.severity + ' | ' + (f.category||'') + ' | ' + (f.tool||'') + ' | ' + detail + ' |\n';
               }
               md += '\n</details>\n\n';
             }
 
-            md += '🔗 [View full report on AgentsID Registry](https://agentsid.dev/registry/' + encodeURIComponent(server) + ')\n\n';
             md += '---\n';
-            md += '**Want to scan your own MCP servers?**\n';
-            md += '- 📦 \`npx @agentsid/scanner -- npx <your-server>\`\n';
-            md += '- 🔁 [Add to your CI/CD](https://github.com/${{ github.repository }}#ci-usage)\n';
-            md += '- 🌐 [Browse the registry](https://agentsid.dev/registry)\n';
-            console.log(md);
-          ")
+            md += '**Scan your own MCP servers:**\n';
+            md += '- CLI: \`npx @agentsid/scanner -- npx <your-server>\`\n';
+            md += '- CI/CD: [GitHub Action](https://github.com/' + process.env.GITHUB_REPOSITORY + '#ci-usage)\n';
+            md += '- Browse all scanned servers: [AgentsID Registry](https://agentsid.dev/registry)\n';
 
+            fs.writeFileSync(process.env.RUNNER_TEMP + '/comment.md', md);
+          "
+
+      - name: Write step summary
+        if: steps.scan.outputs.failed == 'false'
+        run: cat "$RUNNER_TEMP/comment.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post results
+        if: steps.scan.outputs.failed == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMENT=$(cat "$RUNNER_TEMP/comment.md")
           gh api "repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
             -f body="$COMMENT"
 

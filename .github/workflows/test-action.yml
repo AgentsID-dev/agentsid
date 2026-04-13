@@ -1,0 +1,26 @@
+name: Test MCP Scan Action
+
+# Self-test for the composite action at repo root.
+# Runs on PRs that touch the action itself, and on manual trigger.
+on:
+  pull_request:
+    paths:
+      - 'action.yml'
+      - '.github/workflows/test-action.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write    # post PR comment
+      security-events: write  # upload SARIF
+      issues: write           # gh api PR comments use issues endpoint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run scan against Playwright MCP
+        uses: ./
+        with:
+          target: 'npx @playwright/mcp-server'
