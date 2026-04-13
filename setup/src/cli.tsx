@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { render, Box, Text } from "ink";
 import { AuthStep } from "./steps/auth.js";
 import { PlatformStep } from "./steps/platform.js";
+import { HookPathStep } from "./steps/hook-path.js";
 import { PersonaStep } from "./steps/persona.js";
 import { PoliciesStep } from "./steps/policies.js";
 import { LaunchStep } from "./steps/launch.js";
@@ -17,6 +18,7 @@ import type { PolicyPreset, PolicyRule } from "./presets/types.js";
 type WizardStep =
   | "auth"
   | "platform"
+  | "hook-path"
   | "persona"
   | "policies"
   | "launch";
@@ -26,6 +28,7 @@ interface WizardState {
   readonly apiKey: string;
   readonly apiUrl: string;
   readonly platform: Platform | null;
+  readonly hookProjectDir: string | null;
   readonly persona: PersonaName | null;
   readonly rules: readonly PolicyRule[];
 }
@@ -52,6 +55,7 @@ function App(): React.ReactElement {
     apiKey: "",
     apiUrl: "https://api.agentsid.dev",
     platform: null,
+    hookProjectDir: null,
     persona: null,
     rules: [],
   });
@@ -61,7 +65,11 @@ function App(): React.ReactElement {
   }
 
   function handlePlatformSelect(platform: Platform): void {
-    setState((prev) => ({ ...prev, step: "persona", platform }));
+    setState((prev) => ({ ...prev, step: "hook-path", platform }));
+  }
+
+  function handleHookPathSelect(hookProjectDir: string): void {
+    setState((prev) => ({ ...prev, step: "persona", hookProjectDir }));
   }
 
   function handlePersonaSelect(persona: PersonaName): void {
@@ -75,7 +83,7 @@ function App(): React.ReactElement {
     setState((prev) => ({ ...prev, step: "launch", rules }));
   }
 
-  const { step, apiKey, apiUrl, platform, persona, rules } = state;
+  const { step, apiKey, apiUrl, platform, hookProjectDir, persona, rules } = state;
 
   return (
     <Box flexDirection="column" padding={1}>
@@ -88,6 +96,9 @@ function App(): React.ReactElement {
       {step === "platform" && (
         <PlatformStep onSelect={handlePlatformSelect} />
       )}
+      {step === "hook-path" && (
+        <HookPathStep onSelect={handleHookPathSelect} />
+      )}
       {step === "persona" && (
         <PersonaStep onSelect={handlePersonaSelect} />
       )}
@@ -97,11 +108,12 @@ function App(): React.ReactElement {
           onComplete={handlePoliciesComplete}
         />
       )}
-      {step === "launch" && platform && (
+      {step === "launch" && platform && hookProjectDir && (
         <LaunchStep
           apiKey={apiKey}
           apiUrl={apiUrl}
           platform={platform}
+          hookProjectDir={hookProjectDir}
           rules={rules}
         />
       )}

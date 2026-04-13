@@ -18,7 +18,34 @@ export const claudeCodeIntegration: PlatformIntegration = {
   },
 
   generateConfig(config: IntegrationConfig) {
+    const hookDir = path.join(os.homedir(), ".agentsid", "hooks");
     return {
+      hooks: {
+        PreToolUse: [
+          {
+            matcher: ".*",
+            hooks: [
+              {
+                type: "command",
+                command: `${hookDir}/pre-tool.sh`,
+                timeout: 3000,
+              },
+            ],
+          },
+        ],
+        PostToolUse: [
+          {
+            matcher: ".*",
+            hooks: [
+              {
+                type: "command",
+                command: `${hookDir}/post-tool.sh`,
+                timeout: 3000,
+              },
+            ],
+          },
+        ],
+      },
       mcpServers: {
         agentsid: {
           command: "npx",

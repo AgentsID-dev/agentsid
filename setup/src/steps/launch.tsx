@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text } from "ink";
 import Spinner from "ink-spinner";
+import path from "path";
 import type { PolicyRule } from "../presets/types.js";
 import { toApiRules } from "../engine.js";
 import { writeConfig } from "../config-writer.js";
-import { installHook } from "../hook/install.js";
+import { installHook, getHookPath } from "../hook/install.js";
 import { claudeCodeIntegration } from "../integrations/claude-code.js";
 import { cursorIntegration } from "../integrations/cursor.js";
 import { codexIntegration } from "../integrations/codex.js";
@@ -38,6 +39,7 @@ interface Props {
   readonly apiKey: string;
   readonly apiUrl: string;
   readonly platform: Platform;
+  readonly hookProjectDir: string;
   readonly rules: readonly PolicyRule[];
 }
 
@@ -98,13 +100,15 @@ export function LaunchStep({
   apiKey,
   apiUrl,
   platform,
+  hookProjectDir,
   rules,
 }: Props): React.ReactElement {
   const [steps, setSteps] = useState<readonly StepStatus[]>([
     { label: "Registering agent", state: "pending" },
     { label: "Applying policy rules", state: "pending" },
     { label: "Writing platform config", state: "pending" },
-    { label: "Installing PostToolUse hook", state: "pending" },
+    { label: "Installing hooks", state: "pending" },
+    { label: "Activating project protection", state: "pending" },
   ]);
   const [agentId, setAgentId] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -173,23 +177,50 @@ export function LaunchStep({
         return;
       }
 
-      // Step 3: Install hook (Claude Code only)
+      // Step 3: Install hook scripts
       updateStep(3, { state: "running" });
-      if (platform === "claude-code") {
-        try {
-          await installHook();
-          if (cancelled) return;
-        } catch (err) {
-          if (cancelled) return;
-          const msg = err instanceof Error ? err.message : String(err);
-          updateStep(3, { state: "error", error: msg });
-          setFatalError(msg);
-          return;
-        }
-      }
-      if (!cancelled) {
+      try {
+        await installHook();
+        if (cancelled) return;
         updateStep(3, { state: "done" });
+      } catch (err) {
+        if (cancelled) return;
+        const msg = err instanceof Error ? err.message : String(err);
+        updateStep(3, { state: "error", error: msg });
+        setFatalError(msg);
+        return;
+      }
+
+      // Step 4: Write project-level PreToolUse hook config
+      updateStep(4, { state: "running" });
+      try {
+        const preToolPath = getHookPath("pre-tool.sh");
+        const projectSettings = path.join(hookProjectDir, ".claude", "settings.json");
+        const hookConfig = {
+          hooks: {
+            PreToolUse: [
+              {
+                hooks: [
+                  {
+                    type: "command",
+                    command: preToolPath,
+                    timeout: 3000,
+                  },
+                ],
+              },
+            ],
+          },
+        };
+        await writeConfig(projectSettings, hookConfig, "json");
+        if (cancelled) return;
+        updateStep(4, { state: "done" });
         setDone(true);
+      } catch (err) {
+        if (cancelled) return;
+        const msg = err instanceof Error ? err.message : String(err);
+        updateStep(4, { state: "error", error: msg });
+        setFatalError(msg);
+        return;
       }
     }
 
@@ -197,12 +228,12 @@ export function LaunchStep({
     return () => {
       cancelled = true;
     };
-  }, [apiKey, apiUrl, platform, rules]);
+  }, [apiKey, apiUrl, platform, hookProjectDir, rules]);
 
   return (
     <Box flexDirection="column" gap={1}>
       <Text bold color="cyan">
-        Step 4/4 — Activating
+        Step 5/5 — Activating
       </Text>
       {steps.map((step, i) => (
         <Box key={i} flexDirection="row" gap={1}>

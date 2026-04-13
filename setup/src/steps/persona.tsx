@@ -36,7 +36,7 @@ export function PersonaStep({ onSelect }: Props): React.ReactElement {
   return (
     <Box flexDirection="column" gap={1}>
       <Text bold color="cyan">
-        Step 2/4 — Security Profile
+        Step 3/5 — Security Profile
       </Text>
       <Text color="gray">Choose the security posture that matches your team:</Text>
       <SelectInput items={ITEMS} onSelect={handleSelect} />

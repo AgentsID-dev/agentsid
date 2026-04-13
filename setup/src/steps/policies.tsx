@@ -91,7 +91,7 @@ export function PoliciesStep({ preset, onComplete }: Props): React.ReactElement 
   return (
     <Box flexDirection="column" gap={1}>
       <Text bold color="cyan">
-        Step 3/4 — Fine-Tune Policies
+        Step 4/5 — Fine-Tune Policies
       </Text>
       <Text color="gray">
         Use <Text color="white">↑↓</Text> to navigate,{" "}

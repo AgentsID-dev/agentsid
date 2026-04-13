@@ -34,7 +34,7 @@ export function PlatformStep({ onSelect }: Props): React.ReactElement {
   return (
     <Box flexDirection="column" gap={1}>
       <Text bold color="cyan">
-        Step 1/4 — Platform
+        Step 1/5 — Platform
       </Text>
       <Text color="gray">Which AI coding assistant are you securing?</Text>
       <SelectInput items={ITEMS} onSelect={handleSelect} />
