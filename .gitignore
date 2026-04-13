@@ -89,3 +89,7 @@ scanner/reports/
 
 # Playwright artifacts
 .playwright-mcp/
+
+# Project-local Claude Code settings (may contain live tokens/keys)
+.claude/settings.json
+.claude/settings.local.json
