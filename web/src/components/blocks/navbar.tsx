@@ -118,7 +118,7 @@ const Navbar = ({
           title: "GitHub",
           description: "SDKs, CLI tools, and example integrations",
           icon: <ExternalLink className="size-5 shrink-0" />,
-          url: "https://github.com/stevenkozeniesky02/agentsid",
+          url: "https://github.com/AgentsID-dev/agentsid",
           external: true,
         },
         {
@@ -145,7 +145,7 @@ const Navbar = ({
   mobileExtraLinks = [
     { name: "Terms", url: "/terms" },
     { name: "Privacy", url: "/privacy" },
-    { name: "GitHub", url: "https://github.com/stevenkozeniesky02/agentsid" },
+    { name: "GitHub", url: "https://github.com/AgentsID-dev/agentsid" },
   ],
   auth = {
     login: { text: "Dashboard", url: "/dashboard" },

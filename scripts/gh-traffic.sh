@@ -2,7 +2,7 @@
 # Pull real-time GitHub traffic for agentsid-scanner
 # Usage: ./scripts/gh-traffic.sh
 
-REPO="stevenkozeniesky02/agentsid-scanner"
+REPO="AgentsID-dev/agentsid-scanner"
 
 echo "📊 AgentsID Scanner — GitHub Traffic"
 echo "══════════════════════════════════════"

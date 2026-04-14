@@ -15,7 +15,7 @@
   <a href="https://pypi.org/project/agentsid/"><img src="https://img.shields.io/pypi/v/agentsid?style=flat-square&color=7c5bf0&label=pypi" alt="pypi" /></a>
   <a href="https://rubygems.org/gems/agentsid"><img src="https://img.shields.io/gem/v/agentsid?style=flat-square&color=7c5bf0&label=gem" alt="gem" /></a>
   <a href="https://agentsid.dev"><img src="https://img.shields.io/badge/website-agentsid.dev-7c5bf0?style=flat-square" alt="website" /></a>
-  <a href="https://github.com/stevenkozeniesky02/agentsid/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-7c5bf0?style=flat-square" alt="license" /></a>
+  <a href="https://github.com/AgentsID-dev/agentsid/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-7c5bf0?style=flat-square" alt="license" /></a>
 </p>
 
 <p align="center">
@@ -196,7 +196,7 @@ jobs:
       pull-requests: write    # post PR comment
       security-events: write  # upload findings to Security tab
     steps:
-      - uses: stevenkozeniesky02/agentsid@master
+      - uses: AgentsID-dev/agentsid@master
         with:
           target: 'npx @your-org/your-mcp-server'
 ```
@@ -229,7 +229,7 @@ The `security-events: write` permission is required for SARIF upload. Without it
 **Block PRs that score D or below:**
 
 ```yaml
-- uses: stevenkozeniesky02/agentsid@master
+- uses: AgentsID-dev/agentsid@master
   with:
     target: 'npx @your-org/your-mcp-server'
     fail-on-grade: 'D'
@@ -238,7 +238,7 @@ The `security-events: write` permission is required for SARIF upload. Without it
 **Scan a remote server with credentials:**
 
 ```yaml
-- uses: stevenkozeniesky02/agentsid@master
+- uses: AgentsID-dev/agentsid@master
   with:
     target: 'https://mcp.example.com/mcp'
     env: |
@@ -262,7 +262,7 @@ jobs:
       pull-requests: write
       security-events: write
     steps:
-      - uses: stevenkozeniesky02/agentsid@master
+      - uses: AgentsID-dev/agentsid@master
         with:
           target: ${{ matrix.server }}
 ```
@@ -270,7 +270,7 @@ jobs:
 **Use the grade in downstream steps:**
 
 ```yaml
-- uses: stevenkozeniesky02/agentsid@master
+- uses: AgentsID-dev/agentsid@master
   id: scan
   with:
     target: 'npx @your-org/your-mcp-server'
@@ -309,7 +309,7 @@ Findings are grouped into a trust score (0–100) and letter grade (A–F), with
 AgentsID is a single FastAPI application backed by PostgreSQL.
 
 ```bash
-git clone https://github.com/stevenkozeniesky02/agentsid.git
+git clone https://github.com/AgentsID-dev/agentsid.git
 cd agentsid/server
 cp .env.example .env  # set DATABASE_URL and SIGNING_SECRET
 pip install -e .

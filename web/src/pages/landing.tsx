@@ -745,7 +745,7 @@ const Landing = () => {
                 </Button>
                 <Button asChild variant="ghost" size="sm">
                   <a
-                    href="https://github.com/stevenkozeniesky02/agentsid"
+                    href="https://github.com/AgentsID-dev/agentsid"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

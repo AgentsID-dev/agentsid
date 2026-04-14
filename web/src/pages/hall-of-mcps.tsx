@@ -164,7 +164,7 @@ const SubmissionSection = () => {
     `## Server Submission\n\n**Package name:** \`npx <your-package>\`\n\n**Scanner output:**\n\`\`\`\nnpx @agentsid/scanner -- npx <your-package>\n# paste output here\n\`\`\`\n\n**Worst finding (in your words):**\n\n**MAP policy that mitigates it:**\n\`\`\`json\n{\n  "version": "1.0",\n  "rules": []\n}\n\`\`\``
   );
 
-  const issueUrl = `https://github.com/stevenkozeniesky02/agentsid-scanner/issues/new?title=Hall+of+MCPs+submission&body=${issueTemplate}&labels=hall-of-mcps`;
+  const issueUrl = `https://github.com/AgentsID-dev/agentsid-scanner/issues/new?title=Hall+of+MCPs+submission&body=${issueTemplate}&labels=hall-of-mcps`;
 
   return (
     <div className="border border-border/50 rounded-xl overflow-hidden">
@@ -269,7 +269,7 @@ export const HallOfMcps = () => {
           <span>{HALL_STATS.fGrade} F grades</span>
           <span>·</span>
           <a
-            href="https://github.com/stevenkozeniesky02/agentsid-scanner"
+            href="https://github.com/AgentsID-dev/agentsid-scanner"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline inline-flex items-center gap-1"

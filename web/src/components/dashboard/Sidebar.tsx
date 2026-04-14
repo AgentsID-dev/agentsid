@@ -127,7 +127,7 @@ function Sidebar({
             Guides
           </a>
           <a
-            href="https://github.com/stevenkozeniesky02/agentsid"
+            href="https://github.com/AgentsID-dev/agentsid"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-3 px-3.5 py-2 rounded-lg text-muted-foreground text-[13px] font-medium no-underline hover:bg-primary/5 transition-colors"

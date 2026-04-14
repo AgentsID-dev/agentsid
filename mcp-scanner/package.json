@@ -23,7 +23,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stevenkozeniesky02/agentsid-scanner.git"
+    "url": "git+https://github.com/AgentsID-dev/agentsid-scanner.git"
   },
   "dependencies": {
     "@agentsid/scanner": "^0.2.0",

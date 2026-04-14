@@ -224,7 +224,7 @@ export function Spec() {
             <span>Published: March 2026</span>
             <span>Authors: AgentsID Research</span>
             <a
-              href="https://github.com/stevenkozeniesky02/permission-spec"
+              href="https://github.com/AgentsID-dev/permission-spec"
               className="text-amber-500 hover:underline"
               target="_blank"
               rel="noopener noreferrer"

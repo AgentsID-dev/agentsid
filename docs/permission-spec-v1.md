@@ -3,7 +3,7 @@
 **Status:** Draft
 **Published:** March 2026
 **Authors:** AgentsID Research
-**Repository:** github.com/stevenkozeniesky02/permission-spec
+**Repository:** github.com/AgentsID-dev/permission-spec
 **Canonical URL:** agentsid.dev/spec
 
 ---

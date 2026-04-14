@@ -354,7 +354,7 @@ function Dashboard() {
           </a>
           {" \u00B7 "}
           <a
-            href="https://github.com/stevenkozeniesky02/agentsid"
+            href="https://github.com/AgentsID-dev/agentsid"
             target="_blank"
             rel="noreferrer"
             className="text-muted-foreground hover:text-foreground mx-1.5"

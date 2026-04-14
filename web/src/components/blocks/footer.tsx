@@ -34,7 +34,7 @@ const Footer = () => {
               Dashboard
             </a>
             <a
-              href="https://github.com/stevenkozeniesky02/agentsid"
+              href="https://github.com/AgentsID-dev/agentsid"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-foreground transition-colors"

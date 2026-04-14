@@ -6,7 +6,7 @@ const PAPERS = [
     date: "April 2026",
     abstract:
       "GPT-5.4 follows invisible tag-block instructions embedded in MCP tool descriptions 100% of the time. Claude detects them. Gemini ignores them. No registry, client, or SDK sanitizes these bytes. We scanned 3,471 servers and found 298 hidden codepoints across 63 servers — then demonstrated that replacing benign bytes with weaponized payloads produces a server that scores better on current scanners, not worse.",
-    href: "https://github.com/stevenkozeniesky02/agentsid-scanner/blob/master/docs/census-2026/invisible-ink.md",
+    href: "https://github.com/AgentsID-dev/agentsid-scanner/blob/master/docs/census-2026/invisible-ink.md",
     stats: ["120 LLM trials", "3 models tested", "63 servers flagged"],
   },
   {
@@ -14,7 +14,7 @@ const PAPERS = [
     date: "April 2026",
     abstract:
       "The first census-scale security audit of the MCP ecosystem: 15,982 servers, 40,081 tools, and 137,070 security findings. We document the Complexity Tax (tool count vs. security score is a near-perfect negative correlation), introduce a Toxic Flow taxonomy of five vulnerability classes in tool descriptions, and argue that natural language is a structurally failed authorization layer.",
-    href: "https://github.com/stevenkozeniesky02/agentsid-scanner/blob/master/docs/census-2026/weaponized-by-design.md",
+    href: "https://github.com/AgentsID-dev/agentsid-scanner/blob/master/docs/census-2026/weaponized-by-design.md",
     stats: ["15,982 servers", "137,070 findings", "72% scored F"],
   },
   {
@@ -22,7 +22,7 @@ const PAPERS = [
     date: "April 2026",
     abstract:
       "Google's Agent2Agent protocol is the most credible attempt to standardize agent communication. We identify six structural gaps in the v1.0 specification: self-attestation signing, void-by-default push notification requirements, credential chain exposure, SSRF via Part.url, cross-session context injection, and no authorization model. None are implementation bugs — they are in the spec.",
-    href: "https://github.com/stevenkozeniesky02/agentsid-scanner/blob/master/docs/a2a-security-gaps-2026.md",
+    href: "https://github.com/AgentsID-dev/agentsid-scanner/blob/master/docs/a2a-security-gaps-2026.md",
     stats: ["6 gaps identified", "v1.0 spec analysis", "Exact spec citations"],
   },
   {
@@ -30,7 +30,7 @@ const PAPERS = [
     date: "March 2026",
     abstract:
       "We analyzed five major agent frameworks — Claude Code Agent Teams, AutoGen, CrewAI, LangGraph, and OpenAI Agents SDK — and found four structural security gaps present in all of them: agent identity is a string with no cryptographic verification, no credential scoping between agents, no inter-agent authentication, and no audit trail for agent-to-agent delegation.",
-    href: "https://github.com/stevenkozeniesky02/agentsid-scanner/blob/master/docs/agent-teams-auth-gap-2026.md",
+    href: "https://github.com/AgentsID-dev/agentsid-scanner/blob/master/docs/agent-teams-auth-gap-2026.md",
     stats: ["5 frameworks analyzed", "4 gaps per framework", "Zero use delegation chains"],
   },
   {
@@ -38,7 +38,7 @@ const PAPERS = [
     date: "March 2026",
     abstract:
       "The first large-scale security analysis of the MCP ecosystem. We scanned 15,983 MCP servers across npm and PyPI and found that 72.6% scored below 60/100. 88% have no real authentication. 53% rely on static API keys. Only 8.5% implement OAuth. The ecosystem has grown faster than its security infrastructure.",
-    href: "https://github.com/stevenkozeniesky02/agentsid-scanner/blob/master/docs/state-of-agent-security-2026.md",
+    href: "https://github.com/AgentsID-dev/agentsid-scanner/blob/master/docs/state-of-agent-security-2026.md",
     stats: ["15,983 servers scanned", "72.6% scored F", "88% no auth"],
   },
 ] as const;
@@ -103,7 +103,7 @@ const Research = () => {
         <p className="text-muted-foreground text-sm">
           All research is available on{" "}
           <a
-            href="https://github.com/stevenkozeniesky02/agentsid-scanner"
+            href="https://github.com/AgentsID-dev/agentsid-scanner"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline"

@@ -209,4 +209,4 @@ Every tool call — allowed or denied — appears in the AgentsID dashboard at [
 
 - [AgentsID Documentation](https://agentsid.dev/docs)
 - [FastMCP Middleware Docs](https://gofastmcp.com/servers/middleware)
-- [AgentsID Python SDK](https://github.com/stevenkozeniesky02/agentsid/tree/master/sdk-python)
+- [AgentsID Python SDK](https://github.com/AgentsID-dev/agentsid/tree/master/sdk-python)
