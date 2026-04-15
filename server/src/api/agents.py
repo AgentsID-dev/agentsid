@@ -263,6 +263,69 @@ async def revoke_agent(
         raise HTTPException(status_code=404, detail="Agent not found")
 
 
+@router.delete("/{agent_id}/purge", status_code=204)
+@limiter.limit("10/minute")
+async def purge_agent(
+    request: Request,
+    agent_id: str,
+    project: Project = Depends(get_project),
+    db: AsyncSession = Depends(get_db),
+):
+    """Hard-delete an agent and all its history.
+
+    Cascades through tokens, permission_rules, delegations, audit_log,
+    pending_approvals. Also reparents child agents (parent_agent_id = NULL)
+    so the lineage tree stays valid.
+
+    Use this when `revoke` isn't enough — e.g. cleaning up test agents, or
+    removing an agent that should never have existed (GDPR-style erasure).
+    Revocation is usually preferred because it keeps audit history intact.
+    """
+    from sqlalchemy import select, update
+
+    from src.models.models import (
+        Agent,
+        AgentToken,
+        AuditEntry,
+        Delegation,
+        PendingApproval,
+        PermissionRule,
+    )
+
+    result = await db.execute(
+        select(Agent).where(Agent.id == agent_id, Agent.project_id == project.id)
+    )
+    agent = result.scalar_one_or_none()
+    if agent is None:
+        raise HTTPException(status_code=404, detail="Agent not found")
+
+    # Reparent any children so the lineage tree doesn't dangle
+    await db.execute(
+        update(Agent)
+        .where(Agent.parent_agent_id == agent_id)
+        .values(parent_agent_id=None)
+    )
+
+    await db.execute(
+        PermissionRule.__table__.delete().where(PermissionRule.agent_id == agent_id)
+    )
+    await db.execute(
+        AgentToken.__table__.delete().where(AgentToken.agent_id == agent_id)
+    )
+    await db.execute(
+        Delegation.__table__.delete().where(Delegation.agent_id == agent_id)
+    )
+    await db.execute(
+        AuditEntry.__table__.delete().where(AuditEntry.agent_id == agent_id)
+    )
+    await db.execute(
+        PendingApproval.__table__.delete().where(PendingApproval.agent_id == agent_id)
+    )
+
+    await db.delete(agent)
+    await db.commit()
+
+
 class LineageNode(BaseModel):
     id: str
     name: str

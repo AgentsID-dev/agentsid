@@ -110,6 +110,7 @@ function AgentDetail({ agent, apiKey, onBack, onAgentsChanged }: AgentDetailProp
   const [data, setData] = useState<DetailData | null>(null);
   const [editingPerms, setEditingPerms] = useState(false);
   const [revoking, setRevoking] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -148,6 +149,23 @@ function AgentDetail({ agent, apiKey, onBack, onAgentsChanged }: AgentDetailProp
       setRevoking(false);
     }
   }, [agent.id, apiKey, onAgentsChanged, onBack]);
+
+  const handleDelete = useCallback(async () => {
+    const ok = window.confirm(
+      `Permanently delete "${agent.name}"? This removes the agent and its entire audit history, tokens, and permission rules. Cannot be undone. For most cases, Revoke is safer.`,
+    );
+    if (!ok) return;
+    setDeleting(true);
+    try {
+      await apiFetch(`/agents/${agent.id}/purge`, apiKey, { method: "DELETE" });
+      onAgentsChanged();
+      onBack();
+    } catch (e) {
+      alert("Failed to delete: " + (e instanceof Error ? e.message : "Unknown error"));
+    } finally {
+      setDeleting(false);
+    }
+  }, [agent.id, agent.name, apiKey, onAgentsChanged, onBack]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -204,6 +222,9 @@ function AgentDetail({ agent, apiKey, onBack, onAgentsChanged }: AgentDetailProp
                   {revoking ? "Revoking..." : "Revoke Agent"}
                 </button>
               )}
+              <button onClick={handleDelete} disabled={deleting} title="Permanently delete this agent and all its history" className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold bg-destructive text-white rounded-lg hover:bg-destructive/90 transition-all disabled:opacity-50 cursor-pointer">
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
             </div>
           </div>
         </div>
