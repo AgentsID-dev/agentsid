@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 limiter = Limiter(key_func=get_remote_address)
 security = HTTPBearer()
 
+from src.api.auth_dep import get_project
 from src.core.config import settings
 from src.core.database import get_db
 from src.core.security import generate_project_key, hash_key, encrypt_api_key, decrypt_api_key
@@ -151,25 +152,17 @@ async def create_project(
 async def delete_project(
     request: Request,
     project_id: str,
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    project: Project = Depends(get_project),
     db: AsyncSession = Depends(get_db),
 ):
     """Permanently delete a project and everything attached to it.
 
-    Scope is strictly the signed-in Supabase user's own project. We verify
-    `owner_email` matches the authenticated user before touching anything.
+    Auth is the project's own API key — matches the dashboard's normal
+    apiFetch pattern. The URL project_id must match the key's project_id,
+    otherwise you get a 404 (same as if the project didn't exist — don't
+    leak existence across tenants).
     """
-    user = await _verify_supabase_user(credentials.credentials)
-    email = user.get("email", "")
-
-    result = await db.execute(
-        select(Project).where(Project.id == project_id)
-    )
-    project = result.scalar_one_or_none()
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
-    if project.owner_email != email:
-        # Same 404 so we don't leak existence to other users.
+    if project.id != project_id:
         raise HTTPException(status_code=404, detail="Project not found")
 
     # Cascade delete in order (agents cascade to tokens + permission_rules via

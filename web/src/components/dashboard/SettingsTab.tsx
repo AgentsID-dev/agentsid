@@ -208,9 +208,13 @@ function SettingsTab({ apiKey, projectInfo }: SettingsTabProps) {
 
   const handleDeleteProject = useCallback(async () => {
     if (deleteInput !== "DELETE") return;
+    if (!projectInfo?.id) {
+      alert("Missing project info — refresh and try again.");
+      return;
+    }
     setDeleting(true);
     try {
-      await apiFetch("/projects/", apiKey, { method: "DELETE" });
+      await apiFetch(`/projects/${projectInfo.id}`, apiKey, { method: "DELETE" });
       alert("Project deleted. You will be signed out.");
       window.location.reload();
     } catch (err) {
@@ -220,7 +224,7 @@ function SettingsTab({ apiKey, projectInfo }: SettingsTabProps) {
     } finally {
       setDeleting(false);
     }
-  }, [apiKey, deleteInput]);
+  }, [apiKey, deleteInput, projectInfo?.id]);
 
   // ─── Usage bar ───
   const usagePct =
