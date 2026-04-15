@@ -199,7 +199,7 @@ function PermissionEditor({
 
       await apiFetch(`/agents/${agentId}/permissions`, apiKey, {
         method: "PUT",
-        body: JSON.stringify({ rules: payload }),
+        body: JSON.stringify(payload),
       });
 
       setFeedback({ type: "success", message: "Permissions saved" });
