@@ -41,9 +41,46 @@ export async function apiFetch<T>(
   if (resp.status === 204) return null as T;
   if (!resp.ok) {
     const body = await resp.json().catch(() => ({}));
-    throw new Error(body.detail ?? "Request failed: " + resp.status);
+    throw new Error(formatApiError(body, resp.status));
   }
   return resp.json();
+}
+
+/**
+ * FastAPI returns validation errors as `detail: [{loc, msg, type}, ...]`.
+ * Naively throwing `new Error(detail)` stringifies an array of objects to
+ * "[object Object]", which is what users saw. Normalize to a readable message.
+ */
+function formatApiError(body: unknown, status: number): string {
+  if (typeof body !== "object" || body === null) {
+    return `Request failed: ${status}`;
+  }
+  const detail = (body as { detail?: unknown }).detail;
+
+  if (typeof detail === "string") return detail;
+
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item) => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object" && "msg" in item) {
+          const loc = Array.isArray((item as { loc?: unknown[] }).loc)
+            ? (item as { loc: unknown[] }).loc.join(".")
+            : "";
+          const msg = String((item as { msg: unknown }).msg);
+          return loc ? `${loc}: ${msg}` : msg;
+        }
+        return JSON.stringify(item);
+      })
+      .filter(Boolean);
+    return messages.join("; ") || `Request failed: ${status}`;
+  }
+
+  if (detail && typeof detail === "object") {
+    return JSON.stringify(detail);
+  }
+
+  return `Request failed: ${status}`;
 }
 
 // ─── Color Utilities ───

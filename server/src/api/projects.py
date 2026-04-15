@@ -20,7 +20,16 @@ security = HTTPBearer()
 from src.core.config import settings
 from src.core.database import get_db
 from src.core.security import generate_project_key, hash_key, encrypt_api_key, decrypt_api_key
-from src.models.models import Project
+from src.models.models import (
+    Agent,
+    AgentToken,
+    AuditEntry,
+    Delegation,
+    PendingApproval,
+    PermissionRule,
+    Project,
+    Webhook,
+)
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
@@ -135,3 +144,73 @@ async def create_project(
         ),
         api_key=raw_key,
     )
+
+
+@router.delete("/{project_id}", status_code=204)
+@limiter.limit("5/minute")
+async def delete_project(
+    request: Request,
+    project_id: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: AsyncSession = Depends(get_db),
+):
+    """Permanently delete a project and everything attached to it.
+
+    Scope is strictly the signed-in Supabase user's own project. We verify
+    `owner_email` matches the authenticated user before touching anything.
+    """
+    user = await _verify_supabase_user(credentials.credentials)
+    email = user.get("email", "")
+
+    result = await db.execute(
+        select(Project).where(Project.id == project_id)
+    )
+    project = result.scalar_one_or_none()
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    if project.owner_email != email:
+        # Same 404 so we don't leak existence to other users.
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Cascade delete in order (agents cascade to tokens + permission_rules via
+    # ORM relationship, but audit_log / pending_approvals use plain project_id
+    # strings — no FK — so clear those explicitly).
+    agent_ids_q = await db.execute(
+        select(Agent.id).where(Agent.project_id == project_id)
+    )
+    agent_ids = [row[0] for row in agent_ids_q.all()]
+
+    if agent_ids:
+        await db.execute(
+            PermissionRule.__table__.delete().where(
+                PermissionRule.agent_id.in_(agent_ids)
+            )
+        )
+        await db.execute(
+            AgentToken.__table__.delete().where(
+                AgentToken.agent_id.in_(agent_ids)
+            )
+        )
+        await db.execute(
+            Delegation.__table__.delete().where(
+                Delegation.agent_id.in_(agent_ids)
+            )
+        )
+        await db.execute(
+            Agent.__table__.delete().where(Agent.project_id == project_id)
+        )
+
+    await db.execute(
+        AuditEntry.__table__.delete().where(AuditEntry.project_id == project_id)
+    )
+    await db.execute(
+        PendingApproval.__table__.delete().where(
+            PendingApproval.project_id == project_id
+        )
+    )
+    await db.execute(
+        Webhook.__table__.delete().where(Webhook.project_id == project_id)
+    )
+
+    await db.delete(project)
+    await db.commit()
