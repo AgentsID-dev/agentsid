@@ -87,6 +87,75 @@ async def notify_agent_expiring(project_id: str, email: str, agent_name: str, ex
     )
 
 
+def notify_claim_submission(
+    email: str,
+    github_handle: str,
+    package_slug: str,
+    notes: str | None,
+    ip: str,
+) -> None:
+    """Email the admin when someone submits the claim waitlist form.
+
+    Synchronous — safe to call from request handlers because _send_email
+    swallows exceptions. The admin_email config var controls the destination;
+    if unset, the call is a no-op log.
+    """
+    if not settings.admin_email:
+        logger.info(
+            "Claim waitlist submission received but AGENTSID_ADMIN_EMAIL is "
+            "not configured; email not sent. slug=%s handle=%s",
+            package_slug,
+            github_handle,
+        )
+        return
+
+    safe_email = escape(email)
+    safe_handle = escape(github_handle)
+    safe_slug = escape(package_slug)
+    safe_notes = escape(notes) if notes else ""
+    safe_ip = escape(ip)
+
+    registry_url = f"https://agentsid.dev/registry/{package_slug}"
+    github_url = f"https://github.com/{github_handle}"
+
+    notes_block = (
+        "<p><strong>Notes:</strong></p>"
+        "<blockquote style='border-left:3px solid #f59e0b;padding-left:12px;color:#555;'>"
+        + safe_notes
+        + "</blockquote>"
+        if safe_notes
+        else ""
+    )
+
+    body_html = f"""
+    <h2>New claim waitlist submission</h2>
+    <p>Someone just submitted the claim form.</p>
+
+    <table cellpadding="6" style="border-collapse:collapse;font-family:-apple-system,sans-serif;font-size:14px;">
+      <tr><td style="color:#666;">Email</td><td><strong>{safe_email}</strong></td></tr>
+      <tr><td style="color:#666;">GitHub</td><td><a href="{github_url}"><strong>@{safe_handle}</strong></a></td></tr>
+      <tr><td style="color:#666;">Package</td><td><a href="{registry_url}"><strong>{safe_slug}</strong></a></td></tr>
+      <tr><td style="color:#666;">IP</td><td>{safe_ip}</td></tr>
+    </table>
+
+    {notes_block}
+
+    <p style="margin-top:24px;">
+      <strong>Verify:</strong> visit
+      <a href="{github_url}">{github_url}</a> and check whether they have
+      push access to the repo declared in the package.
+    </p>
+
+    <p style="color:#999;font-size:12px;margin-top:32px;">— AgentsID admin</p>
+    """
+
+    _send_email(
+        to=settings.admin_email,
+        subject=f"AgentsID claim: {package_slug} — @{github_handle}",
+        html=body_html,
+    )
+
+
 async def notify_security_alert(project_id: str, email: str, alert_type: str, details: str) -> None:
     """Notify on security events."""
     safe_alert_type = escape(alert_type)

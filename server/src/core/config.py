@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     # Email (Resend)
     resend_api_key: str = ""
     email_from: str = "AgentsID <noreply@agentsid.dev>"
+    # Where admin notifications go (claim waitlist, disputes, etc).
+    # Set via AGENTSID_ADMIN_EMAIL env var.
+    admin_email: str = ""
 
     # API
     cors_origins: str = "http://localhost:3000,http://localhost:5173"

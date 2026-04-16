@@ -20,6 +20,7 @@ from src.api.agents import router as agents_router
 from src.api.approvals import router as approvals_router
 from src.api.audit import router as audit_router
 from src.api.badge import router as badge_router
+from src.api.claims import router as claims_router
 from src.api.permissions import router as permissions_router
 from src.api.projects import router as projects_router
 from src.api.validate import router as validate_router
@@ -87,6 +88,8 @@ app.include_router(teams_router, prefix="/api/v1")
 app.include_router(webhooks_router, prefix="/api/v1")
 # Public badge endpoint — no prefix, served at /badge/:slug.svg
 app.include_router(badge_router)
+# Claim waitlist — see task #11 for the real GitHub OAuth verification flow
+app.include_router(claims_router)
 
 
 # L3: Request size limit — reject bodies over 1MB
