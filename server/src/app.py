@@ -235,7 +235,12 @@ async def registry_lookup(slug: str):
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # React SPA — serve static files from dist + catch-all for client-side routing
-SPA_ROUTES = {"/", "/dashboard", "/docs", "/guides", "/terms", "/privacy", "/blog", "/spec", "/hall-of-mcps", "/research"}
+SPA_ROUTES = {
+    "/", "/dashboard", "/docs", "/guides", "/terms", "/privacy", "/blog",
+    "/spec", "/hall-of-mcps", "/research",
+    "/grade", "/docs/grade",  # grade system docs (proposal #1)
+    "/claim",                 # maintainer claim waitlist
+}
 
 
 @app.get("/{full_path:path}", include_in_schema=False)
@@ -250,7 +255,12 @@ async def spa_catch_all(full_path: str):
         if static_file.is_file() and str(static_file).startswith(str(WEB_DIST_DIR.resolve())):
             return FileResponse(static_file)
     # SPA routes — serve index.html for client-side routing
-    if route in SPA_ROUTES or route.startswith("/blog/") or route.startswith("/registry"):
+    if (
+        route in SPA_ROUTES
+        or route.startswith("/blog/")
+        or route.startswith("/registry")
+        or route.startswith("/claim/")
+    ):
         index = WEB_DIST_DIR / "index.html"
         if index.exists():
             return FileResponse(index)
