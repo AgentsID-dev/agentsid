@@ -57,12 +57,6 @@ function detectCategory(server: HallServer): Category {
 
 type GradeFilter = "All" | GradeLetter;
 
-function cardBorderForGrade(letter: GradeLetter): string {
-  return letter === "F"
-    ? `border-[${GRADE_COLORS.F}]`
-    : "border-border";
-}
-
 function findingCountLabel(s: HallServer): { label: string; tone: GradeLetter | "soft" } {
   const { critical = 0, high, medium, low } = s.findings as {
     critical?: number; high: number; medium: number; low: number;
