@@ -984,6 +984,14 @@ const Landing = () => {
                 <GradeChip letter="D" />
                 <GradeChip letter="F" />
               </div>
+              <div className="mt-3 text-center">
+                <Link
+                  to="/grade"
+                  className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#f59e0b] hover:underline"
+                >
+                  how we grade →
+                </Link>
+              </div>
             </FadeInSection>
           </div>
         </section>

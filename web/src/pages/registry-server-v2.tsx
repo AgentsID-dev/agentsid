@@ -273,6 +273,12 @@ function ServerDetail({ server: s }: { server: HallServer }) {
               <div className="font-mono text-[11px] uppercase tracking-[0.2em] mt-1 text-muted-foreground">
                 AgentsID Grade
               </div>
+              <Link
+                to="/grade"
+                className="inline-block mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#f59e0b] hover:underline"
+              >
+                how we grade →
+              </Link>
             </div>
             <div className="w-full mt-2 rounded-lg bg-card border border-border p-4">
               <SevRow label="CRITICAL" count={critical} tone="F" />

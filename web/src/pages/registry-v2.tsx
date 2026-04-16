@@ -297,6 +297,12 @@ export const RegistryV2 = () => {
                 {g} · {fmtNum(gradeCounts[g] ?? 0)}
               </FilterChip>
             ))}
+            <Link
+              to="/grade"
+              className="ml-auto font-mono text-[11px] text-[#f59e0b] hover:underline whitespace-nowrap"
+            >
+              how we grade →
+            </Link>
           </div>
         </div>
 

@@ -98,9 +98,15 @@ const Navbar = ({
       items: [
         {
           title: "MCP Registry",
-          description: "Security grades for 100+ MCP servers",
+          description: "Security grades for 15,983 MCP servers",
           icon: <Trophy className="size-5 shrink-0" />,
           url: "/registry",
+        },
+        {
+          title: "Grading Standard",
+          description: "How we compute the A/B/C/D/F grade — four signals, one letter",
+          icon: <Shield className="size-5 shrink-0" />,
+          url: "/grade",
         },
         {
           title: "Quick Start",
