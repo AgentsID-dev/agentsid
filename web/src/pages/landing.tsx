@@ -492,7 +492,7 @@ const Landing = () => {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border">
-                  <pre className="rounded-md bg-black border border-border p-4 font-mono text-[12.5px] leading-relaxed overflow-x-auto">
+                  <pre className="rounded-md bg-black border border-border p-4 font-mono text-[11.5px] md:text-[12.5px] leading-relaxed whitespace-pre-wrap break-all">
                     <span className="text-foreground">
                       $ npx{" "}
                       <span style={{ color: "#7dd3fc" }}>
@@ -555,7 +555,7 @@ const Landing = () => {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border">
-                  <pre className="rounded-md bg-black border border-border p-4 font-mono text-[12.5px] leading-relaxed overflow-x-auto">
+                  <pre className="rounded-md bg-black border border-border p-4 font-mono text-[11.5px] md:text-[12.5px] leading-relaxed whitespace-pre-wrap break-all">
                     <span className="text-foreground">
                       $ npx{" "}
                       <span style={{ color: "#7dd3fc" }}>
@@ -804,7 +804,7 @@ const Landing = () => {
             </FadeInSection>
 
             <FadeInSection delay={0.1}>
-              <pre className="rounded-lg bg-black border border-border p-5 md:p-6 font-mono text-[13px] leading-relaxed overflow-x-auto">
+              <pre className="rounded-lg bg-black border border-border p-5 md:p-6 font-mono text-[11.5px] md:text-[13px] leading-relaxed whitespace-pre-wrap break-all">
                 <span className="text-muted-foreground">
                   # Claude Code PreToolUse hook — installed automatically
                 </span>

@@ -226,7 +226,7 @@ function ServerDetail({ server: s }: { server: HallServer }) {
                   )}
                 </button>
               </div>
-              <pre className="px-5 py-4 font-mono text-[12.5px] leading-relaxed overflow-x-auto">
+              <pre className="px-5 py-4 font-mono text-[12px] md:text-[12.5px] leading-relaxed whitespace-pre-wrap break-all">
                 <span className="text-foreground">$ {installCmd}</span>
                 {"\n"}
                 <span className="text-muted-foreground">
@@ -261,7 +261,7 @@ function ServerDetail({ server: s }: { server: HallServer }) {
           </div>
 
           {/* Grade pillar */}
-          <aside className="flex lg:flex-col items-center gap-4 lg:sticky lg:top-8">
+          <aside className="flex flex-col items-center gap-4 w-full lg:w-auto lg:sticky lg:top-8">
             <GradeStamp letter={grade} size="hero" className="text-[8rem] md:text-[9rem]" />
             <div className="text-center">
               <div
