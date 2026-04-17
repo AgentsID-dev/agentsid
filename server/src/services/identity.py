@@ -8,6 +8,10 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.config import settings
+from src.core.security import generate_agent_token, hash_key, validate_agent_token
+from src.models.models import Agent, AgentToken, Delegation
+
 # Simple TTL cache for revocation checks
 _revocation_cache: dict[str, tuple[bool, float]] = {}
 _CACHE_TTL = 10.0  # 10 second TTL — balance between performance and revocation latency
@@ -22,10 +26,6 @@ def _prune_cache(cache: dict, max_size: int = _MAX_CACHE_SIZE) -> None:
         to_remove = len(cache) - int(max_size * 0.8)
         for key in list(cache.keys())[:to_remove]:
             del cache[key]
-
-from src.core.config import settings
-from src.core.security import generate_agent_token, hash_key, validate_agent_token
-from src.models.models import Agent, AgentToken, Delegation
 
 
 def _gen_agent_id() -> str:

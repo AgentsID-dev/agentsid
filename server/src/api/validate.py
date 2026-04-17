@@ -22,7 +22,7 @@ from src.core.security import validate_agent_token
 from src.models.models import Delegation, Project
 from src.services.audit import AuditService
 from src.services.identity import IdentityService
-from src.services.notifications import notify_approaching_limit, notify_limit_reached
+from src.services.notifications import notify_approaching_limit
 from src.services.usage import check_usage_limits
 
 logger = logging.getLogger(__name__)

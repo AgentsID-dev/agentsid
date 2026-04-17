@@ -14,13 +14,10 @@ from slowapi.util import get_remote_address
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-limiter = Limiter(key_func=get_remote_address)
-security = HTTPBearer()
-
 from src.api.auth_dep import get_project
 from src.core.config import settings
 from src.core.database import get_db
-from src.core.security import generate_project_key, hash_key, encrypt_api_key, decrypt_api_key
+from src.core.security import generate_project_key, encrypt_api_key, decrypt_api_key
 from src.models.models import (
     Agent,
     AgentToken,
@@ -31,6 +28,9 @@ from src.models.models import (
     Project,
     Webhook,
 )
+
+limiter = Limiter(key_func=get_remote_address)
+security = HTTPBearer()
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 

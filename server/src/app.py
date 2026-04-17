@@ -9,7 +9,11 @@ SECURITY FIXES APPLIED:
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.database import get_db
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -197,40 +201,44 @@ async def auth_config():
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 WEB_DIST_DIR = Path(__file__).resolve().parent.parent.parent / "web" / "dist"
-_REGISTRY_INDEX: dict | None = None
-_REGISTRY_INDEX_PATH = Path(__file__).resolve().parent.parent.parent / "scanner" / "registry-index.json"
-
-
-def _get_registry_index() -> dict:
-    global _REGISTRY_INDEX
-    if _REGISTRY_INDEX is None:
-        import json
-        if _REGISTRY_INDEX_PATH.exists():
-            _REGISTRY_INDEX = json.loads(_REGISTRY_INDEX_PATH.read_text())
-        else:
-            _REGISTRY_INDEX = {}
-    return _REGISTRY_INDEX
 
 
 @app.get("/api/registry/{slug}")
-async def registry_lookup(slug: str):
-    """Look up a pre-scanned MCP server report by slug."""
+async def registry_lookup(slug: str, db: AsyncSession = Depends(get_db)):
+    """Look up a pre-scanned MCP server report by slug (reads from Supabase)."""
     import re
 
     if not re.match(r'^[\w\-@./]+$', slug):
         return JSONResponse({"error": "Invalid slug"}, status_code=400)
 
-    index = _get_registry_index()
     slug_clean = slug.replace("@", "").replace("/", "-").lstrip("-")
 
-    entry = index.get(slug) or index.get(slug_clean)
-    if not entry:
+    result = await db.execute(
+        text(
+            "select slug, server, version, grade, score, tool_count, "
+            "categories, findings, top_findings, risk_profile, scanned_at "
+            "from registry_entries where slug = :slug or slug = :slug_clean limit 1"
+        ),
+        {"slug": slug, "slug_clean": slug_clean},
+    )
+    row = result.mappings().first()
+    if not row:
         return JSONResponse({"error": f"No registry entry found for: {slug}"}, status_code=404)
 
+    scanned_at = row["scanned_at"]
     return JSONResponse({
         "slug": slug,
         "registryUrl": f"https://agentsid.dev/registry/{slug}",
-        **entry,
+        "server": row["server"],
+        "version": row["version"],
+        "grade": row["grade"],
+        "score": row["score"],
+        "toolCount": row["tool_count"],
+        "categories": row["categories"],
+        "findings": row["findings"],
+        "topFindings": row["top_findings"],
+        "riskProfile": row["risk_profile"],
+        "scannedAt": scanned_at.isoformat() if scanned_at else None,
     })
 
 
