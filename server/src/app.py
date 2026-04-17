@@ -244,6 +244,7 @@ SPA_ROUTES = {
     "/grade", "/docs/grade",  # grade system docs (proposal #1)
     "/claim",                 # maintainer claim waitlist
     "/digest",                # MCP Security Digest subscribe
+    "/badges",                # embed-a-badge gallery
 }
 
 
