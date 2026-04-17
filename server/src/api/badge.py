@@ -11,8 +11,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import Response
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.database import get_db
 
 router = APIRouter(tags=["badge"])
 
@@ -153,24 +157,27 @@ def _not_found_svg(size: BadgeSize, theme: BadgeTheme) -> str:
     ).replace('fill="#6b7280"', 'fill="#71717a"')
 
 
-def _lookup_grade(slug: str) -> str | None:
-    """Resolve a slug to a grade letter using the scanner registry index."""
-    # Lazy import to avoid circular dep with app.py
-    from src.app import _get_registry_index
-
+async def _lookup_grade(slug: str, db: AsyncSession) -> str | None:
+    """Resolve a slug to a grade letter by querying the registry_entries table."""
     import re
 
     if not re.match(r'^[\w\-@.]+$', slug):
         return None
 
-    index = _get_registry_index()
     slug_clean = slug.replace("@", "").replace("/", "-").lstrip("-")
 
-    entry = index.get(slug) or index.get(slug_clean)
-    if not entry:
+    result = await db.execute(
+        text(
+            "select grade from registry_entries "
+            "where slug = :slug or slug = :slug_clean limit 1"
+        ),
+        {"slug": slug, "slug_clean": slug_clean},
+    )
+    row = result.first()
+    if not row:
         return None
 
-    grade = entry.get("grade")
+    grade = row[0]
     if grade not in GRADE_COLORS:
         return None
     return grade
@@ -182,6 +189,7 @@ async def badge_svg(
     size: Literal["sm", "md", "lg"] = "md",
     theme: Literal["dark", "light"] = "dark",
     style: Literal["flat"] = "flat",
+    db: AsyncSession = Depends(get_db),
 ) -> Response:
     """Serve an embeddable AgentsID Grade badge for `slug`.
 
@@ -194,7 +202,7 @@ async def badge_svg(
     size_preset = _SIZE_PRESETS[size]
     theme_preset = _THEMES[theme]
 
-    grade = _lookup_grade(slug)
+    grade = await _lookup_grade(slug, db)
     if grade is None:
         svg = _not_found_svg(size_preset, theme_preset)
         cache_seconds = 300  # shorter cache on misses so new scans propagate quickly
