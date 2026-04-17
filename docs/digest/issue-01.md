@@ -68,7 +68,7 @@ _AgentsID · MCP security research — open source, open data._
 <!--
 Footer template notes (do not send):
 - {{unsubscribe_url}} → server/src/api/digest.py::build_unsubscribe_url(email), HMAC-signed per recipient.
-- {{browser_url}} → optional; point to agentsid.dev/digest/issue-01 once the page ships (Pixel's queue).
+- {{browser_url}} → optional; point to agentsid.dev/digest/issue-01 once the page ships.
 - Frequency "Weekly (Mondays)" matches the subscribe endpoint copy ("First issue lands Monday morning.") in digest.py:138.
 - Physical-address line can be added at send time if CAN-SPAM counsel asks — current footer is minimum viable: sender identity, opt-out, reason-you-received.
 -->

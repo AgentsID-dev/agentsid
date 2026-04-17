@@ -1,7 +1,7 @@
 # Cursor Marketplace Listing — AgentsID Guard
 
-**Status:** Draft v1 · 2026-04-17 · Voice
-**Submission blocker:** Requires `@agentsid/setup` v0.2 on npm (Smith's `cursor.ts` + `codex.ts` patches) before submission — without that, the "Install" path doesn't work.
+**Status:** Draft v1 · 2026-04-17
+**Submission blocker:** Requires `@agentsid/setup` v0.2 on npm (with the `cursor.ts` + `codex.ts` integration patches) before submission — without that, the "Install" path doesn't work.
 **Target surface:** cursor.com/marketplace (listing) + cursor.com/blog/hooks-partners (roster add).
 
 Every stat and claim in this listing is sourced from `scanner/registry-index.json` or `scanner/docs/census-2026/weaponized-by-design.md`. Do not edit numbers without verifying.
@@ -119,9 +119,9 @@ Keywords/tags (up to 10):
 - **256×256 PNG**, transparent background
 - Source: `web/public/favicon.svg` scaled 8× OR the A–F grade shield mark
 - Two-color: amber-500 (#f59e0b) accent on zinc-950 (#09090b) base
-- Export to `web/public/marketplace/cursor-icon-256.png` when Pixel is free
+- Export to `web/public/marketplace/cursor-icon-256.png` when frontend bandwidth allows
 
-## 7. Screenshots (spec — Pixel to capture)
+## 7. Screenshots (spec)
 
 Aspect: 16:9 (1600×900 preferred). Three mandatory + two optional.
 
@@ -178,11 +178,11 @@ https://agentsid.dev
 ## 10. Submission checklist (pre-flight before clicking "Publish")
 
 - [ ] `@agentsid/setup` v0.2+ published on npm with Cursor hook emission
-- [ ] `cursor.ts` integration committed + smoke-tested (Smith)
-- [ ] Icon exported to `web/public/marketplace/cursor-icon-256.png` (Pixel)
-- [ ] 3 mandatory screenshots captured with real data (Pixel)
-- [ ] Listing body reviewed by Cap for claim accuracy (no fabricated numbers)
-- [ ] Docs landing page for `/docs/integrations/cursor` shipped (Pixel + Voice)
+- [ ] `cursor.ts` integration committed + smoke-tested
+- [ ] Icon exported to `web/public/marketplace/cursor-icon-256.png`
+- [ ] 3 mandatory screenshots captured with real data
+- [ ] Listing body reviewed for claim accuracy (no fabricated numbers)
+- [ ] Docs landing page for `/docs/integrations/cursor` shipped
 - [ ] Support email monitored (support@agentsid.dev or github issues)
 - [ ] Short link `agentsid.dev/cursor` redirects to install command / setup docs
 
