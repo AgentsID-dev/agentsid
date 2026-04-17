@@ -178,6 +178,29 @@ async def test_unsubscribe_rejects_malformed_email(client: AsyncClient):
 
 @pytest.mark.integration
 @pytest.mark.asyncio
+async def test_unsubscribe_html_escapes_email_reflection(client: AsyncClient):
+    """Regex permits `<` and `>` in local part — reflected email must be escaped.
+
+    Regression for the XSS surfaced in Cap's 18:55 audit. Without escape, the
+    attacker-controlled email is reflected into the success HTML verbatim.
+    """
+    malicious = "pwn<script>alert(1)</script>@example.com"
+    token = _unsubscribe_token(malicious)
+
+    resp = await client.get(
+        "/api/digest/unsubscribe",
+        params={"email": malicious, "token": token},
+    )
+
+    assert resp.status_code == 200
+    # The raw payload must not appear anywhere in the response body.
+    assert "<script>alert(1)</script>" not in resp.text
+    # The escaped form must be present.
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in resp.text
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
 async def test_unsubscribe_normalises_email_case(client: AsyncClient):
     """Mixed-case email should verify against the lowercased token."""
     email = "mixedcase@example.com"

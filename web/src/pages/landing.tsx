@@ -459,31 +459,31 @@ const Landing = () => {
                   grade.
                 </p>
                 <div className="mt-8 space-y-3">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
                     <GradeStamp letter="A" size="md" />
-                    <span className="font-mono text-sm">
+                    <span className="font-mono text-sm truncate min-w-0 flex-1">
                       @modelcontextprotocol/server-filesystem
                     </span>
-                    <span className="ml-auto font-mono text-[11px] text-muted-foreground">
+                    <span className="font-mono text-[11px] text-muted-foreground shrink-0">
                       0 findings
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
                     <GradeStamp letter="C" size="md" />
-                    <span className="font-mono text-sm">
+                    <span className="font-mono text-sm truncate min-w-0 flex-1">
                       @community/notion-mcp
                     </span>
-                    <span className="ml-auto font-mono text-[11px] text-muted-foreground">
+                    <span className="font-mono text-[11px] text-muted-foreground shrink-0">
                       2 medium
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
                     <GradeStamp letter="F" size="md" />
-                    <span className="font-mono text-sm">
+                    <span className="font-mono text-sm truncate min-w-0 flex-1">
                       @smart-thermostat-mcp/server
                     </span>
                     <span
-                      className="ml-auto font-mono text-[11px]"
+                      className="font-mono text-[11px] shrink-0"
                       style={{ color: GRADE_COLORS.F }}
                     >
                       12 CRITICAL
@@ -977,7 +977,7 @@ const Landing = () => {
                   <Link to="/research">Read the papers</Link>
                 </Button>
               </div>
-              <div className="mt-6 flex justify-center gap-2">
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
                 <GradeChip letter="A" />
                 <GradeChip letter="B" />
                 <GradeChip letter="C" />

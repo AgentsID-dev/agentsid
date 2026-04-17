@@ -14,6 +14,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from hashlib import sha256
+from html import escape as html_escape
 from pathlib import Path
 from threading import Lock
 from urllib.parse import quote
@@ -118,17 +119,21 @@ async def subscribe(request: Request, body: SubscribeBody) -> dict:
     )
     _append(entry)
 
-    # Notify admin
+    # Notify admin — escape all user-influenced fields even though the regex
+    # rejects whitespace and @, because `<`, `>`, `"`, `'` and `&` still pass.
+    safe_email = html_escape(email, quote=True)
+    safe_ip = html_escape(entry.ip, quote=True)
+    safe_ts = html_escape(entry.subscribed_at, quote=True)
     if settings.admin_email:
         try:
             _send_email(
                 to=settings.admin_email,
                 subject=f"Digest subscriber: {email}",
-                html=f"""
-                <h2>New digest subscriber</h2>
-                <p><strong>{email}</strong> just subscribed to the MCP Security Digest.</p>
-                <p style="color:#999;font-size:12px;">IP: {entry.ip} · {entry.subscribed_at}</p>
-                """,
+                html=(
+                    "<h2>New digest subscriber</h2>"
+                    f"<p><strong>{safe_email}</strong> just subscribed to the MCP Security Digest.</p>"
+                    f'<p style="color:#999;font-size:12px;">IP: {safe_ip} · {safe_ts}</p>'
+                ),
             )
         except Exception:
             pass
@@ -207,7 +212,9 @@ async def unsubscribe(request: Request, email: str, token: str) -> HTMLResponse:
 
     _append_unsubscribe(email_clean, _get_real_ip(request))
 
+    # Escape before reflecting into HTML — the regex rejects whitespace and @
+    # but permits `<`, `>`, `"`, `'` and `&`, which would otherwise allow XSS.
     return HTMLResponse(
-        content=_UNSUB_HTML_OK.replace("{email}", email_clean),
+        content=_UNSUB_HTML_OK.replace("{email}", html_escape(email_clean, quote=True)),
         status_code=200,
     )
