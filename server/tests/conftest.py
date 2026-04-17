@@ -11,6 +11,9 @@ os.environ["AGENTSID_DATABASE_URL"] = "postgresql+asyncpg://fake/test"  # passes
 os.environ["AGENTSID_SIGNING_SECRET"] = (
     "test-signing-secret-that-is-at-least-32-characters-long"
 )
+# Tests run without a real Supabase — debug_mode short-circuits
+# _verify_supabase_user to a stub user so project creation works.
+os.environ["AGENTSID_DEBUG_MODE"] = "true"
 
 import pytest
 import pytest_asyncio
@@ -114,11 +117,41 @@ async def client():
         yield c
 
 
+# Monkey-patch _verify_supabase_user so each bearer token maps to a
+# distinct user email. Needed because create_project returns the
+# existing project for the same owner_email — without distinct emails
+# the project and second_project fixtures would collapse to the same row
+# and cross-project isolation tests would be meaningless.
+from src.api import projects as _projects_api  # noqa: E402
+
+
+async def _fake_verify_supabase_user(token: str) -> dict:
+    # Token value becomes the user id + email — stable across a run.
+    return {"email": f"{token}@test.local", "id": f"user_{token}"}
+
+
+_projects_api._verify_supabase_user = _fake_verify_supabase_user  # type: ignore[assignment]
+
+
+def _supabase_auth(user: str = "user1") -> dict[str, str]:
+    """Authorization header whose bearer token is the test user discriminator."""
+    return {"Authorization": f"Bearer {user}"}
+
+
 @pytest_asyncio.fixture
 async def project(client: AsyncClient):
-    """Create a test project and return its response dict (with api_key)."""
-    resp = await client.post("/api/v1/projects/", json={"name": "Test Project"})
-    assert resp.status_code == 201
+    """Create a test project and return its response dict (with api_key).
+
+    Project creation is gated behind a Supabase JWT. The conftest-level
+    monkey-patch of _verify_supabase_user turns the bearer token into a
+    unique stub user, so different fixtures get different owner_emails.
+    """
+    resp = await client.post(
+        "/api/v1/projects/",
+        json={"name": "Test Project"},
+        headers=_supabase_auth("user1"),
+    )
+    assert resp.status_code == 201, resp.text
     return resp.json()
 
 
@@ -147,9 +180,13 @@ async def agent(client: AsyncClient, auth_headers: dict):
 
 @pytest_asyncio.fixture
 async def second_project(client: AsyncClient):
-    """Create a second project for cross-project isolation tests."""
-    resp = await client.post("/api/v1/projects/", json={"name": "Second Project"})
-    assert resp.status_code == 201
+    """Create a second project (different owner) for cross-project isolation tests."""
+    resp = await client.post(
+        "/api/v1/projects/",
+        json={"name": "Second Project"},
+        headers=_supabase_auth("user2"),
+    )
+    assert resp.status_code == 201, resp.text
     return resp.json()
 
 
