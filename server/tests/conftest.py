@@ -44,14 +44,17 @@ test_session_factory = async_sessionmaker(
 )
 
 
-# Patch JSONB -> JSON for SQLite before table creation
+# Patch JSONB + ARRAY -> JSON for SQLite before table creation
 def _patch_jsonb_columns() -> None:
-    """Replace PostgreSQL JSONB columns with generic JSON for SQLite compat."""
-    from sqlalchemy.dialects.postgresql import JSONB
+    """Replace PostgreSQL JSONB and ARRAY columns with generic JSON for SQLite compat."""
+    from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 
     for table in Base.metadata.tables.values():
         for column in table.columns:
             if isinstance(column.type, JSONB):
+                column.type = JSON()
+            elif isinstance(column.type, ARRAY):
+                # SQLite has no array type — serialise as JSON list in tests
                 column.type = JSON()
 
 

@@ -1,5 +1,12 @@
 # MCP Security Digest — Issue #1
 
+**Subject (primary):** Issue #1 — 1,332 MCP servers fail. Here are the 5 worst.
+**Subject (short alt):** The 5 worst MCP servers we've scanned
+**Subject (plain alt):** MCP Security Digest #1 — 1,332 F grades
+**Preheader:** 94.8% of servers with 51+ tools grade F. One pattern predicts most of it.
+
+---
+
 _The 5 worst MCP servers we've scanned, and a pattern that predicts failure._
 
 Out of **15,983** MCP servers scanned, **1,332 (8.3%)** grade F. These five scored zero with the most critical findings.
@@ -15,10 +22,10 @@ Out of **15,983** MCP servers scanned, **1,332 (8.3%)** grade F. These five scor
 **3. @procurementexpress.com/mcp** — npm, v1.0.0
 133 tools · 21 critical findings. Can read email, Slack, and GitHub and relay data externally. Separately flagged for credential-exfiltration data flow.
 
-**4. device-scanner** — PyPI, v1.26.0
+**4. device-scanner-mcp** — PyPI, v1.26.0
 24 tools · 18 critical findings. Credential-exfiltration path to external network. The `device_ssh` tool description instructs the LLM to bypass security controls.
 
-**5. exclugo** — PyPI, v1.26.0
+**5. exclugo-mcp** — PyPI, v1.26.0
 78 tools · 17 critical findings. Reads external sources and sends data externally; also reads local files and sends them externally.
 
 Full per-finding reports: **agentsid.dev/registry**.
@@ -50,3 +57,19 @@ Above ten tools, nearly half fail. Above fifty, nearly none pass. The correlatio
 Scan any server yourself: `npx @agentsid/scanner <package>`
 
 Reply with tools you want us to look at next issue.
+
+---
+
+_MCP Security Digest · Issue #1 · 2026-04-17 · Weekly (Mondays)_
+_You received this because you subscribed at agentsid.dev/digest._
+_[Unsubscribe]({{unsubscribe_url}}) · [View in browser]({{browser_url}}) · [AgentsID](https://agentsid.dev)_
+_AgentsID · MCP security research — open source, open data._
+
+<!--
+Footer template notes (do not send):
+- {{unsubscribe_url}} → server/src/api/digest.py::build_unsubscribe_url(email), HMAC-signed per recipient.
+- {{browser_url}} → optional; point to agentsid.dev/digest/issue-01 once the page ships (Pixel's queue).
+- Frequency "Weekly (Mondays)" matches the subscribe endpoint copy ("First issue lands Monday morning.") in digest.py:138.
+- Physical-address line can be added at send time if CAN-SPAM counsel asks — current footer is minimum viable: sender identity, opt-out, reason-you-received.
+-->
+
