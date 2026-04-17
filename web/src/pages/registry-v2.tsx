@@ -544,7 +544,7 @@ function ToolRow({ server: s }: { server: HallServer & { category: Category } })
   return (
     <Link
       to={`/registry/${s.id}`}
-      className={`grid grid-cols-[52px_1fr_auto_auto] md:grid-cols-[64px_1fr_auto_auto_auto] gap-4 md:gap-5 items-center p-4 md:p-5 rounded-lg bg-card border transition-colors hover:border-muted-foreground hover:bg-secondary ${
+      className={`grid grid-cols-[52px_1fr_auto] md:grid-cols-[64px_1fr_auto_auto_auto] gap-3 md:gap-5 items-center p-4 md:p-5 rounded-lg bg-card border transition-colors hover:border-muted-foreground hover:bg-secondary ${
         s.grade === "F" ? "border-[#ef4444]" : "border-border"
       }`}
       style={s.grade === "F" ? { background: "rgba(239,68,68,0.04)" } : undefined}
@@ -582,7 +582,7 @@ function ToolRow({ server: s }: { server: HallServer & { category: Category } })
       </div>
 
       <span
-        className="inline-flex items-stretch rounded border text-[11px] font-semibold overflow-hidden"
+        className="hidden md:inline-flex items-stretch rounded border text-[11px] font-semibold overflow-hidden"
         style={{ borderColor: "rgba(255,255,255,0.1)" }}
       >
         <span className="flex items-center gap-1.5 bg-black text-foreground px-2 py-1">
