@@ -102,6 +102,122 @@ describe("cursorIntegration", () => {
       "proj-agent-token"
     );
   });
+
+  it("declares type: stdio explicitly for forward-compat", () => {
+    const cfg = cursorIntegration.generateConfig(sampleConfig) as any;
+    expect(cfg.mcpServers.agentsid.type).toBe("stdio");
+  });
+
+  it("additionalFiles emits hooks.json by default, NOT permissions.json", () => {
+    const files = cursorIntegration.additionalFiles!(sampleConfig);
+    const paths = files.map((f) => f.path);
+    expect(paths.some((p) => p.endsWith("hooks.json"))).toBe(true);
+    expect(paths.some((p) => p.endsWith("permissions.json"))).toBe(false);
+  });
+
+  it("additionalFiles emits permissions.json when opted in", () => {
+    const files = cursorIntegration.additionalFiles!(sampleConfig, {
+      enableCursorPermissions: true,
+    });
+    const paths = files.map((f) => f.path);
+    expect(paths.some((p) => p.endsWith("permissions.json"))).toBe(true);
+  });
+
+  it("hooks.json contains the 3 blocking events with failClosed: true", () => {
+    const files = cursorIntegration.additionalFiles!(sampleConfig);
+    const hooks = files.find((f) => f.path.endsWith("hooks.json"));
+    expect(hooks).toBeDefined();
+    const body = hooks!.content as any;
+    expect(body.version).toBe(1);
+    for (const event of [
+      "beforeShellExecution",
+      "beforeMCPExecution",
+      "beforeReadFile",
+    ]) {
+      const entry = body.hooks[event];
+      expect(Array.isArray(entry)).toBe(true);
+      expect(entry[0].failClosed).toBe(true);
+      expect(entry[0].timeout).toBe(3);
+      expect(typeof entry[0].command).toBe("string");
+    }
+  });
+
+  it("hooks.json does NOT register preToolUse (redundant with before-specific hooks)", () => {
+    const files = cursorIntegration.additionalFiles!(sampleConfig);
+    const hooks = files.find((f) => f.path.endsWith("hooks.json"))!;
+    const body = hooks.content as any;
+    expect(body.hooks.preToolUse).toBeUndefined();
+  });
+
+  it("hooks.json does NOT register sessionStart (Cursor ignores env on entries)", () => {
+    // The previous WIP tried to inject env via sessionStart[0].env which is a
+    // no-op in Cursor — env only flows from sessionStart script stdout.
+    // Credentials now flow through ~/.agentsid/cursor-env.json instead.
+    const files = cursorIntegration.additionalFiles!(sampleConfig);
+    const hooks = files.find((f) => f.path.endsWith("hooks.json"))!;
+    const body = hooks.content as any;
+    expect(body.hooks.sessionStart).toBeUndefined();
+  });
+
+  it("each blocking hook points at cursor-adapter.sh with its own subcommand", () => {
+    const files = cursorIntegration.additionalFiles!(sampleConfig);
+    const hooks = files.find((f) => f.path.endsWith("hooks.json"))!;
+    const body = hooks.content as any;
+    const expectations: Array<[string, string]> = [
+      ["beforeShellExecution", "shell"],
+      ["beforeMCPExecution", "mcp"],
+      ["beforeReadFile", "read"],
+    ];
+    for (const [event, subcommand] of expectations) {
+      const cmd = body.hooks[event][0].command as string;
+      expect(cmd).toMatch(/cursor-adapter\.sh /);
+      expect(cmd.endsWith(` ${subcommand}`)).toBe(true);
+    }
+  });
+
+  it("after* audit hooks point at cursor-adapter.sh audit (non-blocking)", () => {
+    const files = cursorIntegration.additionalFiles!(sampleConfig);
+    const hooks = files.find((f) => f.path.endsWith("hooks.json"))!;
+    const body = hooks.content as any;
+    for (const event of ["afterFileEdit", "afterShellExecution", "afterMCPExecution"]) {
+      const entry = body.hooks[event][0];
+      expect(entry.command).toMatch(/cursor-adapter\.sh audit$/);
+      expect(entry.failClosed).toBeUndefined();
+    }
+  });
+
+  it("emits cursor-env.json with AGENTSID_* creds and mode 0o600", () => {
+    const files = cursorIntegration.additionalFiles!({
+      ...sampleConfig,
+      agentId: "ag_123",
+      apiUrl: "https://api.example",
+    });
+    const envFile = files.find((f) => f.path.endsWith("cursor-env.json"));
+    expect(envFile).toBeDefined();
+    expect(envFile!.mode).toBe(0o600);
+    const body = envFile!.content as any;
+    expect(body.AGENTSID_PROJECT_KEY).toBe("test-api-key-123");
+    expect(body.AGENTSID_AGENT_TOKEN).toBe("test-agent-token-456");
+    expect(body.AGENTSID_AGENT_ID).toBe("ag_123");
+    expect(body.AGENTSID_API_URL).toBe("https://api.example");
+  });
+
+  it("cursor-env.json lives under ~/.agentsid/ regardless of scope", () => {
+    // The env file is shared across Cursor sessions, so it's always written
+    // globally even in project scope. The wizard chmods it 600.
+    const expected = path.join(os.homedir(), ".agentsid", "cursor-env.json");
+    for (const cfg of [sampleConfig, projectConfig]) {
+      const files = cursorIntegration.additionalFiles!(cfg);
+      const envFile = files.find((f) => f.path.endsWith("cursor-env.json"))!;
+      expect(envFile.path).toBe(expected);
+    }
+  });
+
+  it("project-scope hooks.json lands at .cursor/hooks.json", () => {
+    const files = cursorIntegration.additionalFiles!(projectConfig);
+    const hooks = files.find((f) => f.path.endsWith("hooks.json"))!;
+    expect(hooks.path).toBe(path.join(".cursor", "hooks.json"));
+  });
 });
 
 // ─── Codex ──────────────────────────────────────────────────────────────────

@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "tsc && npm run copy-assets",
-    "copy-assets": "mkdir -p dist/hook && cp src/hook/pre-tool.sh src/hook/post-tool.sh dist/hook/",
+    "copy-assets": "mkdir -p dist/hook && cp src/hook/pre-tool.sh src/hook/post-tool.sh src/hook/cursor-adapter.sh dist/hook/",
     "dev": "tsx src/cli.tsx",
     "test": "vitest run",
     "prepublishOnly": "npm run build && npm test"

@@ -35,13 +35,22 @@ function installHookFile(filename: string): string {
 }
 
 /**
- * Install both hooks:
- * - pre-tool.sh  → PreToolUse (blocks denied tool calls)
- * - post-tool.sh → PostToolUse (logs results)
+ * Install all hook scripts:
+ * - pre-tool.sh       → Claude Code PreToolUse (blocks denied tool calls)
+ * - post-tool.sh      → Claude Code PostToolUse (logs results)
+ * - cursor-adapter.sh → Cursor before/after hooks (translates Cursor's
+ *                       per-event stdin into a /validate call and emits
+ *                       the {permission, user_message, agent_message}
+ *                       shape Cursor expects)
  *
- * Returns the installed pre-tool hook path.
+ * All three are installed unconditionally so a user who switches platforms
+ * after setup doesn't need to re-run the wizard. Unused scripts sitting in
+ * ~/.agentsid/hooks/ are harmless.
+ *
+ * Returns the installed pre-tool hook path (the Claude Code primary).
  */
 export async function installHook(): Promise<string> {
   installHookFile("post-tool.sh");
+  installHookFile("cursor-adapter.sh");
   return installHookFile("pre-tool.sh");
 }

@@ -179,7 +179,7 @@ export function LaunchStep({
         // cross-file reference points at an existing primary.
         if (integration.additionalFiles) {
           for (const extra of integration.additionalFiles(integrationInput)) {
-            await writeConfig(extra.path, extra.content, extra.format);
+            await writeConfig(extra.path, extra.content, extra.format, extra.mode);
           }
         }
         if (cancelled) return;

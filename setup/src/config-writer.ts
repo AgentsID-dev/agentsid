@@ -103,7 +103,8 @@ function toTomlString(value: string): string {
 export async function writeConfig(
   filePath: string,
   config: Record<string, unknown>,
-  format: "json" | "toml"
+  format: "json" | "toml",
+  mode?: number
 ): Promise<void> {
   const dir = path.dirname(filePath);
   fs.mkdirSync(dir, { recursive: true });
@@ -128,6 +129,10 @@ export async function writeConfig(
   } else {
     const toml = serializeToml(config);
     fs.writeFileSync(filePath, toml, "utf8");
+  }
+
+  if (mode !== undefined) {
+    fs.chmodSync(filePath, mode);
   }
 }
 

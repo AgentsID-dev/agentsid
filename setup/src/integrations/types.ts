@@ -38,6 +38,11 @@ export interface GeneratedFile {
   readonly path: string;
   readonly format: "json" | "toml";
   readonly content: Record<string, unknown>;
+  /**
+   * Optional POSIX file mode (e.g. 0o600 for secret files). Applied via
+   * chmod after the file is written. If unset, the umask default is used.
+   */
+  readonly mode?: number;
 }
 
 export interface PlatformIntegration {
