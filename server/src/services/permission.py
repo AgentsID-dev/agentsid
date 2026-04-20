@@ -24,6 +24,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.models import PermissionRule
+from src.services.classifier import classify as classify_call
+from src.services.classifier import matches_any as _tags_match
 
 # Simple TTL cache for permission rules
 _permission_cache: dict[str, tuple[list, float]] = {}
@@ -158,11 +160,19 @@ class PermissionService:
             _permission_cache[agent_id] = (all_rules, now)
             _prune_cache(_permission_cache)
 
+        # Classify the call once up-front. `tags` is the full set of semantic
+        # labels this (tool, params) call matches — always includes the raw
+        # tool name so exact-name rules keep working, plus any taxonomic
+        # labels (shell.admin.sudo, file.read[.env], …) derived by the
+        # classifier. Rule-matching below checks the stored pattern against
+        # the entire tag list rather than just the raw tool string.
+        tags = classify_call(tool, params)
+
         # Phase 1: Check DENY rules first
         for rule in all_rules:
             if rule.action != "deny":
                 continue
-            if not _matches_pattern(rule.tool_pattern, tool):
+            if not _tags_match(rule.tool_pattern, tags):
                 continue
             if not _matches_schedule(rule.schedule):
                 continue  # schedule doesn't match = rule doesn't apply
@@ -194,7 +204,7 @@ class PermissionService:
         for rule in all_rules:
             if rule.action != "allow":
                 continue
-            if not _matches_pattern(rule.tool_pattern, tool):
+            if not _tags_match(rule.tool_pattern, tags):
                 continue
             if not _matches_schedule(rule.schedule):
                 continue  # schedule doesn't match = rule doesn't apply
