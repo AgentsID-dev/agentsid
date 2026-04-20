@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-04-20
+
+### Fixed
+- **Codex no longer refuses to boot when `@agentsid/guard` can't start.** 0.2.0 set `required = true` on the guard MCP server, which was correct posture for a known-good guard package — but `@agentsid/guard` has never actually been published to npm. Every 0.2.0 Codex user hit `Error: thread/start failed during TUI bootstrap` because Codex dutifully failed-closed on the MCP's `npm 404 Not Found`. Flipping to `required = false` restores boot; the kernel sandbox (`sandbox_mode = "workspace-write"` + `network_access = false`) is still active and still Codex's primary enforcement layer. This matches how Cursor and Claude Code already handle the same failure mode — red MCP badge, app still runs.
+
+### Notes
+- Cursor and Claude Code users were also receiving an MCP config pointing at the unpublished package. It silently failed on those platforms (no `required` field) so they just saw a red agentsid-MCP badge and kept running — losing only the guard-MCP tool surface, not the hook-based enforcement which is the primary mechanism on those platforms.
+- The real fix is to actually publish `@agentsid/guard`. Tracking as a separate deliverable: the package exists at `mcp-shell-guard/` in the monorepo (name = `@agentsid/guard`, v0.1.0) but needs audit + tests + publish workflow before going live.
+
 ## [0.2.0] — 2026-04-20
 
 Minor version bump — Codex promoted from "in testing" to stable. Three of five supported platforms now ship with real enforcement; the multi-provider story holds.

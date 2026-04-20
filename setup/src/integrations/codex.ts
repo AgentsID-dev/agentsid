@@ -19,11 +19,17 @@ import type {
  *   2. `[sandbox_workspace_write] network_access = false` — blocks outbound
  *      network calls from inside the sandbox. Safe default for coding work.
  *   3. `[mcp_servers.agentsid]` — registers the guard MCP server with
- *      `required = true` so Codex fails-loud (not silently-unguarded) if
- *      the guard can't start.
+ *      `required = false` so a transient guard failure (unpublished
+ *      package, npm cache miss, network blip) does NOT prevent Codex from
+ *      booting. The kernel sandbox still enforces regardless. Users see a
+ *      red badge on the agentsid MCP if it fails — same UX as Cursor and
+ *      Claude Code have for the same failure mode. Flip to `true` once
+ *      `@agentsid/guard` is published and known-stable on npm so we can
+ *      fail-loud rather than silently skip the MCP layer.
  *
- * The sandbox pair + guard MCP make Codex stable-grade without relying on
- * the experimental `enableCodexHooks` surface. Hooks stay opt-in, off by
+ * The sandbox pair alone is enough for stable-grade enforcement; the
+ * guard MCP is belt-and-suspenders (and load-bearing on platforms like
+ * Gemini where we don't have a hook path). Hooks stay opt-in, off by
  * default, and Bash-only as of 2026-04.
  */
 const HOOK_DIR = path.join(os.homedir(), ".agentsid", "hooks");
@@ -38,13 +44,15 @@ export const codexIntegration: PlatformIntegration = {
   label: "Codex",
   configFormat: "toml",
   instructions:
-    "AgentsID will register a required MCP server in your Codex config AND " +
-    "enable Codex's kernel-level sandbox (`sandbox_mode = \"workspace-write\"` " +
-    "with `network_access = false`) — that's Codex's primary enforcement " +
-    "layer. Restart the Codex CLI session (exit and relaunch) to activate. " +
-    "If a workflow genuinely needs outbound network access, set " +
-    "`[sandbox_workspace_write] network_access = true` in " +
-    "`~/.codex/config.toml` — but the guard MCP still validates every call.",
+    "AgentsID will enable Codex's kernel-level sandbox " +
+    "(`sandbox_mode = \"workspace-write\"` with `network_access = false`) " +
+    "and register the guard MCP server. The sandbox is Codex's primary " +
+    "enforcement layer — kernel-enforced, always on. Restart the Codex CLI " +
+    "session (exit and relaunch) to activate. If a workflow needs outbound " +
+    "network access, set `[sandbox_workspace_write] network_access = true` " +
+    "in `~/.codex/config.toml`. If the guard MCP shows a red badge, it means " +
+    "the `@agentsid/guard` npm package couldn't start — Codex still runs " +
+    "with sandbox enforcement either way.",
 
   configPath(scope) {
     if (scope === "global") {
@@ -78,7 +86,10 @@ export const codexIntegration: PlatformIntegration = {
           command: "npx",
           args: ["-y", "@agentsid/guard"],
           env: envBlock,
-          required: true,
+          // Fail-soft: if the guard can't start (npm 404, cache miss,
+          // offline), Codex should still boot with sandbox enforcement.
+          // See 0.2.1 CHANGELOG for why this changed from `true`.
+          required: false,
           enabled: true,
           startup_timeout_sec: STARTUP_TIMEOUT_SEC,
           tool_timeout_sec: TOOL_TIMEOUT_SEC,

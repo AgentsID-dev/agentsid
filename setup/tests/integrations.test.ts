@@ -265,9 +265,14 @@ describe("codexIntegration", () => {
     );
   });
 
-  it("marks the guard MCP as required + sets startup/tool timeouts", () => {
+  it("guard MCP is fail-soft (required=false) so Codex still boots if the guard 404s", () => {
+    // 0.2.0 shipped required=true; that made Codex refuse to boot when
+    // `npx -y @agentsid/guard` failed (which is currently always, since the
+    // package isn't yet published on npm). 0.2.1 flips to false so the
+    // kernel sandbox still enforces even when the MCP layer is missing.
+    // See CHANGELOG 0.2.1.
     const cfg = codexIntegration.generateConfig(sampleConfig) as any;
-    expect(cfg.mcp_servers.agentsid.required).toBe(true);
+    expect(cfg.mcp_servers.agentsid.required).toBe(false);
     expect(cfg.mcp_servers.agentsid.enabled).toBe(true);
     expect(typeof cfg.mcp_servers.agentsid.startup_timeout_sec).toBe("number");
     expect(typeof cfg.mcp_servers.agentsid.tool_timeout_sec).toBe("number");
@@ -301,7 +306,9 @@ describe("codexIntegration", () => {
     // MCP server config still emitted correctly.
     expect(toml).toContain("[mcp_servers.agentsid]");
     expect(toml).toContain("[mcp_servers.agentsid.env]");
-    expect(toml).toContain("required = true");
+    // 0.2.1: required=false so Codex boots even if the guard can't start.
+    expect(toml).toContain("required = false");
+    expect(toml).toContain("enabled = true");
   });
 
   it("additionalFiles emits nothing by default (hooks are experimental)", () => {
