@@ -379,6 +379,13 @@ def _matches_conditions(conditions: dict | None, params: dict | None) -> bool:
     NOTE: This function also serves as the resource-level scoping mechanism.
     Use conditions to restrict rules to specific resource values, e.g.:
         {"customer_id": "cust_123"} — rule only applies when customer_id matches.
+
+    Special case: `path_pattern` is interpreted as a glob applied to
+    `params["file_path"]` (basename + full path). Preset authors use this
+    to narrow file-read rules (e.g. `{"path_pattern": ".env"}` means
+    "fire this rule only when the Read tool's file_path basename matches
+    the .env glob"). Without this special case the rule would require an
+    incoming `params["path_pattern"]` key that no client actually sends.
     """
     if not conditions:
         return True
@@ -386,6 +393,12 @@ def _matches_conditions(conditions: dict | None, params: dict | None) -> bool:
         return False  # conditions exist but no params = fail-closed
 
     for key, allowed_values in conditions.items():
+        # Special case: path_pattern matches the file_path param as a glob.
+        if key == "path_pattern":
+            if not _matches_path_pattern(allowed_values, params):
+                return False
+            continue
+
         param_value = params.get(key)
         if param_value is None:
             return False  # required condition param missing = no match
@@ -399,6 +412,31 @@ def _matches_conditions(conditions: dict | None, params: dict | None) -> bool:
             return False
 
     return True
+
+
+def _matches_path_pattern(allowed: object, params: dict) -> bool:
+    """Glob-match allowed pattern(s) against params['file_path'].
+
+    We match both the basename (so `.env` hits an absolute path ending in
+    `/.env`) and the full path (so `src/**/*.py` style patterns work for
+    callers that use them). Either match satisfies the condition.
+    """
+    import os
+
+    file_path = params.get("file_path", "")
+    if not isinstance(file_path, str) or not file_path:
+        return False
+
+    patterns = allowed if isinstance(allowed, list) else [allowed]
+    basename = os.path.basename(file_path)
+
+    for pat in patterns:
+        if not isinstance(pat, str):
+            continue
+        if fnmatch.fnmatch(basename, pat) or fnmatch.fnmatch(file_path, pat):
+            return True
+
+    return False
 
 
 def _matches_schedule(schedule: dict | None) -> bool:
