@@ -148,6 +148,38 @@ describe("codexIntegration", () => {
       "test-agent-token-456"
     );
   });
+
+  it("marks the guard MCP as required + sets startup/tool timeouts", () => {
+    const cfg = codexIntegration.generateConfig(sampleConfig) as any;
+    expect(cfg.mcp_servers.agentsid.required).toBe(true);
+    expect(cfg.mcp_servers.agentsid.enabled).toBe(true);
+    expect(typeof cfg.mcp_servers.agentsid.startup_timeout_sec).toBe("number");
+    expect(typeof cfg.mcp_servers.agentsid.tool_timeout_sec).toBe("number");
+  });
+
+  it("additionalFiles emits nothing by default (hooks are experimental)", () => {
+    const files = codexIntegration.additionalFiles!(sampleConfig);
+    expect(files).toEqual([]);
+  });
+
+  it("additionalFiles emits hooks.json only when opted in", () => {
+    const files = codexIntegration.additionalFiles!(sampleConfig, {
+      enableCodexHooks: true,
+    });
+    expect(files).toHaveLength(1);
+    const hooks = files[0]!;
+    expect(hooks.format).toBe("json");
+    expect(hooks.path.endsWith("hooks.json")).toBe(true);
+    const body = hooks.content as any;
+    expect(body.hooks.PreToolUse[0].hooks[0].type).toBe("command");
+    expect(typeof body.hooks.PreToolUse[0].hooks[0].command).toBe("string");
+    expect(body.hooks.PreToolUse[0].hooks[0].timeoutSec).toBe(3);
+  });
+
+  it("instructions mention the sandbox_mode recommendation", () => {
+    expect(codexIntegration.instructions).toMatch(/sandbox_mode/);
+    expect(codexIntegration.instructions).toMatch(/network_access/);
+  });
 });
 
 // ─── Gemini ─────────────────────────────────────────────────────────────────

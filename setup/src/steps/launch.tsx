@@ -162,16 +162,25 @@ export function LaunchStep({
       try {
         const integration = INTEGRATIONS[platform];
         const agentToken = agent.token ?? agent.agent.id;
-        const config = integration.generateConfig({
+        const integrationInput = {
           apiKey,
           agentToken,
           agentId: agent.agent.id,
           apiUrl,
-          scope: "global",
-        });
+          scope: "global" as const,
+        };
+        const config = integration.generateConfig(integrationInput);
         const configPath = integration.configPath("global");
         if (configPath) {
           await writeConfig(configPath, config, integration.configFormat);
+        }
+        // Sibling files (Cursor hooks.json / permissions.json, Codex
+        // hooks.json, etc.). Primary config must land first so any
+        // cross-file reference points at an existing primary.
+        if (integration.additionalFiles) {
+          for (const extra of integration.additionalFiles(integrationInput)) {
+            await writeConfig(extra.path, extra.content, extra.format);
+          }
         }
         if (cancelled) return;
         updateStep(2, { state: "done" });
