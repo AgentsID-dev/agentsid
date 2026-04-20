@@ -21,7 +21,7 @@ interface SelectItem {
 const ITEMS: SelectItem[] = [
   { label: "Claude Code", value: "claude-code" },
   { label: "Cursor", value: "cursor" },
-  { label: "Codex (in testing)", value: "codex" },
+  { label: "Codex", value: "codex" },
   { label: "Gemini CLI (in testing)", value: "gemini" },
   { label: "Local Model (in testing)", value: "local-model" },
 ];

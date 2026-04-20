@@ -125,8 +125,52 @@ describe("serializeToml", () => {
     expect(toml).toContain('AGENTSID_AGENT_TOKEN = "token-456"');
   });
 
-  it("throws when mcp_servers key is missing", () => {
-    expect(() => serializeToml({ other: "val" })).toThrow();
+  it("throws when no output would be produced", () => {
+    expect(() => serializeToml({})).toThrow();
+  });
+
+  it("emits top-level scalars before any [table] header (TOML ordering)", () => {
+    const toml = serializeToml({
+      sandbox_mode: "workspace-write",
+      mcp_servers: { agentsid: { command: "npx" } },
+    });
+    const sandboxLineIdx = toml.indexOf('sandbox_mode = "workspace-write"');
+    const tableHeaderIdx = toml.indexOf("[mcp_servers.agentsid]");
+    expect(sandboxLineIdx).toBeGreaterThanOrEqual(0);
+    expect(tableHeaderIdx).toBeGreaterThanOrEqual(0);
+    expect(sandboxLineIdx).toBeLessThan(tableHeaderIdx);
+  });
+
+  it("emits generic [table] blocks for nested objects (Codex sandbox case)", () => {
+    const toml = serializeToml({
+      sandbox_mode: "workspace-write",
+      sandbox_workspace_write: { network_access: false },
+      mcp_servers: { agentsid: { command: "npx" } },
+    });
+    expect(toml).toContain("[sandbox_workspace_write]");
+    expect(toml).toContain("network_access = false");
+  });
+
+  it("booleans serialise unquoted (TOML native bool)", () => {
+    const toml = serializeToml({
+      flag_true: true,
+      flag_false: false,
+      mcp_servers: { agentsid: { command: "npx" } },
+    });
+    expect(toml).toContain("flag_true = true");
+    expect(toml).toContain("flag_false = false");
+    // Must NOT double-quote as "true"/"false"
+    expect(toml).not.toMatch(/flag_true = "true"/);
+  });
+
+  it("numbers serialise unquoted", () => {
+    const toml = serializeToml({
+      mcp_servers: {
+        agentsid: { command: "npx", startup_timeout_sec: 10 },
+      },
+    });
+    expect(toml).toContain("startup_timeout_sec = 10");
+    expect(toml).not.toMatch(/startup_timeout_sec = "10"/);
   });
 });
 

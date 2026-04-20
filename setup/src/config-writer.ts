@@ -34,56 +34,99 @@ export function mergeJsonConfig(
   return result;
 }
 
-// ─── TOML serialisation (minimal subset for MCP server blocks) ───────────────
+// ─── TOML serialisation (minimal subset for MCP server blocks + Codex keys) ──
 
 /**
- * Serialise a config object that has the shape:
- * { mcp_servers: { agentsid: { command, args, env: { KEY: VALUE } } } }
+ * Serialise a config object to TOML. Handles three shapes:
  *
- * into a TOML string with the section headers expected by Codex.
+ *   1. Top-level scalars/arrays (must precede any `[table]` header) —
+ *        sandbox_mode = "workspace-write"
+ *
+ *   2. Generic `[table]` sections with scalar values —
+ *        [sandbox_workspace_write]
+ *        network_access = false
+ *
+ *   3. The special `mcp_servers.<name>` form that Codex uses —
+ *        [mcp_servers.agentsid]
+ *        command = "npx"
+ *        ...
+ *        [mcp_servers.agentsid.env]
+ *        KEY = "value"
+ *
+ * Throws when the config produces no output (guard against silently
+ * emitting an empty file). Does NOT support deeply nested non-env tables;
+ * add cases here if future integrations need them.
  */
 export function serializeToml(config: Record<string, unknown>): string {
   const lines: string[] = [];
 
-  const mcpServers = config["mcp_servers"] as
-    | Record<string, unknown>
-    | undefined;
-
-  if (!mcpServers) {
-    throw new Error(
-      "serializeToml: config must contain a top-level 'mcp_servers' key"
-    );
+  // Pass 1: top-level scalars + arrays must come before any [table] header.
+  for (const [key, value] of Object.entries(config)) {
+    if (!isPlainObject(value)) {
+      lines.push(`${key} = ${serializeTomlValue(value)}`);
+    }
   }
+  if (lines.length > 0) lines.push("");
 
-  for (const [serverName, rawServer] of Object.entries(mcpServers)) {
-    const server = rawServer as Record<string, unknown>;
+  // Pass 2: tables.
+  for (const [key, value] of Object.entries(config)) {
+    if (!isPlainObject(value)) continue;
+    const table = value as Record<string, unknown>;
 
-    lines.push(`[mcp_servers.${serverName}]`);
-
-    if (typeof server["command"] === "string") {
-      lines.push(`command = ${toTomlString(server["command"])}`);
-    }
-
-    if (Array.isArray(server["args"])) {
-      const items = (server["args"] as unknown[])
-        .map((a) => toTomlString(String(a)))
-        .join(", ");
-      lines.push(`args = [${items}]`);
-    }
-
-    lines.push("");
-
-    const env = server["env"] as Record<string, unknown> | undefined;
-    if (env) {
-      lines.push(`[mcp_servers.${serverName}.env]`);
-      for (const [envKey, envVal] of Object.entries(env)) {
-        lines.push(`${envKey} = ${toTomlString(String(envVal))}`);
+    if (key === "mcp_servers") {
+      // Codex's special form: one sub-table per server, env as sub-sub-table.
+      for (const [serverName, rawServer] of Object.entries(table)) {
+        emitMcpServerBlock(lines, serverName, rawServer as Record<string, unknown>);
+      }
+    } else {
+      lines.push(`[${key}]`);
+      for (const [subKey, subVal] of Object.entries(table)) {
+        lines.push(`${subKey} = ${serializeTomlValue(subVal)}`);
       }
       lines.push("");
     }
   }
 
+  if (lines.length === 0) {
+    throw new Error("serializeToml: config produced no output");
+  }
+
   return lines.join("\n");
+}
+
+function emitMcpServerBlock(
+  lines: string[],
+  serverName: string,
+  server: Record<string, unknown>
+): void {
+  lines.push(`[mcp_servers.${serverName}]`);
+  // Emit scalars/arrays in order; env is a nested sub-table emitted last.
+  for (const [key, value] of Object.entries(server)) {
+    if (key === "env") continue;
+    if (isPlainObject(value)) continue;
+    lines.push(`${key} = ${serializeTomlValue(value)}`);
+  }
+  lines.push("");
+
+  const env = server["env"] as Record<string, unknown> | undefined;
+  if (env) {
+    lines.push(`[mcp_servers.${serverName}.env]`);
+    for (const [envKey, envVal] of Object.entries(env)) {
+      lines.push(`${envKey} = ${serializeTomlValue(envVal)}`);
+    }
+    lines.push("");
+  }
+}
+
+function serializeTomlValue(value: unknown): string {
+  if (typeof value === "string") return toTomlString(value);
+  if (typeof value === "boolean") return value ? "true" : "false";
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  if (Array.isArray(value)) {
+    return `[${value.map((v) => serializeTomlValue(v)).join(", ")}]`;
+  }
+  // Fallback: coerce to string. Covers undefined/null/non-serialisable values.
+  return toTomlString(String(value));
 }
 
 function toTomlString(value: string): string {

@@ -11,12 +11,20 @@ import type {
  * Codex integration.
  *
  * Codex shares the same `~/.codex/config.toml` between the CLI and the IDE
- * extension, so one file covers both surfaces. We mark the guard MCP server
- * as `required = true` so that if the guard fails to initialise, Codex
- * surfaces the failure rather than silently running unguarded.
+ * extension, so one file covers both surfaces. We write three things:
  *
- * Codex hooks are experimental and Bash-only as of 2026-04 — we emit them
- * only when the wizard's `enableCodexHooks` opt-in is set.
+ *   1. `sandbox_mode = "workspace-write"` — kernel-level sandbox. Codex's
+ *      PRIMARY enforcement layer. Stronger than any hook we could add
+ *      because it's enforced by the OS, not by a userland script.
+ *   2. `[sandbox_workspace_write] network_access = false` — blocks outbound
+ *      network calls from inside the sandbox. Safe default for coding work.
+ *   3. `[mcp_servers.agentsid]` — registers the guard MCP server with
+ *      `required = true` so Codex fails-loud (not silently-unguarded) if
+ *      the guard can't start.
+ *
+ * The sandbox pair + guard MCP make Codex stable-grade without relying on
+ * the experimental `enableCodexHooks` surface. Hooks stay opt-in, off by
+ * default, and Bash-only as of 2026-04.
  */
 const HOOK_DIR = path.join(os.homedir(), ".agentsid", "hooks");
 const PRE_TOOL_HOOK = path.join(HOOK_DIR, "pre-tool.sh");
@@ -30,12 +38,13 @@ export const codexIntegration: PlatformIntegration = {
   label: "Codex",
   configFormat: "toml",
   instructions:
-    "AgentsID will be registered as a required MCP server in your Codex " +
-    "config and set up with sensible startup and tool timeouts. For the " +
-    "strongest runtime defense on Codex, also set " +
-    "`sandbox_mode = \"workspace-write\"` with `network_access = false` in " +
-    "`~/.codex/config.toml` — that is Codex's primary enforcement layer. " +
-    "Restart the Codex CLI session (exit and relaunch) to activate.",
+    "AgentsID will register a required MCP server in your Codex config AND " +
+    "enable Codex's kernel-level sandbox (`sandbox_mode = \"workspace-write\"` " +
+    "with `network_access = false`) — that's Codex's primary enforcement " +
+    "layer. Restart the Codex CLI session (exit and relaunch) to activate. " +
+    "If a workflow genuinely needs outbound network access, set " +
+    "`[sandbox_workspace_write] network_access = true` in " +
+    "`~/.codex/config.toml` — but the guard MCP still validates every call.",
 
   configPath(scope) {
     if (scope === "global") {
@@ -53,6 +62,17 @@ export const codexIntegration: PlatformIntegration = {
     if (config.apiUrl) envBlock.AGENTSID_API_URL = config.apiUrl;
 
     return {
+      // Top-level: kernel-level sandbox. `workspace-write` lets the agent
+      // read/write inside the workspace but blocks system paths, network,
+      // and privilege escalation. Codex config-reference lists three
+      // allowed values: "read-only", "workspace-write", "danger-full-access".
+      sandbox_mode: "workspace-write",
+      // Nested table — disables outbound network within the sandbox.
+      // Users who need network can flip this to true or override via
+      // Codex's per-invocation flags.
+      sandbox_workspace_write: {
+        network_access: false,
+      },
       mcp_servers: {
         agentsid: {
           command: "npx",

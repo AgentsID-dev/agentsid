@@ -273,6 +273,37 @@ describe("codexIntegration", () => {
     expect(typeof cfg.mcp_servers.agentsid.tool_timeout_sec).toBe("number");
   });
 
+  it("writes Codex kernel sandbox as top-level sandbox_mode (not just recommend)", () => {
+    // Prior versions only RECOMMENDED this in the instruction string; that left
+    // Codex's primary enforcement layer unset for every user who skimmed the
+    // wizard output. 0.2.0 writes it directly into config.toml.
+    const cfg = codexIntegration.generateConfig(sampleConfig) as any;
+    expect(cfg.sandbox_mode).toBe("workspace-write");
+  });
+
+  it("disables outbound network inside the sandbox via [sandbox_workspace_write]", () => {
+    const cfg = codexIntegration.generateConfig(sampleConfig) as any;
+    expect(cfg.sandbox_workspace_write).toBeDefined();
+    expect(cfg.sandbox_workspace_write.network_access).toBe(false);
+  });
+
+  it("serialises full Codex config to a well-formed TOML snippet", async () => {
+    const { serializeToml } = await import("../src/config-writer.js");
+    const toml = serializeToml(
+      codexIntegration.generateConfig(sampleConfig) as Record<string, unknown>,
+    );
+    // Top-level sandbox scalar precedes table headers.
+    expect(toml.indexOf('sandbox_mode = "workspace-write"')).toBeLessThan(
+      toml.indexOf("[mcp_servers.agentsid]"),
+    );
+    // Nested sandbox table appears with its boolean.
+    expect(toml).toMatch(/\[sandbox_workspace_write\]\nnetwork_access = false/);
+    // MCP server config still emitted correctly.
+    expect(toml).toContain("[mcp_servers.agentsid]");
+    expect(toml).toContain("[mcp_servers.agentsid.env]");
+    expect(toml).toContain("required = true");
+  });
+
   it("additionalFiles emits nothing by default (hooks are experimental)", () => {
     const files = codexIntegration.additionalFiles!(sampleConfig);
     expect(files).toEqual([]);

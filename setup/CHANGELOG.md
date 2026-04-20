@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-04-20
+
+Minor version bump — Codex promoted from "in testing" to stable. Three of five supported platforms now ship with real enforcement; the multi-provider story holds.
+
+### Added
+- **Codex kernel-sandbox is now written, not just recommended.** Previous versions' wizard printed a recommendation that the user manually set `sandbox_mode = "workspace-write"` with `network_access = false` in `~/.codex/config.toml`. Every user who skimmed the output missed that — Codex's primary enforcement layer stayed off. 0.2.0 writes both directly into `config.toml`:
+  - `sandbox_mode = "workspace-write"` (top-level scalar — kernel-level, blocks system paths + privilege escalation)
+  - `[sandbox_workspace_write] network_access = false` (nested table — blocks outbound network from inside the sandbox)
+- `serializeToml` now handles top-level scalars and generic `[table]` sections, not just `[mcp_servers.<name>]`. Booleans serialise as native TOML bools; arrays serialise correctly. Six new test cases pin this behaviour.
+- Codex integration tests for the new sandbox-config output (4 new cases).
+
+### Changed
+- Codex platform promoted from "(in testing)" to stable in both the wizard's platform picker ([src/steps/platform.tsx](setup/src/steps/platform.tsx)) and the README support matrix. Three of five platforms now stable: Claude Code, Cursor, Codex.
+- Codex integration instructions rewritten — no longer says "also set this manually" since the wizard now sets it. Still documents the network-access override for workflows that genuinely need outbound HTTP.
+
+### Notes
+- Codex hooks remain opt-in and experimental behind `enableCodexHooks`. Hook parity with Cursor's adapter pattern is deferred; the sandbox + guard MCP combo reaches stable-grade enforcement without it.
+- Existing agents created by 0.1.x wizards will NOT automatically pick up the sandbox config — users who want the sandbox enabled should re-run the wizard so a fresh `~/.codex/config.toml` gets written.
+
 ## [0.1.6] — 2026-04-20
 
 ### Added
