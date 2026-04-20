@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.3] — 2026-04-20
+
+### Fixed
+- **Cursor integration now actually enforces policy.** Previously the wizard emitted a `hooks.json` that pointed at Claude Code's `pre-tool.sh`, which silently no-oped on Cursor in three ways: (a) it emitted Claude-Code-format decisions (`hookSpecificOutput.permissionDecision`) that Cursor ignores in favour of `{"permission":"deny","user_message","agent_message"}`; (b) it expected `tool_name` in stdin, which `beforeShellExecution` and `beforeReadFile` don't provide, so the script bailed out allow on every shell exec and file read; (c) credentials were parked on a `sessionStart` entry's `env` field, which Cursor does not read — env only flows from `sessionStart` hook stdout. Every deny was silently dropped. Users who installed 0.1.2 on Cursor had zero enforcement.
+
+### Added
+- `cursor-adapter.sh` — single script with `shell`/`mcp`/`read`/`audit` sub-commands that translates Cursor's per-event stdin shapes into `/validate` calls and emits Cursor-format permission decisions. Sources credentials from `~/.agentsid/cursor-env.json` (chmod 600).
+- `~/.agentsid/cursor-env.json` — global, mode-600 credential file used by the Cursor adapter.
+- `IntegrationOptions` for per-wizard toggles (`enableCodexHooks`, `enableCursorPermissions`), default OFF.
+- `PlatformIntegration.additionalFiles()` — integrations can now emit sibling config files (hooks.json, env files, permissions.json) alongside the primary config, with optional POSIX `mode` for secret files.
+- Codex: mark AgentsID MCP server as `required = true` with startup/tool timeouts so Codex surfaces guard failures instead of silently running unguarded.
+- Codex: opt-in `enableCodexHooks` flag emits an experimental Bash-only `hooks.json`. Off by default because Codex hooks are still experimental.
+- Codex: setup instructions now mention the `sandbox_mode = "workspace-write"` + `network_access = false` recommendation — that's Codex's own primary enforcement layer.
+- 11 new integration tests that spawn `cursor-adapter.sh` against a real HTTP mock, locking down the Cursor protocol contract (deny shape, stdin fields per event, env loading, fail-open on network error, injection safety on deny reason).
+
+### Changed
+- Cursor `hooks.json` now registers `beforeShellExecution`, `beforeMCPExecution`, `beforeReadFile`, and the three `after*` audit hooks. No longer registers `preToolUse` (redundant with the before-specific hooks) or `sessionStart` (its env-injection trick didn't work).
+
 ## [0.1.2] — 2026-04-15
 
 ### Fixed
