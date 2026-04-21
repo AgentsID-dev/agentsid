@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.3] — 2026-04-20
+
+### Added
+- **Codex: `developer_instructions` steers agents toward `agentsid_*` tools by default.** In 0.2.2 live-testing, Codex's agent defaulted to its native `shell` tool unless the user explicitly said "use agentsid_shell_run". That made guard enforcement opt-in-per-prompt instead of automatic. 0.2.3 writes a `developer_instructions` string at the top of `config.toml` that tells the agent (a) prefer `agentsid_*` tools when available, (b) reads a `BLOCKED` response as a hard policy denial, (c) does NOT retry with the native equivalent. Backed by two new tests: one asserts the key is present with the right phrases, one asserts it serialises before any `[table]` header per TOML ordering rules.
+- **Presets now block `.envrc`, `.secrets`/`secrets`, `credentials`/`*.credentials`, and `*.token`.** The server-side classifier shipped the matching tags in the same ship (server commit `5932c18`). Developer and security-team presets gain three new rules (`DENY_SECRETS_FILE`, `DENY_CREDENTIALS_FILE`, `DENY_TOKEN_FILE`) plus a matching wizard toggle (`credentials.secrets`). `.envrc` reuses the existing `file.read[.env]` rule because direnv files hold the same env-var sensitivity class; server classifier now emits the `.env` tag for `.envrc` basenames too.
+
+### Changed
+- Codex `generateConfig` output now includes `developer_instructions` as a top-level key. `serializeToml` already handled top-level strings; no format change needed.
+
+### Notes
+- Existing 0.2.x Codex agents won't automatically pick up the new steering string — users who want the new behaviour need to re-run the wizard so a fresh `~/.codex/config.toml` is written with the new key.
+- The steering string is concise by design (~100 words). Longer system prompts degrade model compliance, and Codex's own built-in instructions already cover general agent behaviour.
+
 ## [0.2.2] — 2026-04-20
 
 ### Fixed

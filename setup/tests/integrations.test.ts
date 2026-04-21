@@ -315,6 +315,35 @@ describe("codexIntegration", () => {
     expect(toml).toContain("enabled = true");
   });
 
+  it("writes developer_instructions at top level (steers Codex toward agentsid_*)", () => {
+    // Without this, Codex's agent defaults to its native `shell` tool and
+    // guard enforcement never fires. See 0.2.3 CHANGELOG + the live-test
+    // session note for the observed behaviour that forced this.
+    const cfg = codexIntegration.generateConfig(sampleConfig) as any;
+    expect(typeof cfg.developer_instructions).toBe("string");
+    // Must name at least one concrete agentsid_* tool so the model can
+    // locate them in its catalog.
+    expect(cfg.developer_instructions).toMatch(/agentsid_shell_run/);
+    // Must explicitly tell the agent to prefer agentsid tools over natives.
+    expect(cfg.developer_instructions).toMatch(/prefer/i);
+    // Must tell the agent not to retry with native on a deny.
+    expect(cfg.developer_instructions).toMatch(/do NOT retry/);
+  });
+
+  it("serialises developer_instructions as a top-level TOML string", async () => {
+    const { serializeToml } = await import("../src/config-writer.js");
+    const toml = serializeToml(
+      codexIntegration.generateConfig(sampleConfig) as Record<string, unknown>,
+    );
+    // The key lands at the top (before any [table] header) and is a
+    // quoted TOML string containing at least one agentsid_* mention.
+    const instructionsIdx = toml.indexOf("developer_instructions = ");
+    const firstTableIdx = toml.indexOf("[sandbox_workspace_write]");
+    expect(instructionsIdx).toBeGreaterThanOrEqual(0);
+    expect(instructionsIdx).toBeLessThan(firstTableIdx);
+    expect(toml).toMatch(/developer_instructions = "[^"]*agentsid_shell_run[^"]*"/);
+  });
+
   it("additionalFiles emits nothing by default (hooks are experimental)", () => {
     const files = codexIntegration.additionalFiles!(sampleConfig);
     expect(files).toEqual([]);

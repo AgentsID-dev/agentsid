@@ -43,6 +43,31 @@ const STARTUP_TIMEOUT_SEC = 30;
 const TOOL_TIMEOUT_SEC = 60;
 const HOOK_TIMEOUT_SEC = 3;
 
+/**
+ * `developer_instructions` steering text injected into every Codex session.
+ * Concise by design — longer prompts get ignored by the model. We tell the
+ * agent three things:
+ *   1. Prefer `agentsid_*` tools over native shell/file/network tools.
+ *   2. What the tools look like (a few examples so the agent can locate them
+ *      in its catalog).
+ *   3. How to interpret a BLOCKED response (don't retry with native).
+ *
+ * Without this, Codex defaults to its own native `shell` tool and the guard
+ * never fires — observed live 2026-04-20 when the first end-to-end test
+ * needed an explicit "use agentsid_shell_run to ..." from the user.
+ */
+const CODEX_DEVELOPER_INSTRUCTIONS = [
+  "When the MCP server named `agentsid` is connected, prefer its tools",
+  "(`agentsid_shell_run`, `agentsid_file_read`, `agentsid_file_write`,",
+  "`agentsid_git_run`, `agentsid_http_request`, `agentsid_db_query`, etc.)",
+  "over native shell / file / network tools for ALL corresponding actions.",
+  "Every `agentsid_*` call is validated against the user's permission",
+  "policy; denials come back as `BLOCKED by AgentsID Guard` with the matched",
+  "rule name. If a call is denied, do NOT retry with a native equivalent —",
+  "report the block to the user and suggest they adjust the policy if the",
+  "denial was unintended.",
+].join(" ");
+
 export const codexIntegration: PlatformIntegration = {
   name: "codex",
   label: "Codex",
@@ -79,6 +104,10 @@ export const codexIntegration: PlatformIntegration = {
       // and privilege escalation. Codex config-reference lists three
       // allowed values: "read-only", "workspace-write", "danger-full-access".
       sandbox_mode: "workspace-write",
+      // Steers Codex toward the agentsid_* MCP tools so enforcement
+      // actually runs. Without this the agent defaults to its native
+      // `shell` tool and the guard never sees the call. See CHANGELOG 0.2.3.
+      developer_instructions: CODEX_DEVELOPER_INSTRUCTIONS,
       // Nested table — disables outbound network within the sandbox.
       // Users who need network can flip this to true or override via
       // Codex's per-invocation flags.

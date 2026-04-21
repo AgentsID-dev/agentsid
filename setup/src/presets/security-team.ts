@@ -104,6 +104,33 @@ const DENY_SSH_KEY: PolicyRule = {
   conditions: { path_pattern: ["id_rsa", "id_ed25519", "id_ecdsa", "id_dsa"] },
 };
 
+const DENY_SECRETS_FILE: PolicyRule = {
+  toolPattern: "file.read[.secrets]",
+  action: "deny",
+  priority: 60,
+  conditions: { path_pattern: [".secrets", "secrets"] },
+};
+
+const DENY_CREDENTIALS_FILE: PolicyRule = {
+  toolPattern: "file.read[credentials]",
+  action: "deny",
+  priority: 60,
+  conditions: {
+    path_pattern: [
+      "credentials",
+      "application_default_credentials.json",
+      "*.credentials",
+    ],
+  },
+};
+
+const DENY_TOKEN_FILE: PolicyRule = {
+  toolPattern: "file.read[*.token]",
+  action: "deny",
+  priority: 60,
+  conditions: { path_pattern: "*.token" },
+};
+
 // Allow rules with approval or unrestricted
 const ALLOW_FILE_WRITE_APPROVAL: PolicyRule = {
   toolPattern: "file.write",
@@ -214,6 +241,13 @@ const categories: readonly PolicyCategory[] = [
         defaultOn: true,
         rules: [DENY_SSH_KEY],
       },
+      {
+        id: "credentials.secrets",
+        label: "Block generic secrets files",
+        description: "Prevents agents from reading `.secrets` / `secrets`, `credentials` (AWS/GCP style), and `*.token` files",
+        defaultOn: true,
+        rules: [DENY_SECRETS_FILE, DENY_CREDENTIALS_FILE, DENY_TOKEN_FILE],
+      },
     ],
   },
   {
@@ -312,6 +346,9 @@ export const securityTeamPreset: PolicyPreset = {
     DENY_KEY_FILE,
     DENY_PFX_FILE,
     DENY_SSH_KEY,
+    DENY_SECRETS_FILE,
+    DENY_CREDENTIALS_FILE,
+    DENY_TOKEN_FILE,
     ALLOW_FILE_WRITE_APPROVAL,
     ALLOW_SHELL_WRITE_APPROVAL,
     ALLOW_SHELL_READ,

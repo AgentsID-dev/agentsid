@@ -68,6 +68,38 @@ const DENY_SSH_KEY: PolicyRule = {
   conditions: { path_pattern: ["id_rsa", "id_ed25519", "id_ecdsa", "id_dsa"] },
 };
 
+const DENY_SECRETS_FILE: PolicyRule = {
+  toolPattern: "file.read[.secrets]",
+  action: "deny",
+  priority: 60,
+  // `.secrets` or `secrets` as a filename (common dotfile convention for
+  // per-project credential storage: dotenv-cli, shell profiles, etc.).
+  conditions: { path_pattern: [".secrets", "secrets"] },
+};
+
+const DENY_CREDENTIALS_FILE: PolicyRule = {
+  toolPattern: "file.read[credentials]",
+  action: "deny",
+  priority: 60,
+  // AWS-style `credentials` (`~/.aws/credentials`), GCP's
+  // `application_default_credentials.json`, and any `*.credentials` file.
+  conditions: {
+    path_pattern: [
+      "credentials",
+      "application_default_credentials.json",
+      "*.credentials",
+    ],
+  },
+};
+
+const DENY_TOKEN_FILE: PolicyRule = {
+  toolPattern: "file.read[*.token]",
+  action: "deny",
+  priority: 60,
+  // Any file with a `.token` suffix — bearer tokens, API tokens, etc.
+  conditions: { path_pattern: "*.token" },
+};
+
 const ALLOW_ALL: PolicyRule = {
   toolPattern: "*",
   action: "allow",
@@ -119,6 +151,13 @@ const categories: readonly PolicyCategory[] = [
         description: "Prevents agents from reading id_rsa / id_ed25519 / id_ecdsa / id_dsa",
         defaultOn: true,
         rules: [DENY_SSH_KEY],
+      },
+      {
+        id: "credentials.secrets",
+        label: "Block generic secrets files",
+        description: "Prevents agents from reading `.secrets` / `secrets`, `credentials` (AWS/GCP style), and `*.token` files",
+        defaultOn: true,
+        rules: [DENY_SECRETS_FILE, DENY_CREDENTIALS_FILE, DENY_TOKEN_FILE],
       },
     ],
   },
@@ -184,6 +223,9 @@ export const developerPreset: PolicyPreset = {
     DENY_KEY_FILE,
     DENY_PFX_FILE,
     DENY_SSH_KEY,
+    DENY_SECRETS_FILE,
+    DENY_CREDENTIALS_FILE,
+    DENY_TOKEN_FILE,
     ALLOW_ALL,
   ],
   categories,
