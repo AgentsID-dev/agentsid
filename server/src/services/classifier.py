@@ -270,7 +270,15 @@ def _classify_file_read(path: str) -> list[str]:
     # Secrets-like files. The preset patterns use bracketed literals
     # (file.read[.env], file.read[*.pem], file.read[*.key]) which we emit
     # as tags verbatim; matches_any() handles these as literal equality.
-    if name == ".env" or name.startswith(".env.") or _has_suffix(name, ".env"):
+
+    # .env and variants — .env, .env.local, .env.production, foo.env, and
+    # .envrc (direnv's env file — same sensitivity class).
+    if (
+        name == ".env"
+        or name == ".envrc"
+        or name.startswith(".env.")
+        or _has_suffix(name, ".env")
+    ):
         tags.append("file.read[.env]")
     if _has_suffix(name, ".pem"):
         tags.append("file.read[*.pem]")
@@ -280,6 +288,21 @@ def _classify_file_read(path: str) -> list[str]:
         tags.append("file.read[*.pfx]")
     if name in {"id_rsa", "id_ed25519", "id_ecdsa", "id_dsa"}:
         tags.append("file.read[ssh_key]")
+    # `.secrets` / `secrets` file or directory — common dotfile convention
+    # for per-project credential storage (dotenv-cli, shell profiles, etc.).
+    if name == ".secrets" or name == "secrets":
+        tags.append("file.read[.secrets]")
+    # AWS-style `credentials` filenames (~/.aws/credentials, etc.) and
+    # GCP's `application_default_credentials.json`.
+    if (
+        name == "credentials"
+        or name == "application_default_credentials.json"
+        or _has_suffix(name, ".credentials")
+    ):
+        tags.append("file.read[credentials]")
+    # `*.token` — bearer tokens, API tokens, session tokens.
+    if _has_suffix(name, ".token"):
+        tags.append("file.read[*.token]")
 
     return tags
 

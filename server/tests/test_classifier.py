@@ -333,6 +333,74 @@ def test_file_read_plain_file_is_only_file_read():
     assert "file.read[*.pem]" not in tags
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        ".envrc",
+        "/app/.envrc",
+        "./.envrc",
+    ],
+)
+def test_file_read_envrc_aliases_env(path):
+    """direnv's `.envrc` holds the same sensitive env-vars as `.env`,
+    so it classifies under the existing `file.read[.env]` tag and hits
+    the same preset deny rule users already enable."""
+    tags = classify("Read", {"file_path": path})
+    assert "file.read[.env]" in tags
+    assert "file.read" in tags
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/project/.secrets",
+        "/home/user/secrets",
+        "./.secrets",
+    ],
+)
+def test_file_read_secrets_file(path):
+    tags = classify("Read", {"file_path": path})
+    assert "file.read[.secrets]" in tags
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/Users/me/.aws/credentials",
+        "/app/credentials",
+        "/etc/gcp/application_default_credentials.json",
+        "/config/prod.credentials",
+    ],
+)
+def test_file_read_credentials_file(path):
+    tags = classify("Read", {"file_path": path})
+    assert "file.read[credentials]" in tags
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/secrets/api.token",
+        "/home/user/.gh/auth.token",
+        "./session.token",
+    ],
+)
+def test_file_read_token_suffix(path):
+    tags = classify("Read", {"file_path": path})
+    assert "file.read[*.token]" in tags
+
+
+def test_file_read_unrelated_name_gets_no_secret_tags():
+    """A regular source file must NOT pick up any secret-class tags even
+    if its name superficially resembles one (e.g. `secrets_test.py` —
+    contains the substring but isn't named `.secrets` / `secrets`)."""
+    tags = classify("Read", {"file_path": "/app/src/secrets_test.py"})
+    assert "file.read[.secrets]" not in tags
+    assert "file.read[credentials]" not in tags
+    assert "file.read[*.token]" not in tags
+    assert tags == ["Read", "file.read"]
+
+
 # ── File writes ──────────────────────────────────────────────────────────────
 
 
