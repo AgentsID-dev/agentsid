@@ -324,10 +324,15 @@ describe("codexIntegration", () => {
     // Must name at least one concrete agentsid_* tool so the model can
     // locate them in its catalog.
     expect(cfg.developer_instructions).toMatch(/agentsid_shell_run/);
-    // Must explicitly tell the agent to prefer agentsid tools over natives.
-    expect(cfg.developer_instructions).toMatch(/prefer/i);
+    // Must explicitly require (not just "prefer") agentsid tools. The 0.2.3
+    // experiment showed that "prefer" language wasn't strong enough for
+    // shell — the model's native-shell bias won. 0.2.4 promotes to MUST /
+    // MANDATORY / hard-requirement language.
+    expect(cfg.developer_instructions).toMatch(/MANDATORY|MUST|hard requirement/);
     // Must tell the agent not to retry with native on a deny.
     expect(cfg.developer_instructions).toMatch(/do NOT retry/);
+    // Shell-specific callout — the weak spot in 0.2.3.
+    expect(cfg.developer_instructions).toMatch(/shell command/i);
   });
 
   it("serialises developer_instructions as a top-level TOML string", async () => {

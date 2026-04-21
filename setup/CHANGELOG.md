@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.4] — 2026-04-20
+
+### Fixed
+- **Codex steering now strong enough to override native-shell bias.** 0.2.3's `developer_instructions` used "prefer" language that worked for file reads (agent correctly picked `agentsid_file_read`) but lost to the model's shell-tool bias for "run X" prompts. 0.2.4 promotes the language to "MANDATORY TOOL POLICY ... MUST use" with explicit "even trivial shell commands" callouts. Test now asserts `MANDATORY|MUST|hard requirement` phrasing is present so future softening regresses immediately.
+
+### Notes
+- Existing 0.2.3 Codex agents aren't auto-updated. Re-run the wizard to get the stronger steering string into `~/.codex/config.toml`.
+- If even 0.2.4's language doesn't steer the agent reliably, the next escalation is `model_instructions_file` (REPLACES Codex's built-in instructions instead of appending to them). That's a bigger change — we'd be taking over the whole instruction channel — so we're trying the strong-appended-text path first.
+
 ## [0.2.3] — 2026-04-20
 
 ### Added

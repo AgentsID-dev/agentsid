@@ -57,15 +57,21 @@ const HOOK_TIMEOUT_SEC = 3;
  * needed an explicit "use agentsid_shell_run to ..." from the user.
  */
 const CODEX_DEVELOPER_INSTRUCTIONS = [
-  "When the MCP server named `agentsid` is connected, prefer its tools",
-  "(`agentsid_shell_run`, `agentsid_file_read`, `agentsid_file_write`,",
-  "`agentsid_git_run`, `agentsid_http_request`, `agentsid_db_query`, etc.)",
-  "over native shell / file / network tools for ALL corresponding actions.",
-  "Every `agentsid_*` call is validated against the user's permission",
-  "policy; denials come back as `BLOCKED by AgentsID Guard` with the matched",
-  "rule name. If a call is denied, do NOT retry with a native equivalent —",
-  "report the block to the user and suggest they adjust the policy if the",
-  "denial was unintended.",
+  "MANDATORY TOOL POLICY: when the `agentsid` MCP server is connected,",
+  "you MUST use `agentsid_*` tools for every operation they support —",
+  "this is a hard requirement of this environment, not a preference.",
+  "Specifically: every shell command (even trivial ones like `ls`,",
+  "`echo`, `pwd`, `cat`) MUST go through `agentsid_shell_run` — do NOT",
+  "use your built-in shell tool when `agentsid_shell_run` is available.",
+  "File reads → `agentsid_file_read`. File writes → `agentsid_file_write`.",
+  "Git → `agentsid_git_run`. HTTP → `agentsid_http_request`. SQL/DB →",
+  "`agentsid_db_query`. Env, process, cron, container, network, ssh,",
+  "packages → the matching `agentsid_*` tool. Every `agentsid_*` call",
+  "is validated against the user's policy; denials return `BLOCKED by",
+  "AgentsID Guard` with the matched rule name. When a call is denied,",
+  "do NOT retry with a native tool or workaround — report the block to",
+  "the user with the rule that matched, and suggest adjusting the",
+  "policy if the denial was unintended.",
 ].join(" ");
 
 export const codexIntegration: PlatformIntegration = {

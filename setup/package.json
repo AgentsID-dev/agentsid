@@ -1,6 +1,6 @@
 {
   "name": "@agentsid/setup",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Guided setup wizard for AgentsID — protect your AI agent in 2 minutes",
   "type": "module",
   "bin": {
