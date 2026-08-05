@@ -475,3 +475,7 @@ date,package,daily,weekly,monthly
 2026-08-04,@agentsid/mcp-scanner,1,21,67
 2026-08-04,@agentsid/sdk,0,3,10
 2026-08-04,@agentsid/proxy,1,10,35
+2026-08-05,@agentsid/scanner,0,5,48
+2026-08-05,@agentsid/mcp-scanner,2,19,69
+2026-08-05,@agentsid/sdk,0,3,10
+2026-08-05,@agentsid/proxy,1,9,36
