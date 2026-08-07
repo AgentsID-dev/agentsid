@@ -483,3 +483,7 @@ date,package,daily,weekly,monthly
 2026-08-06,@agentsid/mcp-scanner,2,12,71
 2026-08-06,@agentsid/sdk,1,3,11
 2026-08-06,@agentsid/proxy,2,9,37
+2026-08-07,@agentsid/scanner,0,4,46
+2026-08-07,@agentsid/mcp-scanner,1,9,71
+2026-08-07,@agentsid/sdk,0,2,11
+2026-08-07,@agentsid/proxy,1,8,38
