@@ -623,3 +623,7 @@ date,package,daily,weekly,monthly
 2026-09-10,@agentsid/mcp-scanner,1,24,73
 2026-09-10,@agentsid/sdk,0,5,19
 2026-09-10,@agentsid/proxy,2,13,52
+2026-09-11,@agentsid/scanner,1,15,40
+2026-09-11,@agentsid/mcp-scanner,2,17,61
+2026-09-11,@agentsid/sdk,0,3,17
+2026-09-11,@agentsid/proxy,1,9,49
