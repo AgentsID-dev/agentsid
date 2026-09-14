@@ -1,6 +1,6 @@
 # AgentsID — Download Metrics
 
-> Auto-updated daily by GitHub Actions. Last run: **2026-09-13**
+> Auto-updated daily by GitHub Actions. Last run: **2026-09-14**
 
 ## Totals
 
@@ -23,13 +23,13 @@
 
 | Date | Total Daily Downloads |
 |------|---------------------:|
-| 2026-09-07 | 3 █ |
 | 2026-09-08 | 3 █ |
 | 2026-09-09 | 3 █ |
 | 2026-09-10 | 3 █ |
 | 2026-09-11 | 4 █ |
 | 2026-09-12 | 1 █ |
 | 2026-09-13 | 1 █ |
+| 2026-09-14 | 1 █ |
 
 ---
 
