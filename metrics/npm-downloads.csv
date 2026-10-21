@@ -779,3 +779,7 @@ date,package,daily,weekly,monthly
 2026-10-20,@agentsid/mcp-scanner,0,3,50
 2026-10-20,@agentsid/sdk,0,2,10
 2026-10-20,@agentsid/proxy,1,3,31
+2026-10-21,@agentsid/scanner,8,9,42
+2026-10-21,@agentsid/mcp-scanner,0,3,50
+2026-10-21,@agentsid/sdk,0,2,10
+2026-10-21,@agentsid/proxy,1,3,31
