@@ -863,3 +863,7 @@ date,package,daily,weekly,monthly
 2026-11-10,@agentsid/mcp-scanner,6,23,53
 2026-11-10,@agentsid/sdk,0,2,12
 2026-11-10,@agentsid/proxy,0,5,23
+2026-11-11,@agentsid/scanner,2,10,37
+2026-11-11,@agentsid/mcp-scanner,1,23,52
+2026-11-11,@agentsid/sdk,1,2,12
+2026-11-11,@agentsid/proxy,0,4,20
