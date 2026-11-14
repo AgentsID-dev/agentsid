@@ -16,6 +16,7 @@
   <a href="https://rubygems.org/gems/agentsid"><img src="https://img.shields.io/gem/v/agentsid?style=flat-square&color=7c5bf0&label=gem" alt="gem" /></a>
   <a href="https://agentsid.dev"><img src="https://img.shields.io/badge/website-agentsid.dev-7c5bf0?style=flat-square" alt="website" /></a>
   <a href="https://github.com/AgentsID-dev/agentsid/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-7c5bf0?style=flat-square" alt="license" /></a>
+  <a href="https://startupscores.com/open-source/agentsid"><img src="https://startupscores.com/badge/agentsid.svg?style=shield&amp;v=combo&amp;theme=dark" alt="AgentSID on StartupScores" /></a>
 </p>
 
 <p align="center">
