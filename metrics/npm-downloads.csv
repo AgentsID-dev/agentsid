@@ -883,3 +883,7 @@ date,package,daily,weekly,monthly
 2026-11-15,@agentsid/mcp-scanner,14,37,75
 2026-11-15,@agentsid/sdk,2,7,17
 2026-11-15,@agentsid/proxy,2,9,26
+2026-11-16,@agentsid/scanner,1,24,58
+2026-11-16,@agentsid/mcp-scanner,2,36,76
+2026-11-16,@agentsid/sdk,0,7,17
+2026-11-16,@agentsid/proxy,1,9,27
