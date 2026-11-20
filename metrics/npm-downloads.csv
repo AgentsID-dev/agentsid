@@ -899,3 +899,7 @@ date,package,daily,weekly,monthly
 2026-11-19,@agentsid/mcp-scanner,6,60,107
 2026-11-19,@agentsid/sdk,0,7,16
 2026-11-19,@agentsid/proxy,0,9,27
+2026-11-20,@agentsid/scanner,1,28,62
+2026-11-20,@agentsid/mcp-scanner,1,52,108
+2026-11-20,@agentsid/sdk,0,4,16
+2026-11-20,@agentsid/proxy,0,6,27
