@@ -911,3 +911,7 @@ date,package,daily,weekly,monthly
 2026-11-22,@agentsid/mcp-scanner,2,37,109
 2026-11-22,@agentsid/sdk,3,4,18
 2026-11-22,@agentsid/proxy,2,5,27
+2026-11-23,@agentsid/scanner,8,28,74
+2026-11-23,@agentsid/mcp-scanner,7,42,113
+2026-11-23,@agentsid/sdk,3,7,20
+2026-11-23,@agentsid/proxy,3,7,29
