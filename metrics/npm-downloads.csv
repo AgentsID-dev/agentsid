@@ -923,3 +923,7 @@ date,package,daily,weekly,monthly
 2026-11-25,@agentsid/mcp-scanner,2,20,109
 2026-11-25,@agentsid/sdk,3,9,21
 2026-11-25,@agentsid/proxy,2,7,27
+2026-11-26,@agentsid/scanner,4,23,77
+2026-11-26,@agentsid/mcp-scanner,1,15,109
+2026-11-26,@agentsid/sdk,3,12,24
+2026-11-26,@agentsid/proxy,0,7,27
